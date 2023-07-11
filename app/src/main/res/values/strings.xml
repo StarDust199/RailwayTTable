@@ -1,8 +1,10 @@
 <resources>
-    <string name="app_name">RailwayTTable</string>
+    <string name="app_name">Rozkład Jazdy</string>
     <string name="rozk_ad_jazdy">Rozkład Jazdy</string>
     <string name="wyszukaj">Wyszukaj</string>
     <string name="rozk_ad">Rozkład</string>
     <string name="ulubione">Ulubione</string>
     <string name="planer">Planer</string>
+    <string name="nav_open">Open navigation drawer</string>
+    <string name="nav_close">Close navigation drawer</string>
 </resources>
