@@ -7,4 +7,8 @@
     <string name="planer">Planer</string>
     <string name="nav_open">Open navigation drawer</string>
     <string name="nav_close">Close navigation drawer</string>
+    <string name="ikona_planera">Ikona planera</string>
+    <string name="ikona_rozk_adu">Ikona rozkładu</string>
+    <string name="ikona_ulubione">Ikona ulubione</string>
+    <string name="ikona_wyszukiwania">Ikona wyszukiwania</string>
 </resources>

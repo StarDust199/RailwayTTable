@@ -1,8 +1,76 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
+
+
     <style name="Base.Theme.RailwayTTable" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Customize your light theme here. -->
-        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+    </style>
+
+    <style name="ThemeA" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="colorPrimary">@color/blueb</item>
+
+        <item name="headerLayout">@layout/header_menu</item>
+    </style>
+
+    <style name="ThemeC" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="colorPrimary">@color/purple</item>
+        <item name="headerLayout">@layout/header_menu_1</item>
+    </style>
+
+    <style name="ThemeB" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="colorPrimary">@color/green</item>
+        <item name="headerLayout">@layout/header_menu_2</item>
+    </style>
+
+    <style name="MyToolbarStyle" parent="Widget.AppCompat.Toolbar">
+        <item name="android:textColor">@color/white</item>
+    </style>
+
+    <style name="CardViewRouteA" parent="Widget.MaterialComponents.CardView">
+        <item name="cardBackgroundColor">@color/blueb</item>
+    </style>
+
+    <style name="CardViewTimetableA" parent="Widget.MaterialComponents.CardView">
+        <item name="cardBackgroundColor">@color/light_blue1</item>
+    </style>
+
+    <style name="CardViewFavoritesA" parent="Widget.MaterialComponents.CardView">
+        <item name="cardBackgroundColor">@color/almost_white</item>
+    </style>
+
+    <style name="CardViewPlanerA" parent="Widget.MaterialComponents.CardView">
+        <item name="cardBackgroundColor">@color/light_orange</item>
+    </style>
+
+    <style name="CardViewRouteB" parent="Widget.MaterialComponents.CardView">
+        <item name="cardBackgroundColor">@color/sunny_orange</item>
+    </style>
+
+    <style name="CardViewTimetableB" parent="Widget.MaterialComponents.CardView">
+        <item name="cardBackgroundColor">@color/light_green</item>
+    </style>
+
+    <style name="CardViewFavoritesB" parent="Widget.MaterialComponents.CardView">
+        <item name="cardBackgroundColor">@color/green</item>
+    </style>
+
+    <style name="CardViewPlanerB" parent="Widget.MaterialComponents.CardView">
+        <item name="cardBackgroundColor">@color/very_light_green</item>
+    </style>
+    <style name="CardViewRouteC" parent="Widget.MaterialComponents.CardView">
+        <item name="cardBackgroundColor">@color/rose</item>
+    </style>
+
+    <style name="CardViewTimetableC" parent="Widget.MaterialComponents.CardView">
+        <item name="cardBackgroundColor">@color/fuchsia</item>
+    </style>
+
+    <style name="CardViewFavoritesC" parent="Widget.MaterialComponents.CardView">
+        <item name="cardBackgroundColor">@color/purple</item>
+    </style>
+
+    <style name="CardViewPlanerC" parent="Widget.MaterialComponents.CardView">
+        <item name="cardBackgroundColor">@color/sea</item>
     </style>
 
     <style name="Theme.RailwayTTable" parent="Base.Theme.RailwayTTable" />

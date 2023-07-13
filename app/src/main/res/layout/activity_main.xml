@@ -15,13 +15,15 @@
         android:layout_height="match_parent"
         android:layout_gravity="start"
         app:headerLayout="@layout/header_menu"
-        app:menu="@menu/main_menu" >
+        app:menu="@menu/main_menu"
+        >
 
     </com.google.android.material.navigation.NavigationView>
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content"
+        android:fillViewport="true">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -41,15 +43,17 @@
                 app:layout_constraintTop_toBottomOf="@+id/toolbar">
 
                 <androidx.cardview.widget.CardView
+                    android:id="@+id/CardRoute"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_margin="5dp"
                     android:layout_weight="1"
                     android:elevation="10dp"
-                    app:cardBackgroundColor="@color/dark_green"
+                    app:cardBackgroundColor="@color/blueb"
                     app:cardCornerRadius="5dp"
                     app:cardElevation="10dp"
-                    app:cardMaxElevation="10dp">
+                    app:cardMaxElevation="10dp"
+                    >
 
                     <RelativeLayout
                         android:layout_width="match_parent"
@@ -62,7 +66,8 @@
                             android:layout_centerHorizontal="true"
                             android:layout_marginTop="15dp"
                             android:onClick="openRoute"
-                            app:srcCompat="@drawable/train_route" />
+                            app:srcCompat="@drawable/train_route"
+                            android:contentDescription="@string/ikona_wyszukiwania"/>
 
                         <TextView
                             android:id="@+id/textView3"
@@ -78,12 +83,13 @@
                 </androidx.cardview.widget.CardView>
 
                 <androidx.cardview.widget.CardView
+                    android:id="@+id/CardFavorites"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_margin="5dp"
                     android:layout_weight="1"
                     android:elevation="10dp"
-                    app:cardBackgroundColor="@color/grass_yellow"
+                    app:cardBackgroundColor="@color/almost_white"
                     app:cardCornerRadius="5dp"
                     app:cardElevation="10dp"
                     app:cardMaxElevation="10dp">
@@ -98,8 +104,10 @@
                             android:layout_height="80dp"
                             android:layout_centerHorizontal="true"
                             android:layout_marginTop="15dp"
+                            android:contentDescription="@string/ikona_ulubione"
                             android:onClick="openFavorites"
-                            app:srcCompat="@drawable/favorites2" />
+                            app:srcCompat="@drawable/favorites2"
+                            tools:ignore="ImageContrastCheck" />
 
                         <TextView
                             android:id="@+id/textView4"
@@ -109,7 +117,7 @@
                             android:layout_centerHorizontal="true"
                             android:layout_marginTop="10dp"
                             android:text="@string/ulubione"
-                            android:textColor="#795548"
+                            android:textColor="#040910"
                             android:textSize="20sp"
                             android:textStyle="bold" />
                     </RelativeLayout>
@@ -127,15 +135,17 @@
                 app:layout_constraintTop_toBottomOf="@+id/linearLayout">
 
                 <androidx.cardview.widget.CardView
+                    android:id="@+id/CardTimetable"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_margin="5dp"
                     android:layout_weight="1"
                     android:elevation="10dp"
-                    app:cardBackgroundColor="@color/olive"
+                    app:cardBackgroundColor="@color/light_blue1"
                     app:cardCornerRadius="5dp"
                     app:cardElevation="10dp"
-                    app:cardMaxElevation="10dp">
+                    app:cardMaxElevation="10dp"
+                    >
 
                     <RelativeLayout
                         android:layout_width="match_parent"
@@ -148,7 +158,8 @@
                             android:layout_centerHorizontal="true"
                             android:layout_marginTop="15dp"
                             android:onClick="openTimetable"
-                            app:srcCompat="@drawable/timetable2" />
+                            app:srcCompat="@drawable/timetable2"
+                            android:contentDescription="@string/ikona_rozk_adu"/>
 
                         <TextView
                             android:id="@+id/textView5"
@@ -164,12 +175,13 @@
                 </androidx.cardview.widget.CardView>
 
                 <androidx.cardview.widget.CardView
+                    android:id="@+id/CardPlanner"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_margin="5dp"
                     android:layout_weight="1"
                     android:elevation="8dp"
-                    app:cardBackgroundColor="@color/rose_1"
+                    app:cardBackgroundColor="@color/light_orange"
                     app:cardCornerRadius="5dp"
                     app:cardElevation="10dp"
                     app:cardMaxElevation="10dp">
@@ -185,7 +197,8 @@
                             android:layout_centerHorizontal="true"
                             android:layout_marginTop="15dp"
                             android:onClick="openPlanner"
-                            app:srcCompat="@drawable/planner" />
+                            app:srcCompat="@drawable/planner"
+                            android:contentDescription="@string/ikona_planera"/>
 
                         <TextView
                             android:id="@+id/textView6"
@@ -195,38 +208,28 @@
                             android:layout_centerHorizontal="true"
                             android:layout_marginTop="10dp"
                             android:text="@string/planer"
-                            android:textColor="@color/white"
+                            android:textColor="#040910"
                             android:textSize="20sp"
                             android:textStyle="bold" />
                     </RelativeLayout>
                 </androidx.cardview.widget.CardView>
             </LinearLayout>
 
-            <TextView
-                android:id="@+id/textView2"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:text="@string/rozk_ad_jazdy"
-                android:textColor="#F3FFFFFF"
-                android:textSize="24sp"
-                app:layout_constraintEnd_toEndOf="@+id/toolbar"
-                app:layout_constraintHorizontal_bias="0.318"
-                app:layout_constraintStart_toStartOf="@+id/toolbar"
-                app:layout_constraintTop_toTopOf="@+id/toolbar" />
+
 
             <androidx.appcompat.widget.Toolbar
                 android:id="@+id/toolbar"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:background="@color/dark_green"
+                android:background="@color/blueb"
                 android:minHeight="?attr/actionBarSize"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
+                app:navigationIconTint="@android:color/transparent"
                 app:navigationIcon="@drawable/icons8_menu_64"
-                app:theme="@style/Theme.AppCompat.Light" />
+                app:theme="@style/MyToolbarStyle" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>
