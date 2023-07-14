@@ -11,4 +11,8 @@
     <string name="ikona_rozk_adu">Ikona rozkładu</string>
     <string name="ikona_ulubione">Ikona ulubione</string>
     <string name="ikona_wyszukiwania">Ikona wyszukiwania</string>
+    <string name="wybierz_motyw">Wybierz motyw:</string>
+    <string name="motyw_fioletowy">Motyw fioletowy</string>
+    <string name="motyw_zielony">Motyw zielony</string>
+    <string name="motyw_niebieski">Motyw niebieski (domyślny)</string>
 </resources>

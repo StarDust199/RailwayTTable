@@ -216,7 +216,6 @@
             </LinearLayout>
 
 
-
             <androidx.appcompat.widget.Toolbar
                 android:id="@+id/toolbar"
                 android:layout_width="0dp"
@@ -227,9 +226,20 @@
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:navigationIconTint="@android:color/transparent"
                 app:navigationIcon="@drawable/icons8_menu_64"
+                app:navigationIconTint="@android:color/transparent"
                 app:theme="@style/MyToolbarStyle" />
+
+            <Button
+                android:id="@+id/button2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="121dp"
+                android:text="Button"
+                android:onClick="OpenSettings"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/toolbar" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>
