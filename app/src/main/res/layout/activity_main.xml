@@ -9,6 +9,7 @@
     android:fitsSystemWindows="true"
     tools:openDrawer="start">
 
+
     <com.google.android.material.navigation.NavigationView
         android:id="@+id/nav_view"
         android:layout_width="wrap_content"
@@ -30,6 +31,7 @@
             android:layout_height="wrap_content">
 
 
+
             <LinearLayout
                 android:id="@+id/linearLayout"
                 android:layout_width="0dp"
@@ -49,7 +51,7 @@
                     android:layout_margin="5dp"
                     android:layout_weight="1"
                     android:elevation="10dp"
-                    app:cardBackgroundColor="@color/blueb"
+                    app:cardBackgroundColor="?colorPrimary"
                     app:cardCornerRadius="5dp"
                     app:cardElevation="10dp"
                     app:cardMaxElevation="10dp"
@@ -89,7 +91,7 @@
                     android:layout_margin="5dp"
                     android:layout_weight="1"
                     android:elevation="10dp"
-                    app:cardBackgroundColor="@color/almost_white"
+                    app:cardBackgroundColor="?attr/colorAccent"
                     app:cardCornerRadius="5dp"
                     app:cardElevation="10dp"
                     app:cardMaxElevation="10dp">
@@ -141,7 +143,7 @@
                     android:layout_margin="5dp"
                     android:layout_weight="1"
                     android:elevation="10dp"
-                    app:cardBackgroundColor="@color/light_blue1"
+                    app:cardBackgroundColor="?attr/colorContainer"
                     app:cardCornerRadius="5dp"
                     app:cardElevation="10dp"
                     app:cardMaxElevation="10dp"
@@ -181,7 +183,7 @@
                     android:layout_margin="5dp"
                     android:layout_weight="1"
                     android:elevation="8dp"
-                    app:cardBackgroundColor="@color/light_orange"
+                    app:cardBackgroundColor="?attr/colorPrimaryVariant"
                     app:cardCornerRadius="5dp"
                     app:cardElevation="10dp"
                     app:cardMaxElevation="10dp">
@@ -220,7 +222,7 @@
                 android:id="@+id/toolbar"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:background="@color/blueb"
+                android:background="?attr/colorPrimary"
                 android:minHeight="?attr/actionBarSize"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.0"
@@ -228,18 +230,7 @@
                 app:layout_constraintTop_toTopOf="parent"
                 app:navigationIcon="@drawable/icons8_menu_64"
                 app:navigationIconTint="@android:color/transparent"
-                app:theme="@style/MyToolbarStyle" />
-
-            <Button
-                android:id="@+id/button2"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="121dp"
-                android:text="Button"
-                android:onClick="OpenSettings"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/toolbar" />
+                />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>

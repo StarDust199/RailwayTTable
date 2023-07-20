@@ -1,7 +1,9 @@
 package com.example.railwayttable;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
@@ -13,6 +15,7 @@ import androidx.cardview.widget.CardView;
 import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.navigation.NavigationView;
@@ -22,16 +25,15 @@ import java.util.Objects;
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     DrawerLayout drawerLayout;
     NavigationView navigationView;
-    private ColorManager colorManager;
+    SharedPreferences sharedPreferences;
     Toolbar toolbar;
-    private int toolbarColor;
-    private int drawerColor;
-    private int cardColor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setThemeOfApp();
         setContentView(R.layout.activity_main);
+
         drawerLayout = findViewById(R.id.drawer_layout);
         navigationView = findViewById(R.id.nav_view);
         toolbar = findViewById(R.id.toolbar);
@@ -47,7 +49,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         // Obsługa kliknięcia elementów w menu nawigacji
         navigationView.setNavigationItemSelectedListener(item -> {
             int itemId = item.getItemId();
-            if (itemId == R.id.nav_settings) {
+            if (itemId == R.id.settings) {
                 // Wywołaj aktywność SettingsActivity po kliknięciu na "Settings"
                 Intent intent = new Intent(MainActivity.this, SettingsActivity.class);
                 startActivity(intent);
@@ -59,67 +61,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             return true;
         });
 
-        ThemeManager.Theme selectedTheme = ThemeManager.getSelectedTheme();
-
-        switch (selectedTheme) {
-            case THEME_A:
-                setCardViewColors(R.color.blueb, R.color.almost_white, R.color.light_orange, R.color.light_blue1);
-                break;
-            case THEME_B:
-                setCardViewColors(R.color.sunny_orange, R.color.very_light_green, R.color.green, R.color.light_green);
-                break;
-            case THEME_C:
-                setCardViewColors(R.color.rose, R.color.purple, R.color.sea, R.color.fuchsia);
-                break;
-            default:
-                setCardViewColors(R.color.blueb, R.color.almost_white, R.color.light_orange, R.color.light_blue1);
-                break;
-        }
-
-        View navigationMenuView = navigationView.getChildAt(0);
-        if (navigationMenuView instanceof RecyclerView) {
-            RecyclerView recyclerView = (RecyclerView) navigationMenuView;
-            recyclerView.setVerticalScrollBarEnabled(true);
-        }
-
-        drawerLayout = findViewById(R.id.drawer_layout);
-        toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        toolbar.setTitleTextColor(ContextCompat.getColor(this, R.color.white));
-        Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setHomeAsUpIndicator(R.drawable.icons8_menu_64);
-
-        toggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.nav_open, R.string.nav_close);
-        drawerLayout.addDrawerListener(toggle);
-        toggle.setDrawerIndicatorEnabled(false);
-        toggle.setHomeAsUpIndicator(R.drawable.icons8_menu_64);
-        toggle.setToolbarNavigationClickListener(v -> {
-            if (drawerLayout.isDrawerVisible(GravityCompat.START)) {
-                drawerLayout.closeDrawer(GravityCompat.START);
-            } else {
-                drawerLayout.openDrawer(GravityCompat.START);
-            }
-        });
-        drawerLayout.addDrawerListener(toggle);
-        toggle.syncState();
     }
 
-    private void setCardViewColors(int routeColor, int favoritesColor, int planerColor, int timetableColor) {
-        CardView cardRoute = findViewById(R.id.CardRoute);
-        CardView cardFavorites = findViewById(R.id.CardFavorites);
-        CardView cardPlaner = findViewById(R.id.CardPlanner);
-        CardView cardTimetable = findViewById(R.id.CardTimetable);
 
-        cardRoute.setCardBackgroundColor(ContextCompat.getColor(this, routeColor));
-        cardFavorites.setCardBackgroundColor(ContextCompat.getColor(this, favoritesColor));
-        cardPlaner.setCardBackgroundColor(ContextCompat.getColor(this, planerColor));
-        cardTimetable.setCardBackgroundColor(ContextCompat.getColor(this, timetableColor));
-    }
 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         int itemId = item.getItemId();
-        if (itemId == R.id.nav_settings) {
+        if (itemId == R.id.settings) {
             Intent intent = new Intent(MainActivity.this, SettingsActivity.class);
             startActivity(intent);
             drawerLayout.closeDrawer(GravityCompat.START);
@@ -129,6 +78,20 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         return false;
     }
 
+    private void setThemeOfApp(){
+       sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+        String selectedTheme = sharedPreferences.getString("color_option", "BLUE");
+
+        if (selectedTheme.equals("BLUE")){
+            setTheme(R.style.BlueTheme);
+        } else if (selectedTheme.equals("VIOLET")) {
+            setTheme(R.style.VioletTheme);
+        } else if (selectedTheme.equals("GREEN")) {
+            setTheme(R.style.GreenTheme);
+        }else{
+            setTheme(R.style.BlueTheme);
+        }
+    }
     @Override
     public void onBackPressed() {
         if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
@@ -137,6 +100,35 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             super.onBackPressed();
         }
     }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.options,menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+
+        int itemId = item.getItemId();
+
+        if (itemId == android.R.id.home) {
+            if (drawerLayout.isDrawerVisible(GravityCompat.START)) {
+                drawerLayout.closeDrawer(GravityCompat.START);
+            } else {
+                drawerLayout.openDrawer(GravityCompat.START);
+            }
+            return true;
+        }
+
+        else if (itemId == R.id.settings) {
+            Intent intent = new Intent(MainActivity.this, SettingsActivity.class);
+            startActivity(intent);
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
 
     public void openRoute(View v) {
         Intent intent = new Intent(MainActivity.this, RouteActivity.class);
@@ -158,6 +150,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         startActivity(intent);
         finish();
     }
+    public void openSettings(View v) {
+        Intent intent = new Intent(MainActivity.this, SettingsActivity.class);
+        startActivity(intent);
+    }
 
     public void openPlanner(View v) {
         Intent intent = new Intent(MainActivity.this, PlannerActivity.class);
@@ -165,10 +161,5 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         startActivity(intent);
         finish();
     }
-    public void OpenSettings(View v) {
-        Intent intent = new Intent(MainActivity.this, SettingsActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-        startActivity(intent);
-        finish();
-    }
+
 }

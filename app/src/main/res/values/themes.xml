@@ -1,26 +1,35 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
 
 
-    <style name="Base.Theme.RailwayTTable" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your light theme here. -->
+
+    <style name="Base.Theme.RailwayTTable" parent="Theme.AppCompat.Light.DarkActionBar">
+
+    </style>
+    <style name="Base.AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
     </style>
 
-    <style name="ThemeA" parent="Theme.Material3.DayNight.NoActionBar">
+    <style name="BlueTheme" parent="Base.AppTheme">
         <item name="colorPrimary">@color/blueb</item>
-
-        <item name="headerLayout">@layout/header_menu</item>
+        <item name="colorPrimaryVariant">@color/light_blue1</item>
+        <item name="colorAccent">@color/almost_white</item>
+        <item name="colorContainer">@color/light_orange</item>
     </style>
-
-    <style name="ThemeC" parent="Theme.Material3.DayNight.NoActionBar">
+    <style name="VioletTheme" parent="Base.AppTheme">
         <item name="colorPrimary">@color/purple</item>
-        <item name="headerLayout">@layout/header_menu_1</item>
+        <item name="colorPrimaryVariant">@color/fuchsia</item>
+        <item name="colorAccent">@color/rose</item>
+        <item name="colorContainer">@color/sea</item>
+    </style>
+    <style name="GreenTheme" parent="Base.AppTheme">
+        <item name="colorPrimary">@color/green</item>
+        <item name="colorPrimaryVariant">@color/light_green</item>
+        <item name="colorAccent">@color/sunny</item>
+        <item name="colorContainer">@color/sunny_orange</item>
     </style>
 
-    <style name="ThemeB" parent="Theme.Material3.DayNight.NoActionBar">
-        <item name="colorPrimary">@color/green</item>
-        <item name="headerLayout">@layout/header_menu_2</item>
-    </style>
+
 
     <style name="MyToolbarStyle" parent="Widget.AppCompat.Toolbar">
         <item name="android:textColor">@color/white</item>
