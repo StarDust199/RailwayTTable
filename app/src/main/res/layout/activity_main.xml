@@ -214,10 +214,11 @@
                     </RelativeLayout>
                 </androidx.cardview.widget.CardView>
             </LinearLayout>
+
             <RelativeLayout
                 android:layout_width="414dp"
                 android:layout_height="102dp"
-                android:background="@drawable/wave__3_"
+                android:background="@drawable/wave_floor"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent">
