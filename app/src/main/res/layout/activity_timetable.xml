@@ -15,4 +15,24 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:navigationIcon="?attr/actionModeCloseDrawable" />
+    <RelativeLayout
+        android:layout_width="413dp"
+        android:layout_height="130dp"
+        android:background="@drawable/wave_blue"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/toolbar2">
+
+    </RelativeLayout>
+    <RelativeLayout
+        android:layout_width="414dp"
+        android:layout_height="102dp"
+        android:background="@drawable/wave__3_"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+    </RelativeLayout>
+
 </androidx.constraintlayout.widget.ConstraintLayout>
