@@ -8,6 +8,7 @@
     <style name="Base.AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
+        <item name="android:textSize">20sp</item>
 
     </style>
 
