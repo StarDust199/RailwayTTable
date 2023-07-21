@@ -5,9 +5,10 @@
     <style name="Base.Theme.RailwayTTable" parent="Theme.AppCompat.Light.DarkActionBar">
 
     </style>
-    <style name="Base.AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+    <style name="Base.AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
+
     </style>
 
     <style name="BlueTheme" parent="Base.AppTheme">
@@ -15,22 +16,22 @@
         <item name="colorPrimaryVariant">@color/light_blue1</item>
         <item name="colorAccent">@color/almost_white</item>
         <item name="colorContainer">@color/light_orange</item>
+        <item name="colorButtonNormal">@color/almost_white</item>
     </style>
     <style name="VioletTheme" parent="Base.AppTheme">
         <item name="colorPrimary">@color/purple</item>
         <item name="colorPrimaryVariant">@color/fuchsia</item>
         <item name="colorAccent">@color/rose</item>
         <item name="colorContainer">@color/sea</item>
+        <item name="colorButtonNormal">@color/light</item>
     </style>
     <style name="GreenTheme" parent="Base.AppTheme">
         <item name="colorPrimary">@color/green</item>
         <item name="colorPrimaryVariant">@color/light_green</item>
         <item name="colorAccent">@color/sunny</item>
         <item name="colorContainer">@color/sunny_orange</item>
+        <item name="colorButtonNormal">@color/very_light_green</item>
     </style>
-
-
-
     <style name="MyToolbarStyle" parent="Widget.AppCompat.Toolbar">
         <item name="android:textColor">@color/white</item>
     </style>

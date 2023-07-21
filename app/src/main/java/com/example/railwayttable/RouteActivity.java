@@ -26,6 +26,8 @@ public class RouteActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
+            setSupportActionBar(toolbar);
+            getSupportActionBar().setTitle("Wyszukaj");;
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
     }

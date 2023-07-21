@@ -50,7 +50,7 @@
                     android:layout_margin="5dp"
                     android:layout_weight="1"
                     android:elevation="10dp"
-                    app:cardBackgroundColor="?colorPrimary"
+                    app:cardBackgroundColor="?attr/colorPrimary"
                     app:cardCornerRadius="5dp"
                     app:cardElevation="10dp"
                     app:cardMaxElevation="10dp">
