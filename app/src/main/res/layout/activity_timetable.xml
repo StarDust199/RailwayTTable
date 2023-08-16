@@ -14,7 +14,9 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:navigationIcon="@drawable/icons8_back_48" />
+        app:navigationIcon="@drawable/icons8_back_48"
+        app:title="ROZKŁAD"
+        app:titleTextColor="@color/white" />
     <RelativeLayout
         android:layout_width="413dp"
         android:layout_height="130dp"

@@ -238,7 +238,8 @@
                 app:layout_constraintTop_toTopOf="parent"
                 app:navigationIcon="@drawable/icons8_menu_64"
                 app:navigationIconTint="@android:color/transparent"
-                />
+                app:title="@string/rozk_ad_jazdy"
+                app:titleTextColor="@color/white" />
 
             <RelativeLayout
                 android:layout_width="413dp"

@@ -1,11 +1,13 @@
 package com.example.railwayttable.Activity;
 
 
-
+import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.MenuItem;
+import android.widget.DatePicker;
+import android.widget.EditText;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
@@ -14,23 +16,47 @@ import androidx.preference.PreferenceManager;
 
 import com.example.railwayttable.R;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
+
 
 public class RouteActivity extends AppCompatActivity {
 
     SharedPreferences sharedPreferences;
-
+    EditText datePicker;
+    int year;
+    int month;
+    int day;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setThemeOfApp();
         setContentView(R.layout.activity_route);
+        datePicker=findViewById(R.id.czas);
+        SimpleDateFormat sdf = new SimpleDateFormat("d MMMM yyyy", Locale.getDefault());
+        String defaultDate = sdf.format(new Date());
+        datePicker.setText(defaultDate);
+        Calendar calendar=Calendar.getInstance();
+        datePicker.setOnClickListener(v -> {
+            year=calendar.get(Calendar.YEAR);
+            month=calendar.get(Calendar.MONTH);
+            day=calendar.get(Calendar.DAY_OF_MONTH);
+            DatePickerDialog datePickerDialog = new DatePickerDialog(RouteActivity.this, (view, year, month, dayOfMonth) -> {
+                calendar.set(year, month, dayOfMonth);
+                datePicker.setText(SimpleDateFormat.getDateInstance().format(calendar.getTime()));
+            }, year, month, day);
+            datePickerDialog.show();
+        });
+
         Toolbar toolbar = findViewById(R.id.toolbar2);
         setSupportActionBar(toolbar);
 
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             setSupportActionBar(toolbar);
-            getSupportActionBar().setTitle("Wyszukaj");;
+            getSupportActionBar().setTitle("Wyszukaj");
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
     }
@@ -51,14 +77,19 @@ public class RouteActivity extends AppCompatActivity {
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
         String selectedTheme = sharedPreferences.getString("color_option", "BLUE");
 
-        if (selectedTheme.equals("BLUE")) {
-            setTheme(R.style.BlueTheme);
-        } else if (selectedTheme.equals("VIOLET")) {
-            setTheme(R.style.VioletTheme);
-        } else if (selectedTheme.equals("GREEN")) {
-            setTheme(R.style.GreenTheme);
-        } else {
-            setTheme(R.style.BlueTheme);
+        switch (selectedTheme) {
+            case "BLUE":
+                setTheme(R.style.BlueTheme);
+                break;
+            case "VIOLET":
+                setTheme(R.style.VioletTheme);
+                break;
+            case "GREEN":
+                setTheme(R.style.GreenTheme);
+                break;
+            default:
+                setTheme(R.style.BlueTheme);
+                break;
         }
     }
 }

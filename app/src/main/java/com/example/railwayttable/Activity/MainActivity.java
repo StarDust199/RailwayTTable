@@ -23,7 +23,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     NavigationView navigationView;
     SharedPreferences sharedPreferences;
     Toolbar toolbar;
-
+    private static String currentTheme;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -59,7 +59,17 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        setThemeOfApp();
+    }
 
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        setThemeOfApp();
+    }
 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
@@ -75,9 +85,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     private void setThemeOfApp(){
-       sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
         String selectedTheme = sharedPreferences.getString("color_option", "BLUE");
-
+        currentTheme = selectedTheme;
         if (selectedTheme.equals("BLUE")){
             setTheme(R.style.BlueTheme);
         } else if (selectedTheme.equals("VIOLET")) {
