@@ -1,5 +1,4 @@
-package com.example.railwayttable;
-
+package com.example.railwayttable.Activity;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -11,7 +10,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.preference.PreferenceManager;
 
-public class FavoritesActivity extends AppCompatActivity {
+import com.example.railwayttable.R;
+
+public class TimetableActivity extends AppCompatActivity {
+
     SharedPreferences sharedPreferences;
 
     @Override
@@ -30,7 +32,7 @@ public class FavoritesActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
-            Intent intent = new Intent(FavoritesActivity.this, MainActivity.class);
+            Intent intent = new Intent(TimetableActivity.this, MainActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(intent);
             finish();

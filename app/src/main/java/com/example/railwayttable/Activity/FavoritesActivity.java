@@ -1,8 +1,6 @@
-package com.example.railwayttable;
+package com.example.railwayttable.Activity;
 
 
-
-import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -13,23 +11,20 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.preference.PreferenceManager;
 
+import com.example.railwayttable.R;
 
-public class RouteActivity extends AppCompatActivity {
-
+public class FavoritesActivity extends AppCompatActivity {
     SharedPreferences sharedPreferences;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setThemeOfApp();
-        setContentView(R.layout.activity_route);
+        setContentView(R.layout.activity_timetable);
         Toolbar toolbar = findViewById(R.id.toolbar2);
         setSupportActionBar(toolbar);
-
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
-            setSupportActionBar(toolbar);
-            getSupportActionBar().setTitle("Wyszukaj");;
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
     }
@@ -37,7 +32,7 @@ public class RouteActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
-            Intent intent = new Intent(RouteActivity.this, MainActivity.class);
+            Intent intent = new Intent(FavoritesActivity.this, MainActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(intent);
             finish();

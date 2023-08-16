@@ -1,4 +1,4 @@
-package com.example.railwayttable;
+package com.example.railwayttable.db;
 
 import android.content.ContentValues;
 import android.content.Context;

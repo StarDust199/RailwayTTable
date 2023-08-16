@@ -2,6 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <uses-permission android:name="android.permission.INTERNET" />
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -11,9 +12,10 @@
         android:roundIcon="@drawable/train_route"
         android:supportsRtl="true"
         android:theme="@style/BlueTheme"
-        tools:targetApi="31">
+        tools:targetApi="31"
+        android:name=".MyApplication">
         <activity
-            android:name=".MainActivity"
+            android:name=".Activity.MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -22,35 +24,35 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".PlannerActivity"
+            android:name=".Activity.PlannerActivity"
             android:exported="false">
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />
         </activity>
         <activity
-            android:name=".FavoritesActivity"
+            android:name=".Activity.FavoritesActivity"
             android:exported="false">
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />
         </activity>
         <activity
-            android:name=".SettingsActivity"
+            android:name=".Activity.SettingsActivity"
             android:exported="false">
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />
         </activity>
         <activity
-            android:name=".RouteActivity"
+            android:name=".Activity.RouteActivity"
             android:exported="false">
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />
         </activity>
         <activity
-            android:name=".TimetableActivity"
+            android:name=".Activity.TimetableActivity"
             android:exported="false">
             <meta-data
                 android:name="android.app.lib_name"

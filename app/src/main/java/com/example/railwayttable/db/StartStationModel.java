@@ -1,4 +1,4 @@
-package com.example.railwayttable;
+package com.example.railwayttable.db;
 
 public class StartStationModel {
 
