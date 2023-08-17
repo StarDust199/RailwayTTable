@@ -2,12 +2,14 @@ package com.example.railwayttable.Activity;
 
 
 import android.app.DatePickerDialog;
+import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.MenuItem;
-import android.widget.DatePicker;
+import android.view.View;
 import android.widget.EditText;
+import android.widget.TimePicker;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
@@ -25,24 +27,27 @@ import java.util.Locale;
 public class RouteActivity extends AppCompatActivity {
 
     SharedPreferences sharedPreferences;
-    EditText datePicker;
+    EditText datePicker, timePicker;
     int year;
     int month;
     int day;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setThemeOfApp();
         setContentView(R.layout.activity_route);
-        datePicker=findViewById(R.id.czas);
+        timePicker = findViewById(R.id.godzina);
+        datePicker = findViewById(R.id.czas);
         SimpleDateFormat sdf = new SimpleDateFormat("d MMMM yyyy", Locale.getDefault());
         String defaultDate = sdf.format(new Date());
+
         datePicker.setText(defaultDate);
-        Calendar calendar=Calendar.getInstance();
+        Calendar calendar = Calendar.getInstance();
         datePicker.setOnClickListener(v -> {
-            year=calendar.get(Calendar.YEAR);
-            month=calendar.get(Calendar.MONTH);
-            day=calendar.get(Calendar.DAY_OF_MONTH);
+            year = calendar.get(Calendar.YEAR);
+            month = calendar.get(Calendar.MONTH);
+            day = calendar.get(Calendar.DAY_OF_MONTH);
             DatePickerDialog datePickerDialog = new DatePickerDialog(RouteActivity.this, (view, year, month, dayOfMonth) -> {
                 calendar.set(year, month, dayOfMonth);
                 datePicker.setText(SimpleDateFormat.getDateInstance().format(calendar.getTime()));
@@ -50,6 +55,13 @@ public class RouteActivity extends AppCompatActivity {
             datePickerDialog.show();
         });
 
+        timePicker.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                openDialog();
+
+            }
+        });
         Toolbar toolbar = findViewById(R.id.toolbar2);
         setSupportActionBar(toolbar);
 
@@ -91,5 +103,19 @@ public class RouteActivity extends AppCompatActivity {
                 setTheme(R.style.BlueTheme);
                 break;
         }
+    }
+
+    private void openDialog() {
+        TimePickerDialog time = new TimePickerDialog(
+                RouteActivity.this,
+                0,
+                (view, hourOfDay, minute) -> {
+                    String formattedTime = String.format(Locale.getDefault(), "%02d:%02d", hourOfDay, minute);
+                    timePicker.setText(formattedTime);
+                },
+                15, 0, true
+        );
+
+        time.show();
     }
 }
