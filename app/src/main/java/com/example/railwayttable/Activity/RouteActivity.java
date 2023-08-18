@@ -58,7 +58,9 @@ public class RouteActivity extends AppCompatActivity {
         timePicker.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                openDialog();
+                if (!timePicker.isFocused()) {
+                    openDialog(); // Otwórz dialog tylko jeśli pole nie ma focusu
+                }
 
             }
         });
@@ -103,6 +105,13 @@ public class RouteActivity extends AppCompatActivity {
                 setTheme(R.style.BlueTheme);
                 break;
         }
+    }
+    @Override
+    public void onBackPressed() {
+        Intent intent = new Intent(RouteActivity.this, MainActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
+        finish();
     }
 
     private void openDialog() {

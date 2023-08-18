@@ -9,6 +9,7 @@ import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
@@ -24,6 +25,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     SharedPreferences sharedPreferences;
     Toolbar toolbar;
     private static String currentTheme;
+    private boolean exitConfirmed = false;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -102,11 +104,29 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public void onBackPressed() {
         if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
             drawerLayout.closeDrawer(GravityCompat.START);
-        } else {
-            super.onBackPressed();
+        }  else {
+            if (exitConfirmed) {
+                exitApp();
+            } else {
+                showExitConfirmationDialog();
+            }
         }
     }
-
+    private void showExitConfirmationDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage("Czy na pewno chcesz wyjść z aplikacji?")
+                .setPositiveButton("Tak", (dialog, which) -> {
+                    dialog.dismiss();
+                    exitConfirmed = true;
+                    exitApp();
+                })
+                .setNegativeButton("Anuluj", (dialog, which) -> dialog.dismiss())
+                .show();
+    }
+    private void exitApp() {
+        sharedPreferences.edit().putString("color_option", currentTheme).apply();
+        finish();
+    }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.options,menu);
