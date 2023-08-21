@@ -2,6 +2,9 @@ package com.example.railwayttable.Activity;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
@@ -52,7 +55,7 @@ public class SettingsActivity extends AppCompatActivity implements SharedPrefere
             String selectedTheme = sharedPreferences.getString("color_option", "DEFAULT");
             Log.d("MyApp", "Wartość color_option: " + selectedTheme);
 
-            // Odśwież MainActivity
+
             Intent intent = new Intent(this, MainActivity.class);
             intent.putExtra("selected_theme", selectedTheme);
             startActivity(intent);
@@ -79,15 +82,17 @@ public class SettingsActivity extends AppCompatActivity implements SharedPrefere
             setTheme(R.style.BlueTheme);
         }
     }
+
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == SETTINGS_CODE && resultCode == RESULT_OK) {
-            // Pobierz wybrany motyw z preferencji
+
             SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
             String selectedTheme = sharedPreferences.getString("color_option", "BLUE");
 
-            // Zaktualizuj motyw aplikacji
+
             switch (selectedTheme) {
                 case "BLUE":
                     setTheme(R.style.BlueTheme);

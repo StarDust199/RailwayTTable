@@ -10,7 +10,7 @@ public class MyApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        // Tutaj możesz ustawić dane uwierzytelniające - nazwę użytkownika i hasło
+        //dane uwierzytelniające - nazwa użytkownika i hasło
         String username = "ahamal_demo";
         String password = "WxWdFCmtqLq2@Hi";
         authData = new AuthData(username, password);

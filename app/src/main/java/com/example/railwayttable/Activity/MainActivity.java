@@ -1,7 +1,13 @@
 package com.example.railwayttable.Activity;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageManager;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -11,7 +17,9 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.preference.PreferenceManager;
@@ -36,25 +44,26 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         navigationView = findViewById(R.id.nav_view);
         toolbar = findViewById(R.id.toolbar);
 
-        // Ustawienie ActionBar jako Toolbar
+
         setSupportActionBar(toolbar);
 
-        // Ustawienie ikony hamburgera jako przycisku nawigacji
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.nav_open, R.string.nav_close);
         drawerLayout.addDrawerListener(toggle);
         toggle.syncState();
 
-        // Obsługa kliknięcia elementów w menu nawigacji
+        getSupportActionBar().setHomeButtonEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setHomeAsUpIndicator(R.drawable.icons8_hamburger_menu_30);
         navigationView.setNavigationItemSelectedListener(item -> {
             int itemId = item.getItemId();
             if (itemId == R.id.settings) {
-                // Wywołaj aktywność SettingsActivity po kliknięciu na "Settings"
+
                 Intent intent = new Intent(MainActivity.this, SettingsActivity.class);
                 startActivity(intent);
                 drawerLayout.closeDrawer(GravityCompat.START);
                 return true;
             }
-            // Obsługa innych elementów menu
+
             drawerLayout.closeDrawer(GravityCompat.START);
             return true;
         });
@@ -72,6 +81,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         super.onRestart();
         setThemeOfApp();
     }
+
 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
@@ -99,7 +109,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }else{
             setTheme(R.style.BlueTheme);
         }
+
     }
+
+
     @Override
     public void onBackPressed() {
         if (drawerLayout.isDrawerOpen(GravityCompat.START)) {

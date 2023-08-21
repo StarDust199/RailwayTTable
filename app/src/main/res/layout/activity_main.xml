@@ -236,8 +236,7 @@
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:navigationIcon="@drawable/icons8_menu_64"
-                app:navigationIconTint="@android:color/transparent"
+                app:navigationIcon="@drawable/icons8_menu_50"
                 app:title="@string/rozk_ad_jazdy"
                 app:titleTextColor="@color/white" />
 

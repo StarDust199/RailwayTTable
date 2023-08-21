@@ -59,7 +59,7 @@ public class RouteActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if (!timePicker.isFocused()) {
-                    openDialog(); // Otwórz dialog tylko jeśli pole nie ma focusu
+                    openDialog();
                 }
 
             }
