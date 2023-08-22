@@ -39,15 +39,6 @@ public class RouteActivity extends AppCompatActivity {
         setContentView(R.layout.activity_route);
         timePicker = findViewById(R.id.godzina);
         datePicker = findViewById(R.id.czas);
-        sharedPreferencesNight = getSharedPreferences("MODE", Context.MODE_PRIVATE);
-
-
-        boolean nightModeEnabled = sharedPreferences.getBoolean("nightMode", false);
-        if (nightModeEnabled) {
-            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
-        } else {
-            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
-        }
 
         SimpleDateFormat sdf = new SimpleDateFormat("d MMMM yyyy", Locale.getDefault());
         String defaultDate = sdf.format(new Date());

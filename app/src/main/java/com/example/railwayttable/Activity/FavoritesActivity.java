@@ -29,15 +29,6 @@ public class FavoritesActivity extends AppCompatActivity {
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
-        sharedPreferencesNight = getSharedPreferences("MODE", Context.MODE_PRIVATE);
-
-
-        boolean nightModeEnabled = sharedPreferences.getBoolean("nightMode", false);
-        if (nightModeEnabled) {
-            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
-        } else {
-            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
-        }
 
     }
     @Override

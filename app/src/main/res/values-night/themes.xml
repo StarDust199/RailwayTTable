@@ -43,7 +43,7 @@
 
 
     <style name="ScreenBackground">
-        <item name="android:background">@color/black1</item>
+        <item name="android:background">@color/gray</item>
     </style>
 
     <style name="MyToolbarStyle" parent="Widget.AppCompat.Toolbar">
