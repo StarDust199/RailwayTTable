@@ -7,9 +7,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.EditText;
-import android.widget.TimePicker;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
@@ -55,14 +53,11 @@ public class RouteActivity extends AppCompatActivity {
             datePickerDialog.show();
         });
 
-        timePicker.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (!timePicker.isFocused()) {
-                    openDialog();
-                }
-
+        timePicker.setOnClickListener(v -> {
+            if (!timePicker.isFocused()) {
+                openDialog();
             }
+
         });
         Toolbar toolbar = findViewById(R.id.toolbar2);
         setSupportActionBar(toolbar);

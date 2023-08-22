@@ -19,5 +19,6 @@
         android:id="@+id/nav_tryb"
         android:title="Mode"
         android:icon="@drawable/icons8_day_and_night_50"/>
+
 </group>
 </menu>

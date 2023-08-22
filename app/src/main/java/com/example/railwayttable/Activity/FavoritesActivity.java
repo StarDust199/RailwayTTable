@@ -27,6 +27,7 @@ public class FavoritesActivity extends AppCompatActivity {
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
+
     }
     @Override
     public void onBackPressed() {
@@ -35,6 +36,8 @@ public class FavoritesActivity extends AppCompatActivity {
         startActivity(intent);
         finish();
     }
+
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -52,14 +55,19 @@ public class FavoritesActivity extends AppCompatActivity {
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
         String selectedTheme = sharedPreferences.getString("color_option", "BLUE");
 
-        if (selectedTheme.equals("BLUE")) {
-            setTheme(R.style.BlueTheme);
-        } else if (selectedTheme.equals("VIOLET")) {
-            setTheme(R.style.VioletTheme);
-        } else if (selectedTheme.equals("GREEN")) {
-            setTheme(R.style.GreenTheme);
-        } else {
-            setTheme(R.style.BlueTheme);
+        switch (selectedTheme) {
+            case "BLUE":
+                setTheme(R.style.BlueTheme);
+                break;
+            case "VIOLET":
+                setTheme(R.style.VioletTheme);
+                break;
+            case "GREEN":
+                setTheme(R.style.GreenTheme);
+                break;
+            default:
+                setTheme(R.style.BlueTheme);
+                break;
         }
     }
 }

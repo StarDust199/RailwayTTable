@@ -2,9 +2,6 @@ package com.example.railwayttable.Activity;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
-import android.graphics.PorterDuff;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
@@ -12,7 +9,6 @@ import android.view.MenuItem;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
-
 import androidx.preference.PreferenceFragmentCompat;
 import androidx.preference.PreferenceManager;
 
@@ -72,14 +68,19 @@ public class SettingsActivity extends AppCompatActivity implements SharedPrefere
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
         String selectedTheme = sharedPreferences.getString("color_option", "BLUE");
 
-        if (selectedTheme.equals("BLUE")){
-            setTheme(R.style.BlueTheme);
-        } else if (selectedTheme.equals("VIOLET")) {
-            setTheme(R.style.VioletTheme);
-        } else if (selectedTheme.equals("GREEN")) {
-            setTheme(R.style.GreenTheme);
-        }else{
-            setTheme(R.style.BlueTheme);
+        switch (selectedTheme) {
+            case "BLUE":
+                setTheme(R.style.BlueTheme);
+                break;
+            case "VIOLET":
+                setTheme(R.style.VioletTheme);
+                break;
+            case "GREEN":
+                setTheme(R.style.GreenTheme);
+                break;
+            default:
+                setTheme(R.style.BlueTheme);
+                break;
         }
     }
 
