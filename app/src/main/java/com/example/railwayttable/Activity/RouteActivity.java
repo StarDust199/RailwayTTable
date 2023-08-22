@@ -3,6 +3,7 @@ package com.example.railwayttable.Activity;
 
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -11,6 +12,7 @@ import android.widget.EditText;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.widget.Toolbar;
 import androidx.preference.PreferenceManager;
 
@@ -24,7 +26,7 @@ import java.util.Locale;
 
 public class RouteActivity extends AppCompatActivity {
 
-    SharedPreferences sharedPreferences;
+    SharedPreferences sharedPreferences, sharedPreferencesNight;
     EditText datePicker, timePicker;
     int year;
     int month;
@@ -37,6 +39,16 @@ public class RouteActivity extends AppCompatActivity {
         setContentView(R.layout.activity_route);
         timePicker = findViewById(R.id.godzina);
         datePicker = findViewById(R.id.czas);
+        sharedPreferencesNight = getSharedPreferences("MODE", Context.MODE_PRIVATE);
+
+
+        boolean nightModeEnabled = sharedPreferences.getBoolean("nightMode", false);
+        if (nightModeEnabled) {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+        } else {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+        }
+
         SimpleDateFormat sdf = new SimpleDateFormat("d MMMM yyyy", Locale.getDefault());
         String defaultDate = sdf.format(new Date());
 
