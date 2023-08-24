@@ -30,8 +30,8 @@
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="10dp"
             android:text="@string/rozk_ad_jazdy"
-            android:textColor="#039BE5"
-            android:textSize="34sp" />
+            android:textColor="@color/white"
+            android:textSize="30sp" />
 
     </LinearLayout>
 

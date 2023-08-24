@@ -20,7 +20,7 @@ public class PlannerActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setThemeOfApp();
-        setContentView(R.layout.activity_timetable);
+        setContentView(R.layout.activity_planner);
         Toolbar toolbar = findViewById(R.id.toolbar2);
         setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();

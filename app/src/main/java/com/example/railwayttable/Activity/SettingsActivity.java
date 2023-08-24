@@ -9,6 +9,7 @@ import android.view.MenuItem;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.preference.PreferenceFragmentCompat;
 import androidx.preference.PreferenceManager;
 
@@ -31,6 +32,9 @@ public class SettingsActivity extends AppCompatActivity implements SharedPrefere
                     .replace(R.id.settings, new SettingsFragment())
                     .commit();
         }
+        Toolbar toolbar = findViewById(R.id.toolbarSettings);
+        setSupportActionBar(toolbar);
+
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
@@ -52,10 +56,10 @@ public class SettingsActivity extends AppCompatActivity implements SharedPrefere
             Log.d("MyApp", "Wartość color_option: " + selectedTheme);
 
 
-            Intent intent = new Intent(this, MainActivity.class);
+            Intent intent = new Intent(this, SettingsActivity.class);
             intent.putExtra("selected_theme", selectedTheme);
             startActivity(intent);
-            finish();
+
         }
     }
     public static class SettingsFragment extends PreferenceFragmentCompat {
@@ -82,6 +86,13 @@ public class SettingsActivity extends AppCompatActivity implements SharedPrefere
                 setTheme(R.style.BlueTheme);
                 break;
         }
+    }
+    @Override
+    public void onBackPressed() {
+        Intent intent = new Intent(SettingsActivity.this, MainActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
+        finish();
     }
 
 

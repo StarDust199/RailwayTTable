@@ -22,8 +22,8 @@ public class FavoritesActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setThemeOfApp();
-        setContentView(R.layout.activity_timetable);
-        Toolbar toolbar = findViewById(R.id.toolbar2);
+        setContentView(R.layout.activity_favorites);
+        Toolbar toolbar = findViewById(R.id.toolbarFav);
         setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
