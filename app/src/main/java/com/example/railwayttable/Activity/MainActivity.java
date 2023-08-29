@@ -64,11 +64,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             editor.apply();
         });
 
-        if (nightMode) {
-            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
-        } else {
-            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
-        }
+        applyNightMode(nightMode);
         setSupportActionBar(toolbar);
 
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.nav_open, R.string.nav_close);
@@ -94,6 +90,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     }
 
+    private void applyNightMode(boolean nightMode) {
+        if (nightMode) {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+        } else {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+        }
+    }
     @Override
     protected void onResume() {
         super.onResume();

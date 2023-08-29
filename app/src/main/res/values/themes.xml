@@ -5,16 +5,20 @@
     <style name="Base.Theme.RailwayTTable" parent="Theme.AppCompat.Light.DarkActionBar">
 
     </style>
-    <style name="Base.AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+    <style name="Base.AppTheme.Dark" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
         <item name="android:textSize">20sp</item>
+        <item name="android:windowBackground">@color/white</item>
+        <item name="android:textColor">@color/gray</item>
+
+
 
 
 
     </style>
 
-    <style name="BlueTheme" parent="Base.AppTheme">
+    <style name="BlueTheme" parent="Base.AppTheme.Dark">
         <item name="colorPrimary">@color/blueb</item>
         <item name="colorPrimaryVariant">@color/light_blue1</item>
         <item name="colorAccent">@color/almost_white</item>
@@ -22,8 +26,9 @@
         <item name="colorButtonNormal">@color/almost_white</item>
         <item name="colorOnBackground">@color/blueb</item>
 
+
     </style>
-    <style name="VioletTheme" parent="Base.AppTheme">
+    <style name="VioletTheme" parent="Base.AppTheme.Dark">
         <item name="colorPrimary">@color/fuchsia</item>
         <item name="colorPrimaryVariant">@color/light</item>
         <item name="colorAccent">@color/rose</item>
@@ -32,13 +37,14 @@
         <item name="colorOnBackground">@color/fuchsia</item>
 
     </style>
-    <style name="GreenTheme" parent="Base.AppTheme">
+    <style name="GreenTheme" parent="Base.AppTheme.Dark">
         <item name="colorPrimary">@color/green</item>
         <item name="colorPrimaryVariant">@color/light_green</item>
         <item name="colorAccent">@color/sunny</item>
         <item name="colorContainer">@color/sunny_orange</item>
         <item name="colorButtonNormal">@color/very_light_green</item>
         <item name="colorOnBackground">@color/sunny</item>
+
 
     </style>
     <style name="MyToolbarStyle" parent="Widget.AppCompat.Toolbar">
@@ -48,6 +54,7 @@
     <style name="ScreenBackground">
         <item name="android:background">@color/white</item>
     </style>
+
 
 
     <style name="Theme.RailwayTTable" parent="Base.Theme.RailwayTTable" />

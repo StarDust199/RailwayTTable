@@ -39,7 +39,7 @@ public class RouteActivity extends AppCompatActivity {
         setContentView(R.layout.activity_route);
         timePicker = findViewById(R.id.godzina);
         datePicker = findViewById(R.id.czas);
-
+        sharedPreferencesNight = getSharedPreferences("MODE", Context.MODE_PRIVATE);
         SimpleDateFormat sdf = new SimpleDateFormat("d MMMM yyyy", Locale.getDefault());
         String defaultDate = sdf.format(new Date());
 
@@ -53,7 +53,11 @@ public class RouteActivity extends AppCompatActivity {
                 calendar.set(year, month, dayOfMonth);
                 datePicker.setText(SimpleDateFormat.getDateInstance().format(calendar.getTime()));
             }, year, month, day);
+            setDialogTheme(sharedPreferencesNight.getBoolean("nightMode", false));
+            datePicker.invalidate();
+            datePickerDialog.getWindow().getDecorView().setSystemUiVisibility(getWindow().getDecorView().getSystemUiVisibility());
             datePickerDialog.show();
+
         });
 
         timePicker.setOnClickListener(v -> {
@@ -70,6 +74,13 @@ public class RouteActivity extends AppCompatActivity {
             setSupportActionBar(toolbar);
             getSupportActionBar().setTitle("Wyszukaj");
             actionBar.setDisplayHomeAsUpEnabled(true);
+        }
+    }
+    private void setDialogTheme(boolean nightMode) {
+        if (nightMode) {
+            setTheme(R.style.Base_AppTheme_Dark);
+        } else {
+            setTheme(R.style.Base_AppTheme);
         }
     }
 
@@ -122,7 +133,9 @@ public class RouteActivity extends AppCompatActivity {
                 },
                 15, 0, true
         );
-
+        setDialogTheme(sharedPreferencesNight.getBoolean("nightMode", false));
+        timePicker.invalidate();
+        time.getWindow().getDecorView().setSystemUiVisibility(getWindow().getDecorView().getSystemUiVisibility());
         time.show();
     }
 }
