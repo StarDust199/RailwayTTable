@@ -1,5 +1,6 @@
 <resources>
     <!-- Reply Preference -->
+
     <string-array name="theme_entries">
         <item>Motyw fioletowy</item>
         <item>Motyw niebieski</item>

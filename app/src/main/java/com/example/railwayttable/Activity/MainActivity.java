@@ -13,6 +13,7 @@ import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
+import androidx.appcompat.view.ContextThemeWrapper;
 import androidx.appcompat.widget.SwitchCompat;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
@@ -159,7 +160,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
     }
     private void showExitConfirmationDialog() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        boolean nightMode = sharedPreferencesNight.getBoolean("nightMode", false);
+        int dialogStyle = nightMode ? R.style.DialogWindow_Dark : R.style.DialogWindow_Light;
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(new ContextThemeWrapper(this, dialogStyle));
         builder.setMessage("Czy na pewno chcesz wyjść z aplikacji?")
                 .setPositiveButton("Tak", (dialog, which) -> {
                     dialog.dismiss();

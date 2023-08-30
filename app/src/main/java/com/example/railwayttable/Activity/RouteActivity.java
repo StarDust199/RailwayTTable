@@ -13,6 +13,7 @@ import android.widget.EditText;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
+import androidx.appcompat.view.ContextThemeWrapper;
 import androidx.appcompat.widget.Toolbar;
 import androidx.preference.PreferenceManager;
 
@@ -55,7 +56,6 @@ public class RouteActivity extends AppCompatActivity {
             }, year, month, day);
             setDialogTheme(sharedPreferencesNight.getBoolean("nightMode", false));
             datePicker.invalidate();
-            datePickerDialog.getWindow().getDecorView().setSystemUiVisibility(getWindow().getDecorView().getSystemUiVisibility());
             datePickerDialog.show();
 
         });
@@ -78,9 +78,9 @@ public class RouteActivity extends AppCompatActivity {
     }
     private void setDialogTheme(boolean nightMode) {
         if (nightMode) {
-            setTheme(R.style.Base_AppTheme_Dark);
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
         } else {
-            setTheme(R.style.Base_AppTheme);
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
         }
     }
 
@@ -124,18 +124,46 @@ public class RouteActivity extends AppCompatActivity {
     }
 
     private void openDialog() {
+        boolean nightMode = sharedPreferencesNight.getBoolean("nightMode", false);
+        String selectedTheme = sharedPreferences.getString("color_option", "BLUE");
+
+        int dialogStyle;
+        if (nightMode) {
+            switch (selectedTheme) {
+                case "VIOLET":
+                    dialogStyle = R.style.DialogWindow_Violet;
+                    break;
+                case "GREEN":
+                    dialogStyle = R.style.DialogWindow_Green;
+                    break;
+                default:
+                    dialogStyle = R.style.DialogWindow_Blue;
+                    break;
+            }
+        } else {
+            switch (selectedTheme) {
+                case "VIOLET":
+                    dialogStyle = R.style.DialogWindow_Light_Violet;
+                    break;
+                case "GREEN":
+                    dialogStyle = R.style.DialogWindow_Light_Green;
+                    break;
+                default:
+                    dialogStyle = R.style.DialogWindow_Light_Blue;
+                    break;
+            }
+        }
+
         TimePickerDialog time = new TimePickerDialog(
-                RouteActivity.this,
-                0,
+                new ContextThemeWrapper(this, dialogStyle),
+                dialogStyle,
                 (view, hourOfDay, minute) -> {
                     String formattedTime = String.format(Locale.getDefault(), "%02d:%02d", hourOfDay, minute);
                     timePicker.setText(formattedTime);
                 },
                 15, 0, true
         );
-        setDialogTheme(sharedPreferencesNight.getBoolean("nightMode", false));
         timePicker.invalidate();
-        time.getWindow().getDecorView().setSystemUiVisibility(getWindow().getDecorView().getSystemUiVisibility());
         time.show();
     }
 }

@@ -9,9 +9,8 @@
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
         <item name="android:textSize">20sp</item>
-        <item name="android:windowBackground">@color/white</item>
         <item name="android:textColor">@color/gray</item>
-
+        <item name="preferenceTheme">@style/ListPreference</item>
 
 
 
@@ -25,6 +24,7 @@
         <item name="colorContainer">@color/light_orange</item>
         <item name="colorButtonNormal">@color/almost_white</item>
         <item name="colorOnBackground">@color/blueb</item>
+        <item name="android:windowBackground">@color/white</item>
 
 
     </style>
@@ -35,6 +35,7 @@
         <item name="colorContainer">@color/sea</item>
         <item name="colorButtonNormal">@color/light</item>
         <item name="colorOnBackground">@color/fuchsia</item>
+        <item name="android:windowBackground">@color/white</item>
 
     </style>
     <style name="GreenTheme" parent="Base.AppTheme.Dark">
@@ -44,17 +45,46 @@
         <item name="colorContainer">@color/sunny_orange</item>
         <item name="colorButtonNormal">@color/very_light_green</item>
         <item name="colorOnBackground">@color/sunny</item>
+        <item name="android:windowBackground">@color/white</item>
 
 
     </style>
     <style name="MyToolbarStyle" parent="Widget.AppCompat.Toolbar">
         <item name="android:textColor">@color/white</item>
     </style>
+    <style name="DialogWindow.Light" parent="Theme.AppCompat.Light.Dialog">
+        <item name="android:windowBackground">@color/white</item>
+
+    </style>
+    <style name="DialogWindow.Light.Blue" parent="Theme.AppCompat.Dialog">
+        <item name="colorPrimary">@color/blueb</item>
+        <item name="colorAccent">@color/light_blue1</item>
+        <item name="android:windowBackground">@color/white</item>
+        <item name="android:textColor">@color/gray</item>
+    </style>
+
+    <style name="DialogWindow.Light.Violet" parent="Theme.AppCompat.Dialog">
+        <item name="colorPrimary">@color/fuchsia</item>
+        <item name="colorAccent">@color/fuchsia</item>
+        <item name="android:windowBackground">@color/white</item>
+        <item name="android:textColor">@color/gray</item>
+    </style>
+
+    <style name="DialogWindow.Light.Green" parent="Theme.AppCompat.Dialog">
+        <item name="colorPrimary">@color/green</item>
+        <item name="colorAccent">@color/sunny</item>
+        <item name="android:windowBackground">@color/white</item>
+        <item name="android:textColor">@color/gray</item>
+    </style>
 
     <style name="ScreenBackground">
         <item name="android:background">@color/white</item>
     </style>
 
+    <style name="ListPreference" parent="PreferenceThemeOverlay">
+        <item name="android:textColor">@color/gray</item>
+
+    </style>
 
 
     <style name="Theme.RailwayTTable" parent="Base.Theme.RailwayTTable" />

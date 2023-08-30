@@ -14,7 +14,8 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             tools:ignore="SpeakableTextPresentCheck"
-            style="@style/ScreenBackground">
+            style="@style/ScreenBackground"
+            >
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -26,6 +27,7 @@
             android:id="@+id/toolbarSettings"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            app:titleTextColor="@color/white"
             android:background="?attr/colorPrimary"
             android:minHeight="?attr/actionBarSize"
             app:layout_constraintEnd_toEndOf="parent"

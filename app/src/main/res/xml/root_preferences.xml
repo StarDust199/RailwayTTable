@@ -4,12 +4,14 @@
     <PreferenceCategory app:title=" ">
 
         <ListPreference
+
             app:defaultValue="BLUE"
             app:entries="@array/theme_entries"
             app:entryValues="@array/theme_values"
             app:key="color_option"
             app:title="Motyw"
             app:useSimpleSummaryProvider="true"
+
             />
 
     </PreferenceCategory>
