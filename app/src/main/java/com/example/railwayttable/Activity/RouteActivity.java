@@ -43,6 +43,7 @@ public class RouteActivity extends AppCompatActivity {
         sharedPreferencesNight = getSharedPreferences("MODE", Context.MODE_PRIVATE);
         SimpleDateFormat sdf = new SimpleDateFormat("d MMMM yyyy", Locale.getDefault());
         String defaultDate = sdf.format(new Date());
+        boolean nightMode = sharedPreferencesNight.getBoolean("nightMode", false);
 
         datePicker.setText(defaultDate);
         Calendar calendar = Calendar.getInstance();
@@ -50,13 +51,20 @@ public class RouteActivity extends AppCompatActivity {
             year = calendar.get(Calendar.YEAR);
             month = calendar.get(Calendar.MONTH);
             day = calendar.get(Calendar.DAY_OF_MONTH);
-            DatePickerDialog datePickerDialog = new DatePickerDialog(RouteActivity.this, (view, year, month, dayOfMonth) -> {
-                calendar.set(year, month, dayOfMonth);
-                datePicker.setText(SimpleDateFormat.getDateInstance().format(calendar.getTime()));
-            }, year, month, day);
-            setDialogTheme(sharedPreferencesNight.getBoolean("nightMode", false));
+            int dialogStyle = nightMode ? R.style.DialogWindowCalendar_Dark : R.style.DialogWindowCalendar_Light;
+
+            DatePickerDialog datePickerDialog = new DatePickerDialog(RouteActivity.this,
+                    dialogStyle,
+                    (view, year, month, dayOfMonth) -> {
+                        calendar.set(year, month, dayOfMonth);
+                        datePicker.setText(SimpleDateFormat.getDateInstance().format(calendar.getTime()));
+                    },
+                    year, month, day);
             datePicker.invalidate();
             datePickerDialog.show();
+
+
+
 
         });
 
