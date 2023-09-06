@@ -1,6 +1,7 @@
 package com.example.railwayttable.Activity;
 
 
+import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Context;
@@ -8,11 +9,11 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.widget.EditText;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.view.ContextThemeWrapper;
 import androidx.appcompat.widget.Toolbar;
 import androidx.preference.PreferenceManager;
@@ -28,18 +29,37 @@ import java.util.Locale;
 public class RouteActivity extends AppCompatActivity {
 
     SharedPreferences sharedPreferences, sharedPreferencesNight;
-    EditText datePicker, timePicker;
+
+    EditText datePicker, timePicker, stationA, stationB;
     int year;
     int month;
     int day;
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setThemeOfApp();
         setContentView(R.layout.activity_route);
+        stationA = findViewById(R.id.stacjaA);
+        stationB = findViewById(R.id.stacjaB3);
         timePicker = findViewById(R.id.godzina);
         datePicker = findViewById(R.id.czas);
+
+        stationB.setOnTouchListener((view, motionEvent) -> {
+
+            final int DRAWABLE_RIGHT = 2;
+            if (motionEvent.getAction() == MotionEvent.ACTION_UP) {
+                if (motionEvent.getRawX() >= (stationB.getRight() - stationB.getCompoundDrawables()[DRAWABLE_RIGHT].getBounds().width())) {
+                    reversePlaces();
+                    return true;
+                }
+
+            }
+            return false;
+        });
+
+
         sharedPreferencesNight = getSharedPreferences("MODE", Context.MODE_PRIVATE);
         SimpleDateFormat sdf = new SimpleDateFormat("d MMMM yyyy", Locale.getDefault());
         String defaultDate = sdf.format(new Date());
@@ -68,6 +88,11 @@ public class RouteActivity extends AppCompatActivity {
 
         });
 
+        SimpleDateFormat sdf1 = new SimpleDateFormat("HH:mm", Locale.getDefault());
+        String currentTime = sdf1.format(new Date());
+
+
+        timePicker.setText(currentTime);
         timePicker.setOnClickListener(v -> {
             if (!timePicker.isFocused()) {
                 openDialog();
@@ -84,14 +109,14 @@ public class RouteActivity extends AppCompatActivity {
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
     }
-    private void setDialogTheme(boolean nightMode) {
-        if (nightMode) {
-            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
-        } else {
-            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
-        }
-    }
 
+    public void reversePlaces() {
+        String textA = stationA.getText().toString();
+        String textB3 = stationB.getText().toString();
+
+        stationA.setText(textB3);
+        stationB.setText(textA);
+    }
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home) {

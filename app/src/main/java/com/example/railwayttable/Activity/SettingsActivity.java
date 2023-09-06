@@ -1,5 +1,6 @@
 package com.example.railwayttable.Activity;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -8,30 +9,48 @@ import android.view.MenuItem;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.DialogFragment;
 import androidx.preference.PreferenceFragmentCompat;
 import androidx.preference.PreferenceManager;
 
 import com.example.railwayttable.R;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+
+import static androidx.fragment.app.DialogFragment.STYLE_NORMAL;
+
 public class SettingsActivity extends AppCompatActivity implements SharedPreferences.OnSharedPreferenceChangeListener {
 
     private static final int SETTINGS_CODE = 234;
-
+    SharedPreferences sharedPreferences, sharedPreferencesNight;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         PreferenceManager.getDefaultSharedPreferences(getBaseContext())
                 .registerOnSharedPreferenceChangeListener(this);
         setThemeOfApp();
+
+
+
+
+
         setContentView(R.layout.settings_activity);
+
         if (savedInstanceState == null) {
             getSupportFragmentManager()
                     .beginTransaction()
                     .replace(R.id.settings, new SettingsFragment())
                     .commit();
+
         }
+
         Toolbar toolbar = findViewById(R.id.toolbarSettings);
         setSupportActionBar(toolbar);
 
@@ -40,6 +59,7 @@ public class SettingsActivity extends AppCompatActivity implements SharedPrefere
             actionBar.setDisplayHomeAsUpEnabled(true);
             actionBar.setHomeButtonEnabled(true); getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
+
 
 
     }
@@ -63,8 +83,10 @@ public class SettingsActivity extends AppCompatActivity implements SharedPrefere
         }
     }
     public static class SettingsFragment extends PreferenceFragmentCompat {
+
         @Override
         public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
+
             setPreferencesFromResource(R.xml.root_preferences, rootKey);
         }
     }
@@ -121,6 +143,7 @@ public class SettingsActivity extends AppCompatActivity implements SharedPrefere
 
         }
     }
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
