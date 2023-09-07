@@ -8,9 +8,14 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Parcelable;
+import android.util.Base64;
 import android.view.MenuItem;
 import android.view.MotionEvent;
+import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
@@ -19,17 +24,27 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.preference.PreferenceManager;
 
 import com.example.railwayttable.R;
+import com.example.railwayttable.Response.Connection;
+import com.example.railwayttable.Service.ApiInterface;
+import com.example.railwayttable.Service.AppSettings;
+import com.example.railwayttable.Service.RetrofitClient;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 
 public class RouteActivity extends AppCompatActivity {
 
     SharedPreferences sharedPreferences, sharedPreferencesNight;
-
+    Button button;
     EditText datePicker, timePicker, stationA, stationB;
     int year;
     int month;
@@ -43,8 +58,44 @@ public class RouteActivity extends AppCompatActivity {
         setContentView(R.layout.activity_route);
         stationA = findViewById(R.id.stacjaA);
         stationB = findViewById(R.id.stacjaB3);
+        button=findViewById(R.id.button_search);
         timePicker = findViewById(R.id.godzina);
         datePicker = findViewById(R.id.czas);
+        String username = "ahamal_demo";
+        String password = "WxWdFCmtqLq2@Hi";
+        AppSettings.setLoginCredentials(this, username, password);
+
+        String credentials = username + ":" + password;
+        String authHeader = "Basic " + Base64.encodeToString(credentials.getBytes(), Base64.NO_WRAP);
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String startStation = stationA.getText().toString();
+                String endStation = stationB.getText().toString();
+                ApiInterface apiInterface = RetrofitClient.getApiInterface();
+                Call<List<Connection>> call = apiInterface.getTrip(startStation, endStation, authHeader);
+
+                call.enqueue(new Callback<List<Connection>>() {
+                    @Override
+                    public void onResponse(Call<List<Connection>> call, Response<List<Connection>> response) {
+                        if (response.isSuccessful() && response.body() != null) {
+                            List<Connection> connections = response.body();
+                            Intent intent = new Intent(RouteActivity.this, TravelActivity.class);
+                            intent.putParcelableArrayListExtra("connections", (ArrayList<? extends Parcelable>) connections);
+                            startActivity(intent);
+
+                        } else {
+                            Toast.makeText(RouteActivity.this, "Wystapił problem", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<List<Connection>> call, Throwable t) {
+
+                    }
+                });
+            }
+        });
 
         stationB.setOnTouchListener((view, motionEvent) -> {
 

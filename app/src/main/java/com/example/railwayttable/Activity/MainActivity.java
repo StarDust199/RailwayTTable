@@ -21,6 +21,7 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.preference.PreferenceManager;
 
 import com.example.railwayttable.R;
+import com.example.railwayttable.Service.AppSettings;
 import com.google.android.material.navigation.NavigationView;
 
 import java.util.Objects;
@@ -40,6 +41,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         super.onCreate(savedInstanceState);
         setThemeOfApp();
         setContentView(R.layout.activity_main);
+
 
         drawerLayout = findViewById(R.id.drawer_layout);
         navigationView = findViewById(R.id.nav_view);
