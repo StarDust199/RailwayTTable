@@ -14,17 +14,16 @@ import retrofit2.http.POST;
 import retrofit2.http.Query;
 
 public interface ApiInterface {
-    @POST ( "/travelstops/name")
+    @POST ( "{host}travelstops/name")
     Call<List<TravelStop>> getStation(
-            @Query("name") String name,
-            @Query("travelStopId") String travelStopId,
-            @Header("Authorization") String authHeader
+            @Query("name") String name
+
     );
 
-    @POST("/travel")
+    @POST("{host}travel")
     Call<List<Connection>> getTrip(
             @Query("startId") String startId,
-            @Query("destId") String destId,
-            @Header("Authorization") String authHeader
+            @Query("destId") String destId
+
     );
 }
