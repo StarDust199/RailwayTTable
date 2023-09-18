@@ -20,7 +20,7 @@ public class PlannerActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setThemeOfApp();
-        setContentView(R.layout.activity_timetable);
+        setContentView(R.layout.activity_planner);
         Toolbar toolbar = findViewById(R.id.toolbar2);
         setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();
@@ -40,19 +40,31 @@ public class PlannerActivity extends AppCompatActivity {
         }
         return super.onOptionsItemSelected(item);
     }
+    @Override
+    public void onBackPressed() {
+        Intent intent = new Intent(PlannerActivity.this, MainActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
+        finish();
+    }
 
     private void setThemeOfApp() {
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
         String selectedTheme = sharedPreferences.getString("color_option", "BLUE");
 
-        if (selectedTheme.equals("BLUE")) {
-            setTheme(R.style.BlueTheme);
-        } else if (selectedTheme.equals("VIOLET")) {
-            setTheme(R.style.VioletTheme);
-        } else if (selectedTheme.equals("GREEN")) {
-            setTheme(R.style.GreenTheme);
-        } else {
-            setTheme(R.style.BlueTheme);
+        switch (selectedTheme) {
+            case "BLUE":
+                setTheme(R.style.BlueTheme);
+                break;
+            case "VIOLET":
+                setTheme(R.style.VioletTheme);
+                break;
+            case "GREEN":
+                setTheme(R.style.GreenTheme);
+                break;
+            default:
+                setTheme(R.style.BlueTheme);
+                break;
         }
     }
 }

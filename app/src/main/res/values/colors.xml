@@ -4,15 +4,15 @@
     <color name="white">#FFFFFFFF</color>
     <color name="blue_berry">#445470</color>
     <color name="light_blue">#DAE2F0</color>
-    <color name="gray">#666A70</color>
-    <color name="blue">#94B5F2</color>
+    <color name="gray">#4B4C4C</color>
+    <color name="blue">#8692F7</color>
 
     <!-- Motyw C -->
-    <color name="light">#ffe3e6</color>
-    <color name="rose">#fe9fb8</color>
-    <color name="purple">#7b5aa7</color>
-    <color name="fuchsia">#7d2f86</color>
-    <color name="sea">#53bfc6</color>
+    <color name="light">#c0a1c3</color>
+    <color name="rose">#916ce9</color>
+    <color name="purple">#3c28a6</color>
+    <color name="fuchsia">#4c477d</color>
+    <color name="sea">#d8ccf6</color>
     <!-- Motyw A -->
     <color name="black1">#121528</color>
     <color name="blueb">#163865</color>
@@ -23,11 +23,11 @@
 
 
     <!-- Motyw B -->
-    <color name="green">#058240</color>
-    <color name="light_green">#87c159</color>
-    <color name="very_light_green">#adcacb</color>
-    <color name="sunny">#fee3a2</color>
-    <color name="sunny_orange">#f3c301</color>
+    <color name="green">#0d642f</color>
+    <color name="light_green">#93bf9f</color>
+    <color name="very_light_green">#99c56c</color>
+    <color name="sunny">#8a985d</color>
+    <color name="sunny_orange">#585c4e</color>
 
 
 </resources>

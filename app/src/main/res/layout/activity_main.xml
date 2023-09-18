@@ -17,14 +17,15 @@
         android:layout_gravity="start"
         app:headerLayout="@layout/header_menu"
         app:menu="@menu/main_menu"
-        >
+        style="@style/ScreenBackground">
 
     </com.google.android.material.navigation.NavigationView>
 
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:fillViewport="true">
+        android:fillViewport="true"
+        style="@style/ScreenBackground">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -236,9 +237,9 @@
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:navigationIcon="@drawable/icons8_menu_64"
-                app:navigationIconTint="@android:color/transparent"
-                />
+                app:navigationIcon="@drawable/icons8_menu_50"
+                app:title="@string/rozk_ad_jazdy"
+                app:titleTextColor="@color/white" />
 
             <RelativeLayout
                 android:layout_width="413dp"
@@ -247,7 +248,21 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/toolbar"/>
+                app:layout_constraintTop_toBottomOf="@+id/toolbar">
+
+                <androidx.appcompat.widget.SwitchCompat
+                    android:id="@+id/switchMode"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginStart="279dp"
+                    android:layout_marginEnd="54dp"
+                    android:minHeight="48dp"
+                    android:thumb="@drawable/thumb"
+                    app:track="@drawable/track" />
+
+            </RelativeLayout>
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>

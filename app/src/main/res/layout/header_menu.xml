@@ -31,7 +31,7 @@
             android:layout_marginTop="10dp"
             android:text="@string/rozk_ad_jazdy"
             android:textColor="@color/white"
-            android:textSize="34sp" />
+            android:textSize="30sp" />
 
     </LinearLayout>
 

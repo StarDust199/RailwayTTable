@@ -1,4 +1,4 @@
-<resources xmlns:tools="http://schemas.android.com/tools">
+<resources>
 
 
 
@@ -9,22 +9,33 @@
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
         <item name="android:textSize">20sp</item>
+        <item name="android:textColor">@color/gray</item>
+
 
     </style>
 
     <style name="BlueTheme" parent="Base.AppTheme">
         <item name="colorPrimary">@color/blueb</item>
+
         <item name="colorPrimaryVariant">@color/light_blue1</item>
         <item name="colorAccent">@color/almost_white</item>
         <item name="colorContainer">@color/light_orange</item>
         <item name="colorButtonNormal">@color/almost_white</item>
+        <item name="colorOnBackground">@color/blueb</item>
+        <item name="android:windowBackground">@color/white</item>
+
+
+
     </style>
     <style name="VioletTheme" parent="Base.AppTheme">
-        <item name="colorPrimary">@color/purple</item>
-        <item name="colorPrimaryVariant">@color/fuchsia</item>
+        <item name="colorPrimary">@color/fuchsia</item>
+        <item name="colorPrimaryVariant">@color/light</item>
         <item name="colorAccent">@color/rose</item>
         <item name="colorContainer">@color/sea</item>
         <item name="colorButtonNormal">@color/light</item>
+        <item name="colorOnBackground">@color/fuchsia</item>
+        <item name="android:windowBackground">@color/white</item>
+
     </style>
     <style name="GreenTheme" parent="Base.AppTheme">
         <item name="colorPrimary">@color/green</item>
@@ -32,9 +43,61 @@
         <item name="colorAccent">@color/sunny</item>
         <item name="colorContainer">@color/sunny_orange</item>
         <item name="colorButtonNormal">@color/very_light_green</item>
+        <item name="colorOnBackground">@color/sunny</item>
+        <item name="android:windowBackground">@color/white</item>
+
+
     </style>
+
     <style name="MyToolbarStyle" parent="Widget.AppCompat.Toolbar">
         <item name="android:textColor">@color/white</item>
+    </style>
+    <style name="DialogWindow.Light" parent="Theme.AppCompat.Light.Dialog">
+        <item name="android:windowBackground">@color/white</item>
+    </style>
+    <style name="DialogWindowCalendar.Light" parent="android:Widget.Material.Light.CalendarView">
+        <item name="android:windowIsFloating">true</item>
+        <item name="android:windowBackground">@color/white</item>
+        <item name="android:textColor">@color/gray</item>
+    </style>
+    <style name="DialogWindow.Light.Blue" parent="android:Widget.Material.Light.TimePicker">
+        <item name="android:windowIsFloating">true</item>
+        <item name="android:numbersBackgroundColor">@color/light_blue1</item>
+        <item name="android:headerBackground">@color/blueb</item>
+        <item name="android:numbersSelectorColor">@color/light_blue1</item>
+        <item name="colorAccent">@color/light_blue1</item>
+        <item name="android:windowBackground">@color/white</item>
+        <item name="android:textColor">@color/gray</item>
+    </style>
+
+    <style name="DialogWindow.Light.Violet" parent="android:Widget.Material.Light.TimePicker">
+        <item name="android:windowIsFloating">true</item>
+        <item name="android:headerBackground">@color/fuchsia</item>
+        <item name="android:numbersBackgroundColor">@color/fuchsia</item>
+        <item name="android:numbersSelectorColor">@color/rose</item>
+        <item name="colorAccent">@color/fuchsia</item>
+        <item name="android:windowBackground">@color/white</item>
+        <item name="android:textColor">@color/gray</item>
+    </style>
+
+    <style name="DialogWindow.Light.Green" parent="android:Widget.Material.Light.TimePicker">
+        <item name="android:windowIsFloating">true</item>
+        <item name="android:numbersSelectorColor">@color/sunny</item>
+        <item name="android:numbersBackgroundColor">@color/green</item>
+        <item name="android:headerBackground">@color/green</item>
+        <item name="colorAccent">@color/sunny</item>
+        <item name="android:windowBackground">@color/white</item>
+        <item name="android:textColor">@color/gray</item>
+    </style>
+
+    <style name="ScreenBackground">
+        <item name="android:background">@color/white</item>
+    </style>
+
+    <style name="ListPreference" parent="Preference.DialogPreference">
+        <item name="android:textColor">@color/gray</item>
+        <item name="android:background">@color/white</item>
+
     </style>
 
 
