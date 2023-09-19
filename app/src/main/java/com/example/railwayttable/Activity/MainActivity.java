@@ -7,6 +7,8 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import androidx.activity.OnBackPressedCallback;
+import androidx.activity.OnBackPressedDispatcher;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
@@ -36,12 +38,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     Toolbar toolbar;
     private static String currentTheme;
     private boolean exitConfirmed = false;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setThemeOfApp();
         setContentView(R.layout.activity_main);
 
+        backButton();
 
         drawerLayout = findViewById(R.id.drawer_layout);
         navigationView = findViewById(R.id.nav_view);
@@ -113,6 +118,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
 
+
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         int itemId = item.getItemId();
@@ -147,6 +153,29 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
 
     }
+
+    private void backButton() {
+        OnBackPressedDispatcher dispatcher = getOnBackPressedDispatcher();
+
+        OnBackPressedCallback callback = new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
+                    drawerLayout.closeDrawer(GravityCompat.START);
+                }  else {
+                    if (exitConfirmed) {
+                        exitApp();
+                    } else {
+                        showExitConfirmationDialog();
+                    }
+                }
+            }
+        };
+
+        dispatcher.addCallback(this, callback);
+    }
+
+
 
 
     @Override

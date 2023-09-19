@@ -5,12 +5,16 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.MenuItem;
 
+import androidx.activity.OnBackPressedCallback;
+import androidx.activity.OnBackPressedDispatcher;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.view.GravityCompat;
 import androidx.preference.PreferenceManager;
 
 import com.example.railwayttable.R;
@@ -23,6 +27,7 @@ public class FavoritesActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setThemeOfApp();
         setContentView(R.layout.activity_favorites);
+        backButton();
         Toolbar toolbar = findViewById(R.id.toolbarFav);
         setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();
@@ -31,15 +36,31 @@ public class FavoritesActivity extends AppCompatActivity {
         }
 
     }
+    private void backButton() {
+        OnBackPressedDispatcher dispatcher = getOnBackPressedDispatcher();
+
+        OnBackPressedCallback callback = new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                backToMain();
+            }
+        };
+
+        dispatcher.addCallback(this, callback);
+    }
+
     @Override
     public void onBackPressed() {
+     backToMain();
+
+    }
+
+    public void backToMain() {
         Intent intent = new Intent(FavoritesActivity.this, MainActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
-        finish();
+
     }
-
-
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
