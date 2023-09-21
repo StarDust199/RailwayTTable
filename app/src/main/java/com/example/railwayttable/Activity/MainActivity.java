@@ -23,7 +23,7 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.preference.PreferenceManager;
 
 import com.example.railwayttable.R;
-import com.example.railwayttable.Service.AppSettings;
+
 import com.google.android.material.navigation.NavigationView;
 
 import java.util.Objects;
@@ -176,8 +176,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
 
-
-
     @Override
     public void onBackPressed() {
         if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
@@ -206,7 +204,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
     private void exitApp() {
         sharedPreferences.edit().putString("color_option", currentTheme).apply();
-        finish();
+        finishAffinity();
+        System.exit(0);
     }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
