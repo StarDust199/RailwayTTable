@@ -69,6 +69,21 @@
                 android:name="android.app.lib_name"
                 android:value="" />
         </activity>
+        <activity
+            android:name=".Activity.InformationActivity"
+            android:exported="false">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
+            <activity
+                android:name=".Activity.PolicyActivity"
+                android:exported="false">
+                <meta-data
+                    android:name="android.app.lib_name"
+                    android:value="" />
+
+        </activity>
     </application>
 
 </manifest>

@@ -135,7 +135,7 @@
                     app:layout_constraintStart_toStartOf="parent"
                     tools:ignore="SpeakableTextPresentCheck" />
 
-                <EditText
+                <AutoCompleteTextView
                     android:id="@+id/stacjaB3"
                     android:layout_width="296dp"
                     android:layout_height="wrap_content"

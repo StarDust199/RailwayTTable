@@ -5,7 +5,8 @@
         android:id="@+id/settings"
         android:icon="@drawable/baseline_settings_24"
         android:title="Settings"
-        app:showAsAction="ifRoom" />
+        app:showAsAction="ifRoom"
+        />
 
 
 </menu>

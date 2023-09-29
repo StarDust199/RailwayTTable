@@ -14,6 +14,7 @@ import android.util.Base64;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
@@ -74,9 +75,13 @@ public class RouteActivity extends AppCompatActivity {
         setContentView(R.layout.activity_route);
         backButton();
         AutoCompleteTextView stationA = findViewById(R.id.stacjaA);
+        AutoCompleteTextView stationB = findViewById(R.id.stacjaB3);
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_dropdown_item_1line, new ArrayList<>());
         stationA.setAdapter(adapter);
-        stationB = findViewById(R.id.stacjaB3);
+        ArrayAdapter<String> adapterB = new ArrayAdapter<>(this, android.R.layout.simple_dropdown_item_1line, new ArrayList<>());
+        stationB.setAdapter(adapterB);
+
+
         button=findViewById(R.id.button_search);
         timePicker = findViewById(R.id.godzina);
         datePicker = findViewById(R.id.czas);
@@ -112,7 +117,12 @@ public class RouteActivity extends AppCompatActivity {
             final int DRAWABLE_RIGHT = 2;
             if (motionEvent.getAction() == MotionEvent.ACTION_UP) {
                 if (motionEvent.getRawX() >= (stationB.getRight() - stationB.getCompoundDrawables()[DRAWABLE_RIGHT].getBounds().width())) {
-                    reversePlaces();
+                    String textA = stationA.getText().toString();
+                    String textB = stationB.getText().toString();
+
+                    stationA.setText(textB);
+                    stationB.setText(textA);
+
                     return true;
                 }
 
@@ -171,13 +181,6 @@ public class RouteActivity extends AppCompatActivity {
         }
     }
 
-    public void reversePlaces() {
-        String textA = stationA.getText().toString();
-        String textB3 = stationB.getText().toString();
-
-        stationA.setText(textB3);
-        stationB.setText(textA);
-    }
 
     private void getStation(String query, ArrayAdapter<String> adapter) {
         String url = "https://wbnet-demo.pkpik.pl:444/admapi/search/travelstops/name";
@@ -216,13 +219,14 @@ public class RouteActivity extends AppCompatActivity {
                     }
                 }) {
             @Override
-            public Map<String, String> getHeaders() throws AuthFailureError {
-                Map<String, String> headers = new HashMap<>();
-                String credentials = username + ":" + password;
-                String auth = "Basic " + Base64.encodeToString(credentials.getBytes(), Base64.NO_WRAP);
-                headers.put("X-correlation-ID", uuid);
-                headers.put("Authentication", auth);
-                return headers;
+
+            public HashMap<String, String> getParams() {
+                HashMap<String, String> params = new HashMap<String, String>();
+                params.put("X-correlation-ID", uuid);
+                params.put("User", username);
+                params.put("Password", password);
+
+                return params;
             }
         };
 

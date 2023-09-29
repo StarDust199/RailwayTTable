@@ -1,5 +1,6 @@
 package com.example.railwayttable.Activity;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -45,11 +46,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         super.onCreate(savedInstanceState);
         setThemeOfApp();
         setContentView(R.layout.activity_main);
-
         backButton();
 
         drawerLayout = findViewById(R.id.drawer_layout);
         navigationView = findViewById(R.id.nav_view);
+
         toolbar = findViewById(R.id.toolbar);
         switchMode = findViewById(R.id.switchMode);
         sharedPreferencesNight = getSharedPreferences("MODE", Context.MODE_PRIVATE);
@@ -82,21 +83,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         Objects.requireNonNull(getSupportActionBar()).setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeAsUpIndicator(R.drawable.icons8_hamburger_menu_30);
-        navigationView.setNavigationItemSelectedListener(item -> {
-            int itemId = item.getItemId();
-            if (itemId == R.id.settings) {
 
-                Intent intent = new Intent(MainActivity.this, SettingsActivity.class);
-                startActivity(intent);
-                drawerLayout.closeDrawer(GravityCompat.START);
-                return true;
-            }
-
-            drawerLayout.closeDrawer(GravityCompat.START);
-            return true;
-        });
 
     }
+
 
     private void applyNightMode(boolean nightMode) {
         if (nightMode) {
@@ -116,6 +106,43 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         super.onRestart();
         setThemeOfApp();
     }
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        navigationView.setNavigationItemSelectedListener(
+                new NavigationView.OnNavigationItemSelectedListener() {
+                    @SuppressLint("NonConstantResourceId")
+                    @Override
+                    public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
+                        int itemId = menuItem.getItemId();
+                        if (itemId == R.id.nav_home) {
+
+                        } else if (itemId == R.id.nav_settings) {
+
+                        } else if (itemId == R.id.nav_information) {
+
+                            Intent intent1 = new Intent(MainActivity.this, InformationActivity.class);
+                            startActivity(intent1);
+
+                        } else if (itemId == R.id.nav_policy) {
+                            Intent intent2 = new Intent(MainActivity.this, PolicyActivity.class);
+                            startActivity(intent2);
+
+                        }
+
+                        drawerLayout.closeDrawer(GravityCompat.START);
+                        return true;
+                    }
+                }
+        );
+
+    }
+
+
+
+
+
 
 
 
