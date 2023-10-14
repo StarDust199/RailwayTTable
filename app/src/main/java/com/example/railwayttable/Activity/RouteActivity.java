@@ -22,6 +22,7 @@ import android.widget.EditText;
 
 import androidx.activity.OnBackPressedCallback;
 import androidx.activity.OnBackPressedDispatcher;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.view.ContextThemeWrapper;
@@ -36,6 +37,11 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.railwayttable.R;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -74,6 +80,7 @@ public class RouteActivity extends AppCompatActivity {
         setThemeOfApp();
         setContentView(R.layout.activity_route);
         backButton();
+        FirebaseDatabase.getInstance().setPersistenceEnabled(true);
         AutoCompleteTextView stationA = findViewById(R.id.stacjaA);
         AutoCompleteTextView stationB = findViewById(R.id.stacjaB3);
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_dropdown_item_1line, new ArrayList<>());
@@ -183,69 +190,29 @@ public class RouteActivity extends AppCompatActivity {
 
 
     private void getStation(String query, ArrayAdapter<String> adapter) {
-        String url = "https://wbnet-demo.pkpik.pl:444/admapi/search/travelstops/name";
+        DatabaseReference stacjePosrednieRef = FirebaseDatabase.getInstance().getReference("/Odjazdy/Stacje posrednie");
 
-        JSONObject jsonBody = new JSONObject();
-        try {
-            jsonBody.put("query", query);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, url, jsonBody,
-                new Response.Listener<JSONObject>() {
+        stacjePosrednieRef.orderByChild("nazwa").startAt(query).endAt(query + "\uf8ff")
+                .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
-                    public void onResponse(JSONObject response) {
-                        try {
-                            JSONArray stations = response.getJSONArray("stations");
-
-                            List<String> stationNames = new ArrayList<>();
-                            for (int i = 0; i < stations.length(); i++) {
-                                stationNames.add(stations.getString(i));
-                            }
-
-                            adapter.clear();
-                            adapter.addAll(stationNames);
-                            adapter.notifyDataSetChanged();
-                        } catch (JSONException e) {
-                            e.printStackTrace();
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        List<String> stationNames = new ArrayList<>();
+                        for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                            String nazwaStacji = snapshot.getKey();
+                            stationNames.add(nazwaStacji);
                         }
+
+                        adapter.clear();
+                        adapter.addAll(stationNames);
+                        adapter.notifyDataSetChanged();
                     }
-                },
-                new Response.ErrorListener() {
+
                     @Override
-                    public void onErrorResponse(VolleyError error) {
-                        error.printStackTrace();
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+                        databaseError.toException().printStackTrace();
                     }
-                }) {
-            @Override
-
-            public HashMap<String, String> getParams() {
-                HashMap<String, String> params = new HashMap<String, String>();
-                params.put("X-correlation-ID", uuid);
-                params.put("User", username);
-                params.put("Password", password);
-
-                return params;
-            }
-        };
-
-        RequestQueue queue = Volley.newRequestQueue(this);
-        queue.add(jsonObjectRequest);
+                });
     }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == android.R.id.home) {
-            Intent intent = new Intent(RouteActivity.this, MainActivity.class);
-            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-            startActivity(intent);
-            finish();
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
     private void setThemeOfApp() {
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
         String selectedTheme = sharedPreferences.getString("color_option", "BLUE");
