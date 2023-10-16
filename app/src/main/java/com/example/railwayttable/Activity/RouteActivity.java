@@ -10,11 +10,9 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Base64;
-import android.view.MenuItem;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
@@ -29,13 +27,6 @@ import androidx.appcompat.view.ContextThemeWrapper;
 import androidx.appcompat.widget.Toolbar;
 import androidx.preference.PreferenceManager;
 
-import com.android.volley.AuthFailureError;
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.Volley;
 import com.example.railwayttable.R;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -43,19 +34,12 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
-import java.util.UUID;
 
 
 public class RouteActivity extends AppCompatActivity {
@@ -64,9 +48,7 @@ public class RouteActivity extends AppCompatActivity {
 
     SharedPreferences sharedPreferences, sharedPreferencesNight;
     Button button;
-    private String uuid;
-    private String username;
-    private String password;
+
 
     EditText datePicker, timePicker, stationA, stationB;
     int year;
@@ -80,11 +62,29 @@ public class RouteActivity extends AppCompatActivity {
         setThemeOfApp();
         setContentView(R.layout.activity_route);
         backButton();
-        FirebaseDatabase.getInstance().setPersistenceEnabled(true);
+
         AutoCompleteTextView stationA = findViewById(R.id.stacjaA);
         AutoCompleteTextView stationB = findViewById(R.id.stacjaB3);
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_dropdown_item_1line, new ArrayList<>());
-        stationA.setAdapter(adapter);
+        DatabaseReference database = FirebaseDatabase.getInstance().getReference();
+        final ArrayAdapter<String> autoComplete = new ArrayAdapter<>(this, android.R.layout.simple_dropdown_item_1line);
+
+        database.child("Odjazdy/Stacje posrednie").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot suggestionSnapshot : dataSnapshot.getChildren()){
+                    String suggestion = suggestionSnapshot.getKey();
+                    autoComplete.add(suggestion);
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+        stationA.setAdapter(autoComplete);
+
         ArrayAdapter<String> adapterB = new ArrayAdapter<>(this, android.R.layout.simple_dropdown_item_1line, new ArrayList<>());
         stationB.setAdapter(adapterB);
 
@@ -92,9 +92,7 @@ public class RouteActivity extends AppCompatActivity {
         button=findViewById(R.id.button_search);
         timePicker = findViewById(R.id.godzina);
         datePicker = findViewById(R.id.czas);
-        uuid = UUID.randomUUID().toString();
-        username = "ahamal_demo";
-        password = "WxWdFCmtqLq2@Hi";
+
 
         button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -110,7 +108,8 @@ public class RouteActivity extends AppCompatActivity {
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
 
                 if (charSequence.length() >= 3) {
-                    getStation(charSequence.toString(), adapter);
+                    getIntermediateStations(charSequence.toString(), autoComplete);
+
                 }
             }
 
@@ -189,30 +188,32 @@ public class RouteActivity extends AppCompatActivity {
     }
 
 
-    private void getStation(String query, ArrayAdapter<String> adapter) {
+    private void getIntermediateStations(String query, ArrayAdapter<String> adapter) {
         DatabaseReference stacjePosrednieRef = FirebaseDatabase.getInstance().getReference("/Odjazdy/Stacje posrednie");
 
-        stacjePosrednieRef.orderByChild("nazwa").startAt(query).endAt(query + "\uf8ff")
-                .addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        List<String> stationNames = new ArrayList<>();
-                        for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                            String nazwaStacji = snapshot.getKey();
-                            stationNames.add(nazwaStacji);
-                        }
+        stacjePosrednieRef.orderByChild(query).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                List<String> stationNames = new ArrayList<>();
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    String nazwaStacji = snapshot.getKey();
+                    stationNames.add(nazwaStacji);
+                }
 
-                        adapter.clear();
-                        adapter.addAll(stationNames);
-                        adapter.notifyDataSetChanged();
-                    }
+                Log.d("TAG", "Pobrane stacje: " + stationNames.toString());
 
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError databaseError) {
-                        databaseError.toException().printStackTrace();
-                    }
-                });
+                adapter.clear();
+                adapter.addAll(stationNames);
+                adapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                databaseError.toException().printStackTrace();
+            }
+        });
     }
+
     private void setThemeOfApp() {
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
         String selectedTheme = sharedPreferences.getString("color_option", "BLUE");
