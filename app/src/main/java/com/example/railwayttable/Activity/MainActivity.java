@@ -118,8 +118,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         int itemId = menuItem.getItemId();
                         if (itemId == R.id.nav_home) {
 
-                        } else if (itemId == R.id.nav_settings) {
-
+                        } else if (itemId == R.id.nav_map) {
+                            Intent intent3 = new Intent(MainActivity.this, MapActivity.class);
+                            startActivity(intent3);
                         } else if (itemId == R.id.nav_information) {
 
                             Intent intent1 = new Intent(MainActivity.this, InformationActivity.class);

@@ -8,23 +8,20 @@
 
     <ScrollView
 
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:id="@+id/scrollView2"
+        style="@style/ScreenBackground"
+        android:layout_width="0dp"
+        android:layout_height="737dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:ignore="SpeakableTextPresentCheck"
-        style="@style/ScreenBackground">
+        tools:ignore="SpeakableTextPresentCheck">
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical" />
     </ScrollView>
 
     <androidx.appcompat.widget.Toolbar
-        android:id="@+id/toolbarPolicy"
+        android:id="@+id/toolbarMap"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="?attr/colorPrimary"
@@ -34,20 +31,9 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:navigationIcon="@drawable/icons8_back_48"
-        app:title="POLITYKA PRYWATNOŚCI"
+        app:title="MAPA AGLOMERACJI"
         app:titleTextColor="@color/white" />
 
-    <TextView
-        android:id="@+id/textPolicy"
-        android:layout_width="match_parent"
-        android:layout_height="451dp"
-        android:scrollbars="vertical"
-        app:layout_constraintBottom_toTopOf="@+id/relativeLayout9"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/relativeLayout">
-
-    </TextView>
 
     <RelativeLayout
         android:id="@+id/relativeLayout"
@@ -57,12 +43,12 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/toolbarPolicy">
+        app:layout_constraintTop_toBottomOf="@+id/toolbarMap">
 
     </RelativeLayout>
 
     <RelativeLayout
-        android:id="@+id/relativeLayout9"
+        android:id="@+id/relativeLayout6"
         android:layout_width="match_parent"
         android:layout_height="102dp"
         android:background="@drawable/wave_floor"
@@ -71,5 +57,15 @@
         app:layout_constraintStart_toStartOf="parent">
 
     </RelativeLayout>
+
+    <ImageView
+        android:id="@+id/imageView7"
+        android:layout_width="339dp"
+        android:layout_height="287dp"
+        app:layout_constraintBottom_toTopOf="@+id/relativeLayout6"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/relativeLayout"
+        app:srcCompat="@drawable/mapa" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

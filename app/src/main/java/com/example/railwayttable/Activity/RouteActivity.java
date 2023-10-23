@@ -12,7 +12,6 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.MotionEvent;
-import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
@@ -70,7 +69,7 @@ public class RouteActivity extends AppCompatActivity {
 
         database.child("Odjazdy/Stacje posrednie").addValueEventListener(new ValueEventListener() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for (DataSnapshot suggestionSnapshot : dataSnapshot.getChildren()){
                     String suggestion = suggestionSnapshot.getKey();
                     autoComplete.add(suggestion);
@@ -78,7 +77,7 @@ public class RouteActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onCancelled(DatabaseError databaseError) {
+            public void onCancelled(@NonNull DatabaseError databaseError) {
 
             }
         });
@@ -94,12 +93,9 @@ public class RouteActivity extends AppCompatActivity {
         datePicker = findViewById(R.id.czas);
 
 
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String startStation = stationA.getText().toString();
-                String endStation = stationB.getText().toString();
-            }
+        button.setOnClickListener(v -> {
+            String startStation = stationA.getText().toString();
+            String endStation = stationB.getText().toString();
         });
         stationA.addTextChangedListener(new TextWatcher() {
             @Override
@@ -200,7 +196,7 @@ public class RouteActivity extends AppCompatActivity {
                     stationNames.add(nazwaStacji);
                 }
 
-                Log.d("TAG", "Pobrane stacje: " + stationNames.toString());
+                Log.d("TAG", "Pobrane stacje: " + stationNames);
 
                 adapter.clear();
                 adapter.addAll(stationNames);
