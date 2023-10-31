@@ -6,7 +6,8 @@
     android:layout_height="match_parent">
 
     <LinearLayout
-        android:layout_width="417dp"
+        android:id="@+id/linearLayout2"
+        android:layout_width="match_parent"
         android:layout_height="213dp"
         android:background="?attr/colorPrimary"
         android:orientation="vertical"
@@ -21,7 +22,8 @@
             android:layout_height="75dp"
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="20dp"
-            app:srcCompat="@drawable/train_route" />
+            app:srcCompat="@drawable/train_route"
+            android:contentDescription="@string/logo_aplikacji" />
 
         <TextView
             android:id="@+id/textView"
@@ -35,6 +37,14 @@
 
     </LinearLayout>
 
-
+    <RelativeLayout
+        android:id="@+id/relativeLayout"
+        android:layout_width="match_parent"
+        android:layout_height="130dp"
+        android:background="@drawable/wave_blue"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout2"></RelativeLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

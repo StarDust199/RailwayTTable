@@ -60,6 +60,7 @@ public class SettingsActivity extends AppCompatActivity implements SharedPrefere
 
     @Override public boolean onSupportNavigateUp() {
         onBackPressed();
+        backButton();
         return true; }
 
     @Override

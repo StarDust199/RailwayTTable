@@ -265,7 +265,8 @@
         android:layout_gravity="start"
         app:headerLayout="@layout/header_menu"
         app:menu="@menu/main_menu"
-        app:itemTextColor="?android:textColor">
+        app:itemTextColor="?android:textColor"
+        app:itemIconTint="?attr/colorPrimaryVariant">
 
     </com.google.android.material.navigation.NavigationView>
 

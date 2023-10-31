@@ -1,24 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
+
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
 <group android:checkableBehavior="single">
     <item
         android:id="@+id/nav_home"
-        android:title="Home"
-        android:icon="@drawable/icons8_home_50"/>
+        android:title="@string/home"
+        android:icon="@drawable/website_home_page_svgrepo_com"/>
     <item
         android:id="@+id/nav_map"
-        android:title="Mapa aglomeracji"
-        android:icon="@drawable/icons8_settings_50"/>
+        android:title="@string/mapa_aglomeracji"
+        android:icon="@drawable/map_locationpin_svgrepo_com"/>
     <item
         android:id="@+id/nav_information"
-        android:title="Informacje"
-        android:icon="@drawable/icons8_information_48"/>
+        android:title="@string/informacje"
+        android:icon="@drawable/information_1535_svgrepo_com"/>
     <item
         android:id="@+id/nav_policy"
-        android:title="Polityka prywatności"
-        android:icon="@drawable/icons8_day_and_night_50"/>
+        android:title="@string/polityka_prywatno_ci"
+        android:icon="@drawable/policy_svgrepo_com"/>
 
 </group>
 </menu>

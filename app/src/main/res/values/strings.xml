@@ -37,4 +37,9 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="godzina">Godzina</string>
+    <string name="logo_aplikacji">Logo aplikacji</string>
+    <string name="home">Home</string>
+    <string name="mapa_aglomeracji">Mapa aglomeracji</string>
+    <string name="informacje">Informacje</string>
+    <string name="polityka_prywatno_ci">Polityka prywatności</string>
 </resources>

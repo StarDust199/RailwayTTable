@@ -22,7 +22,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-             />
+                />
         </ScrollView>
 
         <androidx.appcompat.widget.Toolbar
@@ -37,5 +37,6 @@
             app:navigationIcon="@drawable/icons8_back_48"
             app:titleTextColor="@color/white" />
     </FrameLayout>
+
 
 </LinearLayout>
