@@ -10,7 +10,6 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
@@ -48,8 +47,7 @@ public class RouteActivity extends AppCompatActivity {
     SharedPreferences sharedPreferences, sharedPreferencesNight;
     Button button;
 
-
-    EditText datePicker, timePicker, stationA, stationB;
+    EditText datePicker, timePicker;
     int year;
     int month;
     int day;
@@ -65,8 +63,8 @@ public class RouteActivity extends AppCompatActivity {
         AutoCompleteTextView stationA = findViewById(R.id.stacjaA);
         AutoCompleteTextView stationB = findViewById(R.id.stacjaB3);
         DatabaseReference database = FirebaseDatabase.getInstance().getReference();
-        final ArrayAdapter<String> autoComplete = new ArrayAdapter<>(this, android.R.layout.simple_dropdown_item_1line);
 
+        CustomArrayAdapter autoComplete = new CustomArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, new ArrayList<>());
         database.child("Odjazdy/Stacje posrednie").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -76,6 +74,7 @@ public class RouteActivity extends AppCompatActivity {
                 }
             }
 
+
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
 
@@ -83,9 +82,7 @@ public class RouteActivity extends AppCompatActivity {
         });
 
         stationA.setAdapter(autoComplete);
-
-        ArrayAdapter<String> adapterB = new ArrayAdapter<>(this, android.R.layout.simple_dropdown_item_1line, new ArrayList<>());
-        stationB.setAdapter(adapterB);
+        stationB.setAdapter(autoComplete);
 
 
         button=findViewById(R.id.button_search);
@@ -97,22 +94,46 @@ public class RouteActivity extends AppCompatActivity {
             String startStation = stationA.getText().toString();
             String endStation = stationB.getText().toString();
         });
+
         stationA.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-                if (charSequence.length() >= 3) {
+                if (charSequence.length() >= 1) {
                     getIntermediateStations(charSequence.toString(), autoComplete);
-
+                } else {
+                    showNoStationFoundMessage(autoComplete);
+                    stationA.post(stationA::showDropDown);
                 }
             }
-
 
             @Override
             public void afterTextChanged(Editable s) {}
         });
+
+
+        stationB.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                if (charSequence.length() >= 1) {
+                    getIntermediateStations(charSequence.toString(), autoComplete);
+                } else {
+                    showNoStationFoundMessage(autoComplete);
+                    stationB.post(stationB::showDropDown);
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {}
+        });
+
+
+
 
         stationB.setOnTouchListener((view, motionEvent) -> {
 
@@ -182,25 +203,31 @@ public class RouteActivity extends AppCompatActivity {
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
     }
-
-
-    private void getIntermediateStations(String query, ArrayAdapter<String> adapter) {
+    private void showNoStationFoundMessage(ArrayAdapter<String> adapter) {
+        adapter.clear();
+        adapter.add("Nie znaleziono stacji");
+        adapter.notifyDataSetChanged();
+    }
+    private void getIntermediateStations(String query, CustomArrayAdapter adapter) {
         DatabaseReference stacjePosrednieRef = FirebaseDatabase.getInstance().getReference("/Odjazdy/Stacje posrednie");
 
-        stacjePosrednieRef.orderByChild(query).addListenerForSingleValueEvent(new ValueEventListener() {
+        stacjePosrednieRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 List<String> stationNames = new ArrayList<>();
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     String nazwaStacji = snapshot.getKey();
-                    stationNames.add(nazwaStacji);
+                    if (nazwaStacji.toLowerCase().contains(query.toLowerCase())) {
+                        stationNames.add(nazwaStacji);
+                    }
                 }
-
-                Log.d("TAG", "Pobrane stacje: " + stationNames);
 
                 adapter.clear();
                 adapter.addAll(stationNames);
-                adapter.notifyDataSetChanged();
+
+                if (stationNames.isEmpty()) {
+                    adapter.add("Nie znaleziono stacji");
+                }
             }
 
             @Override
@@ -209,7 +236,6 @@ public class RouteActivity extends AppCompatActivity {
             }
         });
     }
-
     private void setThemeOfApp() {
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
         String selectedTheme = sharedPreferences.getString("color_option", "BLUE");
