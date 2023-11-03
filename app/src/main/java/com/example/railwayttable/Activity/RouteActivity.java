@@ -46,7 +46,7 @@ public class RouteActivity extends AppCompatActivity {
 
     SharedPreferences sharedPreferences, sharedPreferencesNight;
     Button button;
-
+    CustomArrayAdapter autoComplete;
     EditText datePicker, timePicker;
     int year;
     int month;
@@ -59,12 +59,21 @@ public class RouteActivity extends AppCompatActivity {
         setThemeOfApp();
         setContentView(R.layout.activity_route);
         backButton();
+        Toolbar toolbar = findViewById(R.id.toolbarRoute);
+
+        setSupportActionBar(toolbar);
+
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            setSupportActionBar(toolbar);
+            actionBar.setDisplayHomeAsUpEnabled(true);
+        }
 
         AutoCompleteTextView stationA = findViewById(R.id.stacjaA);
         AutoCompleteTextView stationB = findViewById(R.id.stacjaB3);
         DatabaseReference database = FirebaseDatabase.getInstance().getReference();
 
-        CustomArrayAdapter autoComplete = new CustomArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, new ArrayList<>());
+        autoComplete = new CustomArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, new ArrayList<>());
         database.child("Odjazdy/Stacje posrednie").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -93,6 +102,11 @@ public class RouteActivity extends AppCompatActivity {
         button.setOnClickListener(v -> {
             String startStation = stationA.getText().toString();
             String endStation = stationB.getText().toString();
+
+            Intent intent = new Intent(this, TravelActivity.class);
+            intent.putExtra("START_STATION", startStation);
+            intent.putExtra("END_STATION", endStation);
+            startActivity(intent);
         });
 
         stationA.addTextChangedListener(new TextWatcher() {
@@ -101,12 +115,9 @@ public class RouteActivity extends AppCompatActivity {
 
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                if (charSequence.length() >= 1) {
+
                     getIntermediateStations(charSequence.toString(), autoComplete);
-                } else {
-                    showNoStationFoundMessage(autoComplete);
-                    stationA.post(stationA::showDropDown);
-                }
+
             }
 
             @Override
@@ -115,21 +126,20 @@ public class RouteActivity extends AppCompatActivity {
 
 
         stationB.addTextChangedListener(new TextWatcher() {
+
+
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
 
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                if (charSequence.length() >= 1) {
-                    getIntermediateStations(charSequence.toString(), autoComplete);
-                } else {
-                    showNoStationFoundMessage(autoComplete);
-                    stationB.post(stationB::showDropDown);
-                }
+                getIntermediateStations(charSequence.toString(), autoComplete);
             }
 
             @Override
-            public void afterTextChanged(Editable s) {}
+            public void afterTextChanged(Editable editable) {
+
+            }
         });
 
 
@@ -193,20 +203,12 @@ public class RouteActivity extends AppCompatActivity {
             }
 
         });
-        Toolbar toolbar = findViewById(R.id.toolbar2);
-        setSupportActionBar(toolbar);
 
-        ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null) {
-            setSupportActionBar(toolbar);
-            getSupportActionBar().setTitle("Wyszukaj");
-            actionBar.setDisplayHomeAsUpEnabled(true);
-        }
     }
     private void showNoStationFoundMessage(ArrayAdapter<String> adapter) {
         adapter.clear();
         adapter.add("Nie znaleziono stacji");
-        adapter.notifyDataSetChanged();
+
     }
     private void getIntermediateStations(String query, CustomArrayAdapter adapter) {
         DatabaseReference stacjePosrednieRef = FirebaseDatabase.getInstance().getReference("/Odjazdy/Stacje posrednie");
@@ -215,19 +217,25 @@ public class RouteActivity extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 List<String> stationNames = new ArrayList<>();
+                boolean found = false;
+
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     String nazwaStacji = snapshot.getKey();
                     if (nazwaStacji.toLowerCase().contains(query.toLowerCase())) {
                         stationNames.add(nazwaStacji);
+                        found = true;
                     }
                 }
 
                 adapter.clear();
                 adapter.addAll(stationNames);
 
-                if (stationNames.isEmpty()) {
+                if (!found) {
                     adapter.add("Nie znaleziono stacji");
+
                 }
+
+
             }
 
             @Override

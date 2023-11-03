@@ -27,7 +27,7 @@ public class InformationActivity extends AppCompatActivity {
         backButton();
         Toolbar toolbar = findViewById(R.id.toolbarInfo);
         setSupportActionBar(toolbar);
-        textview=(TextView)findViewById(R.id.textInfo);
+        textview= findViewById(R.id.textInfo);
         String pars="Lorem ipsum dolor sit amet, consectetur adipiscing elit. In consectetur venenatis ipsum, quis lacinia dui varius vel. Nullam pharetra odio neque, id porta dolor sodales sit amet. Nullam fermentum finibus consectetur. Phasellus at malesuada magna, nec interdum nisl. Integer sagittis iaculis erat, non ultrices lacus consequat id. Curabitur vitae leo massa. Maecenas posuere arcu orci, nec rutrum nisi pellentesque a. Nulla massa nisl, efficitur imperdiet nibh ut, scelerisque ultrices sapien.\n" +
                 "\n" +
                 "Sed elementum bibendum elit sit amet pellentesque. Cras auctor odio felis, non tempus enim aliquam in. Pellentesque sit amet augue tristique, bibendum odio a, tempor ipsum. Integer et aliquam ex. Duis nulla lectus, pretium at nibh id, hendrerit cursus justo. Ut sit amet molestie tellus. Duis laoreet vestibulum odio, vel pretium turpis eleifend quis. Praesent accumsan viverra leo hendrerit fringilla. Nullam placerat tellus sed libero faucibus, fringilla ultrices nisl vulputate. Ut metus sem, rhoncus vel ultricies vel, dictum in ipsum. Vestibulum pretium varius ligula.";

@@ -11,17 +11,17 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.preference.PreferenceManager;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.railwayttable.R;
-import com.example.railwayttable.Response.Connection;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class TravelActivity extends AppCompatActivity{
         SharedPreferences sharedPreferences, sharedPreferencesNight;
-
+    private RecyclerView recyclerView;
+    private List<String> connectionsList = new ArrayList<>();
         @Override
         protected void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
@@ -34,6 +34,12 @@ public class TravelActivity extends AppCompatActivity{
             if (actionBar != null) {
                 actionBar.setDisplayHomeAsUpEnabled(true);
             }
+            Intent intent = getIntent();
+            String startStation = intent.getStringExtra("START_STATION");
+            String endStation = intent.getStringExtra("END_STATION");
+
+          recyclerView=(RecyclerView) findViewById(R.id.connectionRecyclerView);
+
 
         }
     private void backButton() {
@@ -74,7 +80,10 @@ public class TravelActivity extends AppCompatActivity{
             return super.onOptionsItemSelected(item);
         }
 
-        private void setThemeOfApp() {
+
+
+
+    private void setThemeOfApp() {
             sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
             String selectedTheme = sharedPreferences.getString("color_option", "BLUE");
 
