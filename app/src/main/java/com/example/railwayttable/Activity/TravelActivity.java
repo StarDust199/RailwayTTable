@@ -3,25 +3,36 @@ package com.example.railwayttable.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 
 import androidx.activity.OnBackPressedCallback;
 import androidx.activity.OnBackPressedDispatcher;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.preference.PreferenceManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.railwayttable.R;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class TravelActivity extends AppCompatActivity{
-        SharedPreferences sharedPreferences, sharedPreferencesNight;
+    SharedPreferences sharedPreferences, sharedPreferencesNight;
     private RecyclerView recyclerView;
-    private List<String> connectionsList = new ArrayList<>();
+
+    DatabaseReference databaseReference;
+    ConnectionAdapter connectionAdapter;
+    ArrayList<ConnectionModel> list;
         @Override
         protected void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
@@ -38,9 +49,30 @@ public class TravelActivity extends AppCompatActivity{
             String startStation = intent.getStringExtra("START_STATION");
             String endStation = intent.getStringExtra("END_STATION");
 
-          recyclerView=(RecyclerView) findViewById(R.id.connectionRecyclerView);
+            recyclerView = (RecyclerView) findViewById(R.id.connectionRecyclerView);
+            databaseReference = FirebaseDatabase.getInstance().getReference("Odjazdy");
+            recyclerView.setHasFixedSize(true);
+            recyclerView.setLayoutManager(new LinearLayoutManager(this));
+            list = new ArrayList<>();
+            connectionAdapter = new ConnectionAdapter(this, list);
+            recyclerView.setAdapter(connectionAdapter);
+            databaseReference.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    Log.d("TravelActivity", "onDataChange called");
+                    Log.d("TravelActivity", "Liczba dzieci: " + snapshot.getChildrenCount());
+                    for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                        ConnectionModel connectionModel=dataSnapshot.getValue(ConnectionModel.class);
+                        list.add(connectionModel);
+                    }
+                    connectionAdapter.notifyDataSetChanged();
+                }
 
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
 
+                }
+            });
         }
     private void backButton() {
         OnBackPressedDispatcher dispatcher = getOnBackPressedDispatcher();

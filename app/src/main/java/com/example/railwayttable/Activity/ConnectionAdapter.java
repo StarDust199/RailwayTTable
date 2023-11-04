@@ -1,11 +1,15 @@
 package com.example.railwayttable.Activity;
 
 import android.content.Context;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.example.railwayttable.R;
 
 import java.util.ArrayList;
 
@@ -21,24 +25,33 @@ public class ConnectionAdapter extends RecyclerView.Adapter<ConnectionAdapter.My
     @NonNull
     @Override
     public MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        return null;
+        View v= LayoutInflater.from(context).inflate(R.layout.item, parent, false);
+        return new MyViewHolder(v);
     }
 
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
 
+        ConnectionModel connectionModel=list.get(position);
+        holder.name.setText(connectionModel.getNazwa());
+        holder.type.setText(connectionModel.getTyp());
+        holder.platform.setText(connectionModel.getPeron());
     }
 
     @Override
     public int getItemCount() {
-        return 0;
+        return list.size();
     }
 
     public static class MyViewHolder extends RecyclerView.ViewHolder{
-
+    TextView name, type, platform;
 
         public MyViewHolder(@NonNull View itemView) {
+
             super(itemView);
+            name=itemView.findViewById(R.id.name);
+            type=itemView.findViewById(R.id.type);
+            platform=itemView.findViewById(R.id.platform);
         }
     }
 }
