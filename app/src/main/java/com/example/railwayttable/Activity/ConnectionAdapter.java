@@ -35,7 +35,7 @@ public class ConnectionAdapter extends RecyclerView.Adapter<ConnectionAdapter.My
         ConnectionModel connectionModel=list.get(position);
         holder.name.setText(connectionModel.getNazwa());
         holder.type.setText(connectionModel.getTyp());
-        holder.platform.setText(connectionModel.getPeron());
+        holder.numer.setText(connectionModel.getNumer());
     }
 
     @Override
@@ -44,14 +44,14 @@ public class ConnectionAdapter extends RecyclerView.Adapter<ConnectionAdapter.My
     }
 
     public static class MyViewHolder extends RecyclerView.ViewHolder{
-    TextView name, type, platform;
+    TextView name, type, numer;
 
         public MyViewHolder(@NonNull View itemView) {
 
             super(itemView);
             name=itemView.findViewById(R.id.name);
             type=itemView.findViewById(R.id.type);
-            platform=itemView.findViewById(R.id.platform);
+            numer=itemView.findViewById(R.id.numer);
         }
     }
 }

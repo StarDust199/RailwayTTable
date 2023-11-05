@@ -50,7 +50,7 @@ public class TravelActivity extends AppCompatActivity{
             String endStation = intent.getStringExtra("END_STATION");
 
             recyclerView = (RecyclerView) findViewById(R.id.connectionRecyclerView);
-            databaseReference = FirebaseDatabase.getInstance().getReference("Odjazdy");
+            databaseReference = FirebaseDatabase.getInstance().getReference("IC/Stacje");
             recyclerView.setHasFixedSize(true);
             recyclerView.setLayoutManager(new LinearLayoutManager(this));
             list = new ArrayList<>();

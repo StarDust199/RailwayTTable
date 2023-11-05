@@ -1,18 +1,21 @@
 package com.example.railwayttable.Activity;
 
-public class ConnectionModel {
-    String nazwa, stacjePosrednie[], typ, numer, peron, stacjKon;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
+public class ConnectionModel {
+    String  nazwa, numer, stacjaKon, typ;
+    Map<String, Map<String, String>> stacje;
     public ConnectionModel() {
     }
 
-    public ConnectionModel(String nazwa, String[] stacjePosrednie, String typ, String numer, String peron, String stacjKon) {
+    public ConnectionModel(String nazwa, String numer, String stacjaKon, String typ, Map<String, Map<String, String>> stacje) {
         this.nazwa = nazwa;
-        this.stacjePosrednie = stacjePosrednie;
-        this.typ = typ;
         this.numer = numer;
-        this.peron = peron;
-        this.stacjKon = stacjKon;
+        this.stacjaKon = stacjaKon;
+        this.typ = typ;
+        this.stacje = stacje;
     }
 
     public String getNazwa() {
@@ -23,12 +26,20 @@ public class ConnectionModel {
         this.nazwa = nazwa;
     }
 
-    public String[] getStacjePosrednie() {
-        return stacjePosrednie;
+    public String getNumer() {
+        return numer;
     }
 
-    public void setStacjePosrednie(String[] stacjePosrednie) {
-        this.stacjePosrednie = stacjePosrednie;
+    public void setNumer(String numer) {
+        this.numer = numer;
+    }
+
+    public String getStacjaKon() {
+        return stacjaKon;
+    }
+
+    public void setStacjaKon(String stacjaKon) {
+        this.stacjaKon = stacjaKon;
     }
 
     public String getTyp() {
@@ -39,27 +50,21 @@ public class ConnectionModel {
         this.typ = typ;
     }
 
-    public String getNumer() {
-        return numer;
+    public List<StationModel> getStations() {
+        List<StationModel> stations = new ArrayList<>();
+        for (Map.Entry<String, Map<String, String>> entry : stacje.entrySet()) {
+            String nazwaStacji = entry.getKey();
+            Map<String, String> details = entry.getValue();
+            String odjazd = details.get("odjazd");
+            String przyjazd = details.get("przyjazd");
+
+            StationModel station = new StationModel(nazwaStacji, odjazd, przyjazd);
+            stations.add(station);
+        }
+        return stations;
     }
 
-    public void setNumer(String numer) {
-        this.numer = numer;
-    }
-
-    public String getPeron() {
-        return peron;
-    }
-
-    public void setPeron(String peron) {
-        this.peron = peron;
-    }
-
-    public String getStacjKon() {
-        return stacjKon;
-    }
-
-    public void setStacjKon(String stacjKon) {
-        this.stacjKon = stacjKon;
+    public void setStacje(Map<String, Map<String, String>> stacje) {
+        this.stacje = stacje;
     }
 }

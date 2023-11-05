@@ -36,8 +36,10 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 
 
 public class RouteActivity extends AppCompatActivity {
@@ -74,7 +76,7 @@ public class RouteActivity extends AppCompatActivity {
         DatabaseReference database = FirebaseDatabase.getInstance().getReference();
 
         autoComplete = new CustomArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, new ArrayList<>());
-        database.child("Odjazdy/Stacje posrednie").addValueEventListener(new ValueEventListener() {
+        database.child("IC/Stacje").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for (DataSnapshot suggestionSnapshot : dataSnapshot.getChildren()){
@@ -116,7 +118,7 @@ public class RouteActivity extends AppCompatActivity {
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
 
-                    getIntermediateStations(charSequence.toString(), autoComplete);
+                getAllICStations(charSequence.toString(), autoComplete);
 
             }
 
@@ -133,7 +135,8 @@ public class RouteActivity extends AppCompatActivity {
 
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                getIntermediateStations(charSequence.toString(), autoComplete);
+                getAllICStations(charSequence.toString(), autoComplete);
+
             }
 
             @Override
@@ -210,32 +213,51 @@ public class RouteActivity extends AppCompatActivity {
         adapter.add("Nie znaleziono stacji");
 
     }
-    private void getIntermediateStations(String query, CustomArrayAdapter adapter) {
-        DatabaseReference stacjePosrednieRef = FirebaseDatabase.getInstance().getReference("/Odjazdy/Stacje posrednie");
+    private void getAllICStations(String query, CustomArrayAdapter adapter) {
+        DatabaseReference icRef = FirebaseDatabase.getInstance().getReference("/IC");
 
-        stacjePosrednieRef.addListenerForSingleValueEvent(new ValueEventListener() {
+        icRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                List<String> stationNames = new ArrayList<>();
-                boolean found = false;
-
+                List<String> trainKeys = new ArrayList<>();
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    String nazwaStacji = snapshot.getKey();
-                    if (nazwaStacji.toLowerCase().contains(query.toLowerCase())) {
-                        stationNames.add(nazwaStacji);
-                        found = true;
-                    }
+                    String trainKey = snapshot.getKey();
+                    trainKeys.add(trainKey);
                 }
 
-                adapter.clear();
-                adapter.addAll(stationNames);
+                Set<String> stationNamesSet = new HashSet<>();
 
-                if (!found) {
-                    adapter.add("Nie znaleziono stacji");
+                for (String trainKey : trainKeys) {
+                    DatabaseReference stacjeRef = FirebaseDatabase.getInstance().getReference("/IC/" + trainKey + "/Stacje");
 
+                    stacjeRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            boolean found = false;
+                            for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                                String nazwaStacji = snapshot.getKey();
+                                if (nazwaStacji.toLowerCase().contains(query.toLowerCase())) {
+                                    stationNamesSet.add(nazwaStacji);
+                                    found = true;
+                                }
+                            }
+
+                            List<String> stationNames = new ArrayList<>(stationNamesSet);
+
+                            adapter.clear();
+                            adapter.addAll(stationNames);
+
+                            if (!found) {
+                                adapter.add("Nie znaleziono stacji");
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+                            databaseError.toException().printStackTrace();
+                        }
+                    });
                 }
-
-
             }
 
             @Override
@@ -244,6 +266,7 @@ public class RouteActivity extends AppCompatActivity {
             }
         });
     }
+
     private void setThemeOfApp() {
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
         String selectedTheme = sharedPreferences.getString("color_option", "BLUE");
