@@ -5,16 +5,18 @@ import java.util.List;
 import java.util.Map;
 
 public class ConnectionModel {
-    String  nazwa, numer, stacjaKon, typ;
-    Map<String, Map<String, String>> stacje;
+    String  nazwa, stacjaKon, typ;
+    long numer;
+
+    static Map<String, Map<String, String>> stacje;
     public ConnectionModel() {
     }
 
-    public ConnectionModel(String nazwa, String numer, String stacjaKon, String typ, Map<String, Map<String, String>> stacje) {
+    public ConnectionModel(String nazwa, String stacjaKon, String typ, long numer, Map<String, Map<String, String>> stacje) {
         this.nazwa = nazwa;
-        this.numer = numer;
         this.stacjaKon = stacjaKon;
         this.typ = typ;
+        this.numer = numer;
         this.stacje = stacje;
     }
 
@@ -26,11 +28,12 @@ public class ConnectionModel {
         this.nazwa = nazwa;
     }
 
-    public String getNumer() {
+    public long getNumer() {
         return numer;
     }
 
-    public void setNumer(String numer) {
+
+    public void setNumer(long numer) {
         this.numer = numer;
     }
 
@@ -50,18 +53,59 @@ public class ConnectionModel {
         this.typ = typ;
     }
 
-    public List<StationModel> getStations() {
+    public static List<StationModel> getStations() {
         List<StationModel> stations = new ArrayList<>();
-        for (Map.Entry<String, Map<String, String>> entry : stacje.entrySet()) {
-            String nazwaStacji = entry.getKey();
-            Map<String, String> details = entry.getValue();
-            String odjazd = details.get("odjazd");
-            String przyjazd = details.get("przyjazd");
+        if (stacje != null) {
+            for (Map.Entry<String, Map<String, String>> entry : stacje.entrySet()) {
+                String nazwaStacji = entry.getKey();
+                Map<String, String> details = entry.getValue();
+                String odjazd = details.get("odjazd");
+                String przyjazd = details.get("przyjazd");
 
-            StationModel station = new StationModel(nazwaStacji, odjazd, przyjazd);
-            stations.add(station);
+                StationModel station = new StationModel(nazwaStacji, odjazd, przyjazd);
+                stations.add(station);
+            }
         }
         return stations;
+    }
+    public static List<StationModel> findConnectionsBetweenStations(String startStation, String endStation, Map<String, Map<String, String>> stacje) {
+        List<StationModel> connections = new ArrayList<>();
+        if (stacje != null) {
+        for (Map.Entry<String, Map<String, String>> entry : ConnectionModel.stacje.entrySet()) {
+            String nazwaStacji = entry.getKey();
+
+            if (nazwaStacji.equals(startStation)) {
+
+                Map<String, String> stationDetails = entry.getValue();
+                String odjazd = stationDetails.get("odjazd");
+                String przyjazd = stationDetails.get("przyjazd");
+                StationModel station = new StationModel(nazwaStacji, odjazd, przyjazd);
+                connections.add(station);
+
+                for (Map.Entry<String, String> detailEntry : stationDetails.entrySet()) {
+                    if (detailEntry.getKey().equals("odjazd") || detailEntry.getKey().equals("przyjazd")) {
+
+                        continue;
+                    }
+
+                    String innerStationName = detailEntry.getKey();
+                    odjazd = detailEntry.getValue();
+                    przyjazd = stationDetails.get(innerStationName + "_przyjazd");
+                    StationModel innerStation = new StationModel(innerStationName, odjazd, przyjazd);
+                    connections.add(innerStation);
+
+                    if (innerStationName.equals(endStation)) {
+
+                        break;
+                    }
+                }
+            }
+        }}
+        return connections;
+    }
+
+    public static Map<String, Map<String, String>> getStacje() {
+        return stacje;
     }
 
     public void setStacje(Map<String, Map<String, String>> stacje) {

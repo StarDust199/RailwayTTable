@@ -24,7 +24,11 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import static com.example.railwayttable.Activity.ConnectionModel.stacje;
 
 public class TravelActivity extends AppCompatActivity{
     SharedPreferences sharedPreferences, sharedPreferencesNight;
@@ -50,7 +54,7 @@ public class TravelActivity extends AppCompatActivity{
             String endStation = intent.getStringExtra("END_STATION");
 
             recyclerView = (RecyclerView) findViewById(R.id.connectionRecyclerView);
-            databaseReference = FirebaseDatabase.getInstance().getReference("IC/Stacje");
+            databaseReference = FirebaseDatabase.getInstance().getReference("IC/");
             recyclerView.setHasFixedSize(true);
             recyclerView.setLayoutManager(new LinearLayoutManager(this));
             list = new ArrayList<>();
@@ -59,11 +63,29 @@ public class TravelActivity extends AppCompatActivity{
             databaseReference.addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
-                    Log.d("TravelActivity", "onDataChange called");
-                    Log.d("TravelActivity", "Liczba dzieci: " + snapshot.getChildrenCount());
                     for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
-                        ConnectionModel connectionModel=dataSnapshot.getValue(ConnectionModel.class);
-                        list.add(connectionModel);
+                        ConnectionModel connectionModel = dataSnapshot.getValue(ConnectionModel.class);
+
+                        List<StationModel> connections = ConnectionModel.findConnectionsBetweenStations(startStation, endStation, stacje);
+                        Log.d("TravelActivity", "Liczba znalezionych połączeń: " + connections.size());
+                        if (!connections.isEmpty()) {
+                            for (StationModel station : connections) {
+                                ConnectionModel tempConnection = new ConnectionModel();
+                                tempConnection.setNazwa(connectionModel.getNazwa());
+                                tempConnection.setNumer(connectionModel.getNumer());
+                                tempConnection.setStacjaKon(connectionModel.getStacjaKon());
+                                tempConnection.setTyp(connectionModel.getTyp());
+
+                                Map<String, Map<String, String>> tempStacje = new HashMap<>();
+                                Map<String, String> tempDetails = new HashMap<>();
+                                tempDetails.put("odjazd", station.getOdjazd());
+                                tempDetails.put("przyjazd", station.getPrzyjazd());
+                                tempStacje.put(station.getNazwaStacji(), tempDetails);
+
+                                tempConnection.setStacje(tempStacje);
+                                list.add(tempConnection);
+                            }
+                        }
                     }
                     connectionAdapter.notifyDataSetChanged();
                 }
@@ -74,6 +96,7 @@ public class TravelActivity extends AppCompatActivity{
                 }
             });
         }
+
     private void backButton() {
         OnBackPressedDispatcher dispatcher = getOnBackPressedDispatcher();
 

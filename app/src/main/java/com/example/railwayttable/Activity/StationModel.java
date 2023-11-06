@@ -1,9 +1,20 @@
 package com.example.railwayttable.Activity;
 
+import java.util.List;
+
 public class StationModel {
     private String nazwaStacji;
     private String odjazd;
     private String przyjazd;
+    List<StationModel> stations;
+
+    public List<StationModel> getStations() {
+        return stations;
+    }
+
+    public void setStations(List<StationModel> stations) {
+        this.stations = stations;
+    }
 
     public StationModel() {
     }

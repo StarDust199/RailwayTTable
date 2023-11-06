@@ -35,7 +35,7 @@ public class ConnectionAdapter extends RecyclerView.Adapter<ConnectionAdapter.My
         ConnectionModel connectionModel=list.get(position);
         holder.name.setText(connectionModel.getNazwa());
         holder.type.setText(connectionModel.getTyp());
-        holder.numer.setText(connectionModel.getNumer());
+        holder.numer.setText(String.valueOf(connectionModel.getNumer()));
     }
 
     @Override
