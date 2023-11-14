@@ -46,4 +46,8 @@
     <string name="nazwa_pociagu">Nazwa pociagu:</string>
     <string name="peron">peron:</string>
     <string name="stacje_posrednie">stacje posrednie:</string>
+    <string name="numer">numer</string>
+    <string name="nazwa">nazwa</string>
+    <string name="numer2">numer:</string>
+    <string name="nazwa2">nazwa:</string>
 </resources>

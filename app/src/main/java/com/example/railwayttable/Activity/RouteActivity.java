@@ -104,10 +104,12 @@ public class RouteActivity extends AppCompatActivity {
         button.setOnClickListener(v -> {
             String startStation = stationA.getText().toString();
             String endStation = stationB.getText().toString();
+            String godzina=timePicker.getText().toString();
 
             Intent intent = new Intent(this, TravelActivity.class);
             intent.putExtra("START_STATION", startStation);
             intent.putExtra("END_STATION", endStation);
+            intent.putExtra("GODZINA", godzina);
             startActivity(intent);
         });
 
@@ -236,6 +238,7 @@ public class RouteActivity extends AppCompatActivity {
                             boolean found = false;
                             for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                                 String nazwaStacji = snapshot.getKey();
+                                assert nazwaStacji != null;
                                 if (nazwaStacji.toLowerCase().contains(query.toLowerCase())) {
                                     stationNamesSet.add(nazwaStacji);
                                     found = true;

@@ -3,7 +3,6 @@ package com.example.railwayttable.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.MenuItem;
 
 import androidx.activity.OnBackPressedCallback;
@@ -23,16 +22,15 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-
-import static com.example.railwayttable.Activity.ConnectionModel.stacje;
 
 public class TravelActivity extends AppCompatActivity{
     SharedPreferences sharedPreferences, sharedPreferencesNight;
-    private RecyclerView recyclerView;
 
     DatabaseReference databaseReference;
     ConnectionAdapter connectionAdapter;
@@ -52,9 +50,10 @@ public class TravelActivity extends AppCompatActivity{
             Intent intent = getIntent();
             String startStation = intent.getStringExtra("START_STATION");
             String endStation = intent.getStringExtra("END_STATION");
+            String godzina = intent.getStringExtra("GODZINA");
 
-            recyclerView = (RecyclerView) findViewById(R.id.connectionRecyclerView);
-            databaseReference = FirebaseDatabase.getInstance().getReference("IC/");
+            RecyclerView recyclerView = findViewById(R.id.connectionRecyclerView);
+            databaseReference = FirebaseDatabase.getInstance().getReference("/IC");
             recyclerView.setHasFixedSize(true);
             recyclerView.setLayoutManager(new LinearLayoutManager(this));
             list = new ArrayList<>();
@@ -63,31 +62,65 @@ public class TravelActivity extends AppCompatActivity{
             databaseReference.addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
-                    for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
-                        ConnectionModel connectionModel = dataSnapshot.getValue(ConnectionModel.class);
 
-                        List<StationModel> connections = ConnectionModel.findConnectionsBetweenStations(startStation, endStation, stacje);
-                        Log.d("TravelActivity", "Liczba znalezionych połączeń: " + connections.size());
-                        if (!connections.isEmpty()) {
-                            for (StationModel station : connections) {
-                                ConnectionModel tempConnection = new ConnectionModel();
-                                tempConnection.setNazwa(connectionModel.getNazwa());
-                                tempConnection.setNumer(connectionModel.getNumer());
-                                tempConnection.setStacjaKon(connectionModel.getStacjaKon());
-                                tempConnection.setTyp(connectionModel.getTyp());
 
-                                Map<String, Map<String, String>> tempStacje = new HashMap<>();
-                                Map<String, String> tempDetails = new HashMap<>();
-                                tempDetails.put("odjazd", station.getOdjazd());
-                                tempDetails.put("przyjazd", station.getPrzyjazd());
-                                tempStacje.put(station.getNazwaStacji(), tempDetails);
 
-                                tempConnection.setStacje(tempStacje);
-                                list.add(tempConnection);
+                    for (DataSnapshot trainSnapshot : snapshot.getChildren()) {
+                        String trainKey = trainSnapshot.getKey();
+                        DatabaseReference stacjeRef = FirebaseDatabase.getInstance().getReference("/IC/" + trainKey + "/Stacje");
+
+                        stacjeRef.addValueEventListener(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot stacjeSnapshot) {
+                                String connectionName = trainSnapshot.child("nazwa").getValue(String.class);
+                                boolean startStationFound = false;
+                                boolean endStationFound = false;
+
+                                for (DataSnapshot stationSnapshot : stacjeSnapshot.getChildren()) {
+                                    String stationName = stationSnapshot.getKey();
+                                    String departureTime = stationSnapshot.child("odjazd").getValue(String.class);
+                                    String arrivalTime = stationSnapshot.child("przyjazd").getValue(String.class);
+
+
+                                    if (stationName.equals(startStation)) {
+                                        startStationFound = true;
+                                    }
+
+                                    if (stationName.equals(endStation)) {
+                                        endStationFound = true;
+                                    }
+
+
+                                    boolean departureTimeIsAfterRequestedTime = isTimeAfter(departureTime, godzina);
+
+
+                                    if ((startStationFound && endStationFound || (!startStationFound && !endStationFound)) && departureTimeIsAfterRequestedTime) {
+                                        ConnectionModel tempConnection = new ConnectionModel();
+                                        tempConnection.setNazwa(connectionName);
+                                        tempConnection.setNumer(trainSnapshot.child("numer").getValue(Long.class));
+                                        tempConnection.setStacjaKon(trainSnapshot.child("stacja koncowa").getValue(String.class));
+                                        tempConnection.setTyp(trainSnapshot.child("typ").getValue(String.class));
+
+                                        Map<String, Map<String, String>> tempStacje = new HashMap<>();
+                                        Map<String, String> tempDetails = new HashMap<>();
+                                        tempDetails.put("odjazd", departureTime);
+                                        tempDetails.put("przyjazd", arrivalTime);
+                                        tempStacje.put(stationName, tempDetails);
+
+                                        tempConnection.setStacje(tempStacje);
+                                        list.add(tempConnection);
+                                    }
+                                }
+
+                                connectionAdapter.notifyDataSetChanged();
                             }
-                        }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError error) {
+
+                            }
+                        });
                     }
-                    connectionAdapter.notifyDataSetChanged();
                 }
 
                 @Override
@@ -96,8 +129,23 @@ public class TravelActivity extends AppCompatActivity{
                 }
             });
         }
+            private boolean isTimeAfter(String time1, String time2) {
+                SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
+                try {
+                    Date date1 = sdf.parse(time1);
+                    Date date2 = sdf.parse(time2);
 
-    private void backButton() {
+                    return date1.after(date2);
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+
+                return false;
+            }
+
+
+
+            private void backButton() {
         OnBackPressedDispatcher dispatcher = getOnBackPressedDispatcher();
 
         OnBackPressedCallback callback = new OnBackPressedCallback(true) {
