@@ -31,7 +31,7 @@ import java.util.Map;
 
 public class TravelActivity extends AppCompatActivity{
     SharedPreferences sharedPreferences, sharedPreferencesNight;
-
+    int positionInserted;
     DatabaseReference databaseReference;
     ConnectionAdapter connectionAdapter;
     ArrayList<ConnectionModel> list;
@@ -42,6 +42,7 @@ public class TravelActivity extends AppCompatActivity{
             setContentView(R.layout.activity_travel);
             backButton();
             Toolbar toolbar = findViewById(R.id.toolbarTrav);
+
             setSupportActionBar(toolbar);
             ActionBar actionBar = getSupportActionBar();
             if (actionBar != null) {
@@ -53,73 +54,76 @@ public class TravelActivity extends AppCompatActivity{
             String godzina = intent.getStringExtra("GODZINA");
 
             RecyclerView recyclerView = findViewById(R.id.connectionRecyclerView);
-            databaseReference = FirebaseDatabase.getInstance().getReference("/IC");
             recyclerView.setHasFixedSize(true);
             recyclerView.setLayoutManager(new LinearLayoutManager(this));
             list = new ArrayList<>();
             connectionAdapter = new ConnectionAdapter(this, list);
             recyclerView.setAdapter(connectionAdapter);
-            databaseReference.addValueEventListener(new ValueEventListener() {
+
+            databaseReference = FirebaseDatabase.getInstance().getReference("trains");
+            databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    list.clear();
 
+                    for (DataSnapshot trainTypeSnapshot : snapshot.getChildren()) {
+                        String trainTypeKey = trainTypeSnapshot.getKey();
 
+                        for (DataSnapshot trainSnapshot : trainTypeSnapshot.getChildren()) {
+                            String trainKey = trainSnapshot.getKey();
+                            DatabaseReference stacjeRef = trainSnapshot.getRef().child("Stacje");
 
-                    for (DataSnapshot trainSnapshot : snapshot.getChildren()) {
-                        String trainKey = trainSnapshot.getKey();
-                        DatabaseReference stacjeRef = FirebaseDatabase.getInstance().getReference("/IC/" + trainKey + "/Stacje");
+                            stacjeRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot stacjeSnapshot) {
+                                    String connectionName = trainSnapshot.child("nazwa").getValue(String.class);
+                                    boolean startStationFound = false;
+                                    boolean endStationFound = false;
 
-                        stacjeRef.addValueEventListener(new ValueEventListener() {
-                            @Override
-                            public void onDataChange(@NonNull DataSnapshot stacjeSnapshot) {
-                                String connectionName = trainSnapshot.child("nazwa").getValue(String.class);
-                                boolean startStationFound = false;
-                                boolean endStationFound = false;
+                                    for (DataSnapshot stationSnapshot : stacjeSnapshot.getChildren()) {
+                                        String stationName = stationSnapshot.getKey();
+                                        String departureTime = stationSnapshot.child("odjazd").getValue(String.class);
+                                        String arrivalTime = stationSnapshot.child("przyjazd").getValue(String.class);
 
-                                for (DataSnapshot stationSnapshot : stacjeSnapshot.getChildren()) {
-                                    String stationName = stationSnapshot.getKey();
-                                    String departureTime = stationSnapshot.child("odjazd").getValue(String.class);
-                                    String arrivalTime = stationSnapshot.child("przyjazd").getValue(String.class);
+                                        assert stationName != null;
+                                        if (stationName.equals(startStation)) {
+                                            startStationFound = true;
+                                        }
 
+                                        if (stationName.equals(endStation)) {
+                                            endStationFound = true;
+                                        }
 
-                                    if (stationName.equals(startStation)) {
-                                        startStationFound = true;
+                                        boolean departureTimeIsAfterRequestedTime = isTimeAfter(departureTime, godzina);
+
+                                        if (startStationFound && endStationFound && departureTimeIsAfterRequestedTime) {
+                                            ConnectionModel tempConnection = new ConnectionModel();
+                                            tempConnection.setNazwa(connectionName);
+                                            tempConnection.setNumer(trainSnapshot.child("numer").getValue(Long.class));
+                                            tempConnection.setStacjaKon(trainSnapshot.child("stacja koncowa").getValue(String.class));
+                                            tempConnection.setTyp(trainTypeKey);
+
+                                            Map<String, Map<String, String>> tempStacje = new HashMap<>();
+                                            Map<String, String> tempDetails = new HashMap<>();
+                                            tempDetails.put("odjazd", departureTime);
+                                            tempDetails.put("przyjazd", arrivalTime);
+                                            tempStacje.put(stationName, tempDetails);
+
+                                            tempConnection.setStacje(tempStacje);
+                                            positionInserted = list.size();
+                                            list.add(tempConnection);
+                                        }
                                     }
 
-                                    if (stationName.equals(endStation)) {
-                                        endStationFound = true;
-                                    }
-
-
-                                    boolean departureTimeIsAfterRequestedTime = isTimeAfter(departureTime, godzina);
-
-
-                                    if ((startStationFound && endStationFound || (!startStationFound && !endStationFound)) && departureTimeIsAfterRequestedTime) {
-                                        ConnectionModel tempConnection = new ConnectionModel();
-                                        tempConnection.setNazwa(connectionName);
-                                        tempConnection.setNumer(trainSnapshot.child("numer").getValue(Long.class));
-                                        tempConnection.setStacjaKon(trainSnapshot.child("stacja koncowa").getValue(String.class));
-                                        tempConnection.setTyp(trainSnapshot.child("typ").getValue(String.class));
-
-                                        Map<String, Map<String, String>> tempStacje = new HashMap<>();
-                                        Map<String, String> tempDetails = new HashMap<>();
-                                        tempDetails.put("odjazd", departureTime);
-                                        tempDetails.put("przyjazd", arrivalTime);
-                                        tempStacje.put(stationName, tempDetails);
-
-                                        tempConnection.setStacje(tempStacje);
-                                        list.add(tempConnection);
-                                    }
+                                    connectionAdapter.notifyItemInserted(positionInserted);
                                 }
 
-                                connectionAdapter.notifyDataSetChanged();
-                            }
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError error) {
 
-                            @Override
-                            public void onCancelled(@NonNull DatabaseError error) {
-
-                            }
-                        });
+                                }
+                            });
+                        }
                     }
                 }
 
@@ -129,6 +133,8 @@ public class TravelActivity extends AppCompatActivity{
                 }
             });
         }
+
+
             private boolean isTimeAfter(String time1, String time2) {
                 SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
                 try {
@@ -165,7 +171,7 @@ public class TravelActivity extends AppCompatActivity{
     }
 
     public void backToMain() {
-        Intent intent = new Intent(TravelActivity.this, MainActivity.class);
+        Intent intent = new Intent(TravelActivity.this, RouteActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
 

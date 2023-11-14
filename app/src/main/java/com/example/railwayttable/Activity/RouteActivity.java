@@ -76,18 +76,29 @@ public class RouteActivity extends AppCompatActivity {
         DatabaseReference database = FirebaseDatabase.getInstance().getReference();
 
         autoComplete = new CustomArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, new ArrayList<>());
-        database.child("IC/Stacje").addValueEventListener(new ValueEventListener() {
+        database.child("trains").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                for (DataSnapshot suggestionSnapshot : dataSnapshot.getChildren()){
-                    String suggestion = suggestionSnapshot.getKey();
-                    autoComplete.add(suggestion);
+                boolean suggestionsExist = false;
+
+                for (DataSnapshot trainTypeSnapshot : dataSnapshot.getChildren()) {
+                    for (DataSnapshot suggestionSnapshot : trainTypeSnapshot.child("Stacje").getChildren()) {
+                        String suggestion = suggestionSnapshot.getKey();
+                        autoComplete.add(suggestion);
+                        suggestionsExist = true;
+                    }
                 }
+
+                if (!suggestionsExist) {
+
+                    autoComplete.add("Nie znaleziono stacji");
+                }
+
+                autoComplete.notifyDataSetChanged();
             }
 
-
             @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
+            public void onCancelled(@NonNull DatabaseError error) {
 
             }
         });
@@ -120,7 +131,7 @@ public class RouteActivity extends AppCompatActivity {
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
 
-                getAllICStations(charSequence.toString(), autoComplete);
+                getAllStations(charSequence.toString(), autoComplete);
 
             }
 
@@ -137,7 +148,7 @@ public class RouteActivity extends AppCompatActivity {
 
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                getAllICStations(charSequence.toString(), autoComplete);
+                getAllStations(charSequence.toString(), autoComplete);
 
             }
 
@@ -215,51 +226,48 @@ public class RouteActivity extends AppCompatActivity {
         adapter.add("Nie znaleziono stacji");
 
     }
-    private void getAllICStations(String query, CustomArrayAdapter adapter) {
-        DatabaseReference icRef = FirebaseDatabase.getInstance().getReference("/IC");
+    private void getAllStations(String query, CustomArrayAdapter adapter) {
+        DatabaseReference trainsRef = FirebaseDatabase.getInstance().getReference("trains");
 
-        icRef.addListenerForSingleValueEvent(new ValueEventListener() {
+        trainsRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                List<String> trainKeys = new ArrayList<>();
-                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    String trainKey = snapshot.getKey();
-                    trainKeys.add(trainKey);
-                }
-
                 Set<String> stationNamesSet = new HashSet<>();
 
-                for (String trainKey : trainKeys) {
-                    DatabaseReference stacjeRef = FirebaseDatabase.getInstance().getReference("/IC/" + trainKey + "/Stacje");
+                for (DataSnapshot trainTypeSnapshot : dataSnapshot.getChildren()) {
+                    for (DataSnapshot trainSnapshot : trainTypeSnapshot.getChildren()) {
+                        String trainKey = trainSnapshot.getKey();
+                        DatabaseReference stationsRef = FirebaseDatabase.getInstance().getReference("/trains/" + trainTypeSnapshot.getKey() + "/" + trainKey + "/Stacje");
 
-                    stacjeRef.addListenerForSingleValueEvent(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                            boolean found = false;
-                            for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                                String nazwaStacji = snapshot.getKey();
-                                assert nazwaStacji != null;
-                                if (nazwaStacji.toLowerCase().contains(query.toLowerCase())) {
-                                    stationNamesSet.add(nazwaStacji);
-                                    found = true;
+                        stationsRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                boolean found = false;
+                                for (DataSnapshot stationSnapshot : snapshot.getChildren()) {
+                                    String nazwaStacji = stationSnapshot.getKey();
+                                    assert nazwaStacji != null;
+                                    if (nazwaStacji.toLowerCase().contains(query.toLowerCase())) {
+                                        stationNamesSet.add(nazwaStacji);
+                                        found = true;
+                                    }
+                                }
+
+                                List<String> stationNames = new ArrayList<>(stationNamesSet);
+
+                                adapter.clear();
+                                adapter.addAll(stationNames);
+
+                                if (!found) {
+                                    adapter.add("Nie znaleziono stacji");
                                 }
                             }
 
-                            List<String> stationNames = new ArrayList<>(stationNamesSet);
-
-                            adapter.clear();
-                            adapter.addAll(stationNames);
-
-                            if (!found) {
-                                adapter.add("Nie znaleziono stacji");
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError databaseError) {
+                                databaseError.toException().printStackTrace();
                             }
-                        }
-
-                        @Override
-                        public void onCancelled(@NonNull DatabaseError databaseError) {
-                            databaseError.toException().printStackTrace();
-                        }
-                    });
+                        });
+                    }
                 }
             }
 
@@ -269,6 +277,7 @@ public class RouteActivity extends AppCompatActivity {
             }
         });
     }
+
 
     private void setThemeOfApp() {
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
