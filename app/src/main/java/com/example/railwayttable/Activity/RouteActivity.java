@@ -10,11 +10,13 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import androidx.activity.OnBackPressedCallback;
 import androidx.activity.OnBackPressedDispatcher;
@@ -113,15 +115,21 @@ public class RouteActivity extends AppCompatActivity {
 
 
         button.setOnClickListener(v -> {
-            String startStation = stationA.getText().toString();
-            String endStation = stationB.getText().toString();
-            String godzina=timePicker.getText().toString();
+            String startStation = stationA.getText().toString().trim();
+            String endStation = stationB.getText().toString().trim();
+            String godzina=timePicker.getText().toString().trim();
+            if (startStation.isEmpty() || endStation.isEmpty() || godzina.isEmpty()) {
 
-            Intent intent = new Intent(this, TravelActivity.class);
-            intent.putExtra("START_STATION", startStation);
-            intent.putExtra("END_STATION", endStation);
-            intent.putExtra("GODZINA", godzina);
-            startActivity(intent);
+                Toast.makeText(this, "Pole nie może być puste!", Toast.LENGTH_SHORT).show();
+            } else if (startStation.equals(endStation)) {
+                Toast.makeText(this, "Stacja początkowa i końcowa nie mogą być takie same", Toast.LENGTH_SHORT).show();
+            } else {
+                Intent intent = new Intent(this, TravelActivity.class);
+                intent.putExtra("START_STATION", startStation);
+                intent.putExtra("END_STATION", endStation);
+                intent.putExtra("GODZINA", godzina);
+                startActivity(intent);
+            }
         });
 
         stationA.addTextChangedListener(new TextWatcher() {
@@ -278,6 +286,18 @@ public class RouteActivity extends AppCompatActivity {
         });
     }
 
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            Intent intent = new Intent(RouteActivity.this, MainActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
+            finish();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
 
     private void setThemeOfApp() {
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getBaseContext());

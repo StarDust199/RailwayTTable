@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.MenuItem;
+import android.widget.TextView;
 
 import androidx.activity.OnBackPressedCallback;
 import androidx.activity.OnBackPressedDispatcher;
@@ -52,9 +53,13 @@ public class TravelActivity extends AppCompatActivity{
             String startStation = intent.getStringExtra("START_STATION");
             String endStation = intent.getStringExtra("END_STATION");
             String godzina = intent.getStringExtra("GODZINA");
+            TextView textViewStartStation = findViewById(R.id.textStationA);
+            TextView textViewEndStation = findViewById(R.id.textStationB);
+            textViewStartStation.setText(startStation);
+            textViewEndStation.setText(endStation);
 
             RecyclerView recyclerView = findViewById(R.id.connectionRecyclerView);
-            recyclerView.setHasFixedSize(true);
+
             recyclerView.setLayoutManager(new LinearLayoutManager(this));
             list = new ArrayList<>();
             connectionAdapter = new ConnectionAdapter(this, list);
@@ -70,13 +75,13 @@ public class TravelActivity extends AppCompatActivity{
                         String trainTypeKey = trainTypeSnapshot.getKey();
 
                         for (DataSnapshot trainSnapshot : trainTypeSnapshot.getChildren()) {
-                            String trainKey = trainSnapshot.getKey();
-                            DatabaseReference stacjeRef = trainSnapshot.getRef().child("Stacje");
+                            String connectionName = trainSnapshot.child("nazwa").getValue(String.class);
+                            Long trainNumber = trainSnapshot.child("numer").getValue(Long.class);
 
+                            DatabaseReference stacjeRef = trainSnapshot.getRef().child("Stacje");
                             stacjeRef.addListenerForSingleValueEvent(new ValueEventListener() {
                                 @Override
                                 public void onDataChange(@NonNull DataSnapshot stacjeSnapshot) {
-                                    String connectionName = trainSnapshot.child("nazwa").getValue(String.class);
                                     boolean startStationFound = false;
                                     boolean endStationFound = false;
 
@@ -85,7 +90,6 @@ public class TravelActivity extends AppCompatActivity{
                                         String departureTime = stationSnapshot.child("odjazd").getValue(String.class);
                                         String arrivalTime = stationSnapshot.child("przyjazd").getValue(String.class);
 
-                                        assert stationName != null;
                                         if (stationName.equals(startStation)) {
                                             startStationFound = true;
                                         }
@@ -99,7 +103,7 @@ public class TravelActivity extends AppCompatActivity{
                                         if (startStationFound && endStationFound && departureTimeIsAfterRequestedTime) {
                                             ConnectionModel tempConnection = new ConnectionModel();
                                             tempConnection.setNazwa(connectionName);
-                                            tempConnection.setNumer(trainSnapshot.child("numer").getValue(Long.class));
+                                            tempConnection.setNumer(trainNumber);
                                             tempConnection.setStacjaKon(trainSnapshot.child("stacja koncowa").getValue(String.class));
                                             tempConnection.setTyp(trainTypeKey);
 
@@ -110,12 +114,12 @@ public class TravelActivity extends AppCompatActivity{
                                             tempStacje.put(stationName, tempDetails);
 
                                             tempConnection.setStacje(tempStacje);
-                                            positionInserted = list.size();
                                             list.add(tempConnection);
+                                            break;
                                         }
                                     }
 
-                                    connectionAdapter.notifyItemInserted(positionInserted);
+                                    connectionAdapter.notifyDataSetChanged();
                                 }
 
                                 @Override
@@ -132,15 +136,15 @@ public class TravelActivity extends AppCompatActivity{
 
                 }
             });
+
         }
-
-
             private boolean isTimeAfter(String time1, String time2) {
                 SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
                 try {
                     Date date1 = sdf.parse(time1);
                     Date date2 = sdf.parse(time2);
 
+                    assert date1 != null;
                     return date1.after(date2);
                 } catch (ParseException e) {
                     e.printStackTrace();
@@ -180,7 +184,7 @@ public class TravelActivity extends AppCompatActivity{
         @Override
         public boolean onOptionsItemSelected(MenuItem item) {
             if (item.getItemId() == android.R.id.home) {
-                Intent intent = new Intent(TravelActivity.this, MainActivity.class);
+                Intent intent = new Intent(TravelActivity.this, RouteActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(intent);
                 finish();
