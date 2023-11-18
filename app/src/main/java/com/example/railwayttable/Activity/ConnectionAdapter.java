@@ -60,9 +60,9 @@ public class ConnectionAdapter extends RecyclerView.Adapter<ConnectionAdapter.My
 
     private void setTrainImage(ImageView imageView, String trainType) {
         if ("IC".equals(trainType)) {
-            imageView.setImageResource(R.drawable.timetable2);
+            imageView.setImageResource(R.drawable.icons8_line_50_green);
         } else if ("Regio".equals(trainType)) {
-            imageView.setImageResource(R.drawable.train_route);
+            imageView.setImageResource(R.drawable.icons8_line_50_orange);
         } else {
 
             imageView.setImageResource(R.drawable.mapa);
