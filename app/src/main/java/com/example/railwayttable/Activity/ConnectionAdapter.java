@@ -34,10 +34,10 @@ public class ConnectionAdapter extends RecyclerView.Adapter<ConnectionAdapter.My
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
         ConnectionModel connectionModel = list.get(position);
 
-        holder.name.setText(connectionModel.getNazwa());
+        holder.godzOjd.setText(connectionModel.getGodzinaOdjazdu());
         holder.type.setText(connectionModel.getTyp());
-        holder.numer.setText(String.valueOf(connectionModel.getNumer()));
-        setTrainImage(holder.imageView, connectionModel.getTyp());
+        holder.godzPrzy.setText(connectionModel.getGodzinaPrzyjazdu());
+
     }
 
     @Override
@@ -46,26 +46,25 @@ public class ConnectionAdapter extends RecyclerView.Adapter<ConnectionAdapter.My
     }
 
     public static class MyViewHolder extends RecyclerView.ViewHolder {
-        TextView name, type, numer;
-        ImageView imageView;
+        TextView godzOjd, type, godzPrzy;
+
 
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
-            name = itemView.findViewById(R.id.name);
-            type = itemView.findViewById(R.id.type);
-            numer = itemView.findViewById(R.id.numer);
-            imageView = itemView.findViewById(R.id.TrainIcon);
+            godzOjd = itemView.findViewById(R.id.textGodzinaOdj);
+            type = itemView.findViewById(R.id.typ);
+            godzPrzy = itemView.findViewById(R.id.textGodzinaPrzy);
+
         }
     }
 
-    private void setTrainImage(ImageView imageView, String trainType) {
+    private void setTrainType(TextView typeTextView, String trainType) {
         if ("IC".equals(trainType)) {
-            imageView.setImageResource(R.drawable.icons8_line_50_green);
+            typeTextView.setBackgroundResource(R.drawable.icons8_rectangle_ic);
         } else if ("Regio".equals(trainType)) {
-            imageView.setImageResource(R.drawable.icons8_line_50_orange);
+            typeTextView.setBackgroundResource(R.drawable.icons8_rectangle_regio);
         } else {
-
-            imageView.setImageResource(R.drawable.mapa);
+            typeTextView.setBackgroundResource(R.drawable.icons8_rectangle_eic);
         }
     }
 }

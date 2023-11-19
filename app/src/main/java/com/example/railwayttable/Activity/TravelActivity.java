@@ -64,7 +64,6 @@ public class TravelActivity extends AppCompatActivity{
             list = new ArrayList<>();
             connectionAdapter = new ConnectionAdapter(this, list);
             recyclerView.setAdapter(connectionAdapter);
-
             databaseReference = FirebaseDatabase.getInstance().getReference("trains");
             databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
@@ -84,24 +83,27 @@ public class TravelActivity extends AppCompatActivity{
                                 public void onDataChange(@NonNull DataSnapshot stacjeSnapshot) {
                                     boolean startStationFound = false;
                                     boolean endStationFound = false;
+                                    ConnectionModel tempConnection = new ConnectionModel();
 
                                     for (DataSnapshot stationSnapshot : stacjeSnapshot.getChildren()) {
                                         String stationName = stationSnapshot.getKey();
                                         String departureTime = stationSnapshot.child("odjazd").getValue(String.class);
                                         String arrivalTime = stationSnapshot.child("przyjazd").getValue(String.class);
 
+                                        assert stationName != null;
                                         if (stationName.equals(startStation)) {
                                             startStationFound = true;
+                                            tempConnection.setGodzinaOdjazdu(departureTime);
                                         }
 
                                         if (stationName.equals(endStation)) {
                                             endStationFound = true;
+                                            tempConnection.setGodzinaPrzyjazdu(arrivalTime);
                                         }
 
                                         boolean departureTimeIsAfterRequestedTime = isTimeAfter(departureTime, godzina);
 
                                         if (startStationFound && endStationFound && departureTimeIsAfterRequestedTime) {
-                                            ConnectionModel tempConnection = new ConnectionModel();
                                             tempConnection.setNazwa(connectionName);
                                             tempConnection.setNumer(trainNumber);
                                             tempConnection.setStacjaKon(trainSnapshot.child("stacja koncowa").getValue(String.class));
@@ -114,6 +116,7 @@ public class TravelActivity extends AppCompatActivity{
                                             tempStacje.put(stationName, tempDetails);
 
                                             tempConnection.setStacje(tempStacje);
+
                                             list.add(tempConnection);
                                             break;
                                         }
@@ -136,8 +139,8 @@ public class TravelActivity extends AppCompatActivity{
 
                 }
             });
-
         }
+
             private boolean isTimeAfter(String time1, String time2) {
                 SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
                 try {

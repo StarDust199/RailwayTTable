@@ -7,17 +7,56 @@ import java.util.Map;
 public class ConnectionModel {
     String  nazwa, stacjaKon, typ;
     long numer;
-
+    private String stacja;
+    private String godzinaOdjazdu;
+    private String godzinaPrzyjazdu;
+    private List<String> stacjeList;
     static Map<String, Map<String, String>> stacje;
     public ConnectionModel() {
     }
 
-    public ConnectionModel(String nazwa, String stacjaKon, String typ, long numer, Map<String, Map<String, String>> stacje) {
+    public ConnectionModel(String nazwa, String stacjaKon, String typ, long numer, Map<String, Map<String, String>> stacje, List<String> stacjeList,String stacja, String godzinaOdjazdu, String godzinaPrzyjazdu) {
         this.nazwa = nazwa;
         this.stacjaKon = stacjaKon;
         this.typ = typ;
         this.numer = numer;
         this.stacje = stacje;
+        this.stacjeList=stacjeList;
+        this.stacja = stacja;
+        this.godzinaOdjazdu = godzinaOdjazdu;
+        this.godzinaPrzyjazdu = godzinaPrzyjazdu;
+    }
+
+    public String getStacja() {
+        return stacja;
+    }
+
+    public void setStacja(String stacja) {
+        this.stacja = stacja;
+    }
+
+    public String getGodzinaOdjazdu() {
+        return godzinaOdjazdu;
+    }
+
+    public void setGodzinaOdjazdu(String godzinaOdjazdu) {
+        this.godzinaOdjazdu = godzinaOdjazdu;
+    }
+
+    public String getGodzinaPrzyjazdu() {
+        return godzinaPrzyjazdu;
+    }
+
+    public void setGodzinaPrzyjazdu(String godzinaPrzyjazdu) {
+        this.godzinaPrzyjazdu = godzinaPrzyjazdu;
+    }
+
+    public List<String> getStacjeList() {
+        return stacjeList;
+    }
+
+    public void setStacjeList(List<String> stacjeList) {
+        this.stacjeList = stacjeList;
     }
 
     public String getNazwa() {
@@ -53,55 +92,13 @@ public class ConnectionModel {
         this.typ = typ;
     }
 
-    public static List<StationModel> getStations() {
-        List<StationModel> stations = new ArrayList<>();
-        if (stacje != null) {
-            for (Map.Entry<String, Map<String, String>> entry : stacje.entrySet()) {
-                String nazwaStacji = entry.getKey();
-                Map<String, String> details = entry.getValue();
-                String odjazd = details.get("odjazd");
-                String przyjazd = details.get("przyjazd");
+    public String getGodzinaOdjazduNaStacji(String nazwaStacji) {
 
-                StationModel station = new StationModel(nazwaStacji, odjazd, przyjazd);
-                stations.add(station);
-            }
-        }
-        return stations;
+      return stacje.get(nazwaStacji).get("odjazd");
     }
-    public static List<StationModel> findConnectionsBetweenStations(String startStation, String endStation, Map<String, Map<String, String>> stacje) {
-        List<StationModel> connections = new ArrayList<>();
-        if (stacje != null) {
-        for (Map.Entry<String, Map<String, String>> entry : ConnectionModel.stacje.entrySet()) {
-            String nazwaStacji = entry.getKey();
 
-            if (nazwaStacji.equals(startStation)) {
-
-                Map<String, String> stationDetails = entry.getValue();
-                String odjazd = stationDetails.get("odjazd");
-                String przyjazd = stationDetails.get("przyjazd");
-                StationModel station = new StationModel(nazwaStacji, odjazd, przyjazd);
-                connections.add(station);
-
-                for (Map.Entry<String, String> detailEntry : stationDetails.entrySet()) {
-                    if (detailEntry.getKey().equals("odjazd") || detailEntry.getKey().equals("przyjazd")) {
-
-                        continue;
-                    }
-
-                    String innerStationName = detailEntry.getKey();
-                    odjazd = detailEntry.getValue();
-                    przyjazd = stationDetails.get(innerStationName + "_przyjazd");
-                    StationModel innerStation = new StationModel(innerStationName, odjazd, przyjazd);
-                    connections.add(innerStation);
-
-                    if (innerStationName.equals(endStation)) {
-
-                        break;
-                    }
-                }
-            }
-        }}
-        return connections;
+    public String getGodzinaPrzyjazduNaStacji(String nazwaStacji) {
+        return stacje.get(nazwaStacji).get("przyjazd");
     }
 
     public static Map<String, Map<String, String>> getStacje() {
