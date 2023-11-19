@@ -39,7 +39,7 @@
 
     <RelativeLayout
         android:id="@+id/relativeLayout"
-        android:layout_width="413dp"
+        android:layout_width="match_parent"
         android:layout_height="130dp"
         android:background="@drawable/wave_blue"
         app:layout_constraintEnd_toEndOf="parent"
@@ -50,7 +50,7 @@
     </RelativeLayout>
 
     <RelativeLayout
-        android:layout_width="414dp"
+        android:layout_width="match_parent"
         android:layout_height="102dp"
         android:background="@drawable/wave_floor"
         app:layout_constraintBottom_toBottomOf="parent"

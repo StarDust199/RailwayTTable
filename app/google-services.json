@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "837529250639",
+    "firebase_url": "https://railwayttable-default-rtdb.europe-west1.firebasedatabase.app",
+    "project_id": "railwayttable",
+    "storage_bucket": "railwayttable.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:837529250639:android:eab5da1ff48c23b7e2733a",
+        "android_client_info": {
+          "package_name": "com.example.railwayttable"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCBIoazKR_dEDMoSifydFKHl0x2SK2tm7o"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,10 +1,11 @@
 package com.example.railwayttable.Activity;
 
-
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.text.method.ScrollingMovementMethod;
 import android.view.MenuItem;
+import android.widget.TextView;
 
 import androidx.activity.OnBackPressedCallback;
 import androidx.activity.OnBackPressedDispatcher;
@@ -15,17 +16,23 @@ import androidx.preference.PreferenceManager;
 
 import com.example.railwayttable.R;
 
-public class FavoritesActivity extends AppCompatActivity {
+public class InformationActivity extends AppCompatActivity {
     SharedPreferences sharedPreferences, sharedPreferencesNight;
-
+    TextView textview;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setThemeOfApp();
-        setContentView(R.layout.activity_favorites);
+        setContentView(R.layout.activity_info);
         backButton();
-        Toolbar toolbar = findViewById(R.id.toolbarFav);
+        Toolbar toolbar = findViewById(R.id.toolbarInfo);
         setSupportActionBar(toolbar);
+        textview= findViewById(R.id.textInfo);
+        String pars="Lorem ipsum dolor sit amet, consectetur adipiscing elit. In consectetur venenatis ipsum, quis lacinia dui varius vel. Nullam pharetra odio neque, id porta dolor sodales sit amet. Nullam fermentum finibus consectetur. Phasellus at malesuada magna, nec interdum nisl. Integer sagittis iaculis erat, non ultrices lacus consequat id. Curabitur vitae leo massa. Maecenas posuere arcu orci, nec rutrum nisi pellentesque a. Nulla massa nisl, efficitur imperdiet nibh ut, scelerisque ultrices sapien.\n" +
+                "\n" +
+                "Sed elementum bibendum elit sit amet pellentesque. Cras auctor odio felis, non tempus enim aliquam in. Pellentesque sit amet augue tristique, bibendum odio a, tempor ipsum. Integer et aliquam ex. Duis nulla lectus, pretium at nibh id, hendrerit cursus justo. Ut sit amet molestie tellus. Duis laoreet vestibulum odio, vel pretium turpis eleifend quis. Praesent accumsan viverra leo hendrerit fringilla. Nullam placerat tellus sed libero faucibus, fringilla ultrices nisl vulputate. Ut metus sem, rhoncus vel ultricies vel, dictum in ipsum. Vestibulum pretium varius ligula.";
+        textview.setText(pars);
+        textview.setMovementMethod(new ScrollingMovementMethod());
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
@@ -47,12 +54,12 @@ public class FavoritesActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-     backToMain();
+        backToMain();
 
     }
 
     public void backToMain() {
-        Intent intent = new Intent(FavoritesActivity.this, MainActivity.class);
+        Intent intent = new Intent(InformationActivity.this, MainActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
 
@@ -61,7 +68,7 @@ public class FavoritesActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
-            Intent intent = new Intent(FavoritesActivity.this, MainActivity.class);
+            Intent intent = new Intent(InformationActivity.this, MainActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(intent);
             finish();

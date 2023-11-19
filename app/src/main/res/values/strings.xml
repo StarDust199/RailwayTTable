@@ -37,4 +37,17 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="godzina">Godzina</string>
+    <string name="logo_aplikacji">Logo aplikacji</string>
+    <string name="home">Home</string>
+    <string name="mapa_aglomeracji">Mapa aglomeracji</string>
+    <string name="informacje">Informacje</string>
+    <string name="polityka_prywatno_ci">Polityka prywatności</string>
+    <string name="typ">typ:</string>
+    <string name="nazwa_pociagu">Nazwa pociagu:</string>
+    <string name="peron">peron:</string>
+    <string name="stacje_posrednie">stacje posrednie:</string>
+    <string name="numer">numer</string>
+    <string name="nazwa">nazwa</string>
+    <string name="numer2">numer:</string>
+    <string name="nazwa2">nazwa:</string>
 </resources>

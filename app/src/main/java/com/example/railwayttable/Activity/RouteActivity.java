@@ -8,19 +8,18 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.MotionEvent;
-import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import androidx.activity.OnBackPressedCallback;
+import androidx.activity.OnBackPressedDispatcher;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
@@ -29,32 +28,20 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.preference.PreferenceManager;
 
 import com.example.railwayttable.R;
-import com.example.railwayttable.Response.Connection;
-import com.example.railwayttable.Response.TravelStop;
-import com.example.railwayttable.Service.ApiInterface;
-import com.example.railwayttable.Service.RetrofitClient;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
-import org.jetbrains.annotations.NotNull;
-
-import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
-
-import okhttp3.Credentials;
-import okhttp3.Interceptor;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
-
-import static com.example.railwayttable.Service.RetrofitClient.BASE_URL;
+import java.util.Set;
 
 
 public class RouteActivity extends AppCompatActivity {
@@ -63,7 +50,8 @@ public class RouteActivity extends AppCompatActivity {
 
     SharedPreferences sharedPreferences, sharedPreferencesNight;
     Button button;
-    EditText datePicker, timePicker, stationA, stationB;
+    CustomArrayAdapter autoComplete;
+    EditText datePicker, timePicker;
     int year;
     int month;
     int day;
@@ -74,134 +62,124 @@ public class RouteActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setThemeOfApp();
         setContentView(R.layout.activity_route);
+        backButton();
+        Toolbar toolbar = findViewById(R.id.toolbarRoute);
+
+        setSupportActionBar(toolbar);
+
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            setSupportActionBar(toolbar);
+            actionBar.setDisplayHomeAsUpEnabled(true);
+        }
+
         AutoCompleteTextView stationA = findViewById(R.id.stacjaA);
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_dropdown_item_1line, new ArrayList<>());
-        stationA.setAdapter(adapter);
-        stationB = findViewById(R.id.stacjaB3);
+        AutoCompleteTextView stationB = findViewById(R.id.stacjaB3);
+        DatabaseReference database = FirebaseDatabase.getInstance().getReference();
+
+        autoComplete = new CustomArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, new ArrayList<>());
+        database.child("trains").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                boolean suggestionsExist = false;
+
+                for (DataSnapshot trainTypeSnapshot : dataSnapshot.getChildren()) {
+                    for (DataSnapshot suggestionSnapshot : trainTypeSnapshot.child("Stacje").getChildren()) {
+                        String suggestion = suggestionSnapshot.getKey();
+                        autoComplete.add(suggestion);
+                        suggestionsExist = true;
+                    }
+                }
+
+                if (!suggestionsExist) {
+
+                    autoComplete.add("Nie znaleziono stacji");
+                }
+
+                autoComplete.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+
+        stationA.setAdapter(autoComplete);
+        stationB.setAdapter(autoComplete);
+
+
         button=findViewById(R.id.button_search);
         timePicker = findViewById(R.id.godzina);
         datePicker = findViewById(R.id.czas);
 
-        OkHttpClient client = new OkHttpClient.Builder()
-                .addInterceptor(new Interceptor() {
-                    @NotNull
-                    @Override
-                    public okhttp3.Response intercept(@NotNull Chain chain) throws IOException {
-                        Request original = chain.request();
 
-                        String credentials = Credentials.basic("ahamal_demo", "WxWdFCmtqLq2@Hi");
-                        Request request = original.newBuilder()
-                                .header("Authorization", credentials)
-                                .method(original.method(), original.body())
-                                .build();
+        button.setOnClickListener(v -> {
+            String startStation = stationA.getText().toString().trim();
+            String endStation = stationB.getText().toString().trim();
+            String godzina=timePicker.getText().toString().trim();
+            if (startStation.isEmpty() || endStation.isEmpty() || godzina.isEmpty()) {
 
-                        return chain.proceed(request);
-                    }
-                })
-                .build();
-
-
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(BASE_URL)
-                .client(client)
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
-
-
-
-
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String startStation = stationA.getText().toString();
-                String endStation = stationB.getText().toString();
-                ApiInterface apiInterface = RetrofitClient.getApiInterface();
-                Call<List<Connection>> call = apiInterface.getTrip(startStation, endStation);
-
-                call.enqueue(new Callback<List<Connection>>() {
-                    @Override
-                    public void onResponse(@NonNull Call<List<Connection>> call, @NonNull Response<List<Connection>> response) {
-                        if (response.isSuccessful() && response.body() != null) {
-                            List<Connection> connections = response.body();
-                            Intent intent = new Intent(RouteActivity.this, TravelActivity.class);
-                            intent.putParcelableArrayListExtra("connections", (ArrayList<? extends Parcelable>) connections);
-                            startActivity(intent);
-
-                        } else {
-                            Toast.makeText(RouteActivity.this, "Wystapił problem", Toast.LENGTH_SHORT).show();
-                        }
-                    }
-
-                    @Override
-                    public void onFailure(@NonNull Call<List<Connection>> call, @NonNull Throwable t) {
-
-                    }
-                });
+                Toast.makeText(this, "Pole nie może być puste!", Toast.LENGTH_SHORT).show();
+            } else if (startStation.equals(endStation)) {
+                Toast.makeText(this, "Stacja początkowa i końcowa nie mogą być takie same", Toast.LENGTH_SHORT).show();
+            } else {
+                Intent intent = new Intent(this, TravelActivity.class);
+                intent.putExtra("START_STATION", startStation);
+                intent.putExtra("END_STATION", endStation);
+                intent.putExtra("GODZINA", godzina);
+                startActivity(intent);
             }
         });
+
         stationA.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
 
             @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                String input = s.toString().trim();
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
 
-                if (input.length() >= 3) {
-                    ApiInterface apiInterface = RetrofitClient.getApiInterface();
-                    Call<List<TravelStop>> call = apiInterface.getStation(input);
-                    Log.d("TravelStop", "Before making the API call");
-                    call.enqueue(new Callback<List<TravelStop>>() {
-                        @Override
-                        public void onResponse(@NonNull Call<List<TravelStop>> call, @NonNull Response<List<TravelStop>> response) {
-                            int statusCode = response.code();
-                            if (response.isSuccessful() && response.body() != null) {
-                                List<TravelStop> matchingStops = response.body();
-                                Log.d("TravelStop", "Matching stops size: " + matchingStops.size());
-                                if (matchingStops.isEmpty()) {
-                                    Toast.makeText(RouteActivity.this, "Nie znaleziono stacji", Toast.LENGTH_SHORT).show();
-                                } else {
-                                    List<String> stopNames = new ArrayList<>();
-                                    for (TravelStop stop : matchingStops) {
-                                        stopNames.add(stop.getTravelStopName());
-                                        Log.d("TravelStop", "Stop name: " + stop.getTravelStopName());
-                                    }
+                getAllStations(charSequence.toString(), autoComplete);
 
-                                    ArrayAdapter<String> updatedAdapter = new ArrayAdapter<>(RouteActivity.this, android.R.layout.simple_dropdown_item_1line, stopNames);
-                                    stationA.setAdapter(updatedAdapter);
-                                    updatedAdapter.notifyDataSetChanged();
-                                }
-
-                            }else {
-                                Toast.makeText(RouteActivity.this, "Błąd z kodem: " + statusCode, Toast.LENGTH_SHORT).show();
-                            }
-                        }
-
-                        @Override
-                        public void onFailure(@NonNull Call<List<TravelStop>> call, @NonNull Throwable t) {
-                            Log.e("TravelStop", "Error: " + t.getMessage());
-                            Toast.makeText(RouteActivity.this, "Wystąpił problem", Toast.LENGTH_SHORT).show();
-
-                        }
-                    });
-                    Log.d("TravelStop", "After enqueue");
-                } else {
-
-
-                    Toast.makeText(RouteActivity.this, "Wprowadź co najmniej 3 znaki", Toast.LENGTH_SHORT).show();
-                }
             }
 
             @Override
             public void afterTextChanged(Editable s) {}
         });
 
+
+        stationB.addTextChangedListener(new TextWatcher() {
+
+
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                getAllStations(charSequence.toString(), autoComplete);
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+            }
+        });
+
+
+
+
         stationB.setOnTouchListener((view, motionEvent) -> {
 
             final int DRAWABLE_RIGHT = 2;
             if (motionEvent.getAction() == MotionEvent.ACTION_UP) {
                 if (motionEvent.getRawX() >= (stationB.getRight() - stationB.getCompoundDrawables()[DRAWABLE_RIGHT].getBounds().width())) {
-                    reversePlaces();
+                    String textA = stationA.getText().toString();
+                    String textB = stationB.getText().toString();
+
+                    stationA.setText(textB);
+                    stationB.setText(textA);
+
                     return true;
                 }
 
@@ -249,24 +227,66 @@ public class RouteActivity extends AppCompatActivity {
             }
 
         });
-        Toolbar toolbar = findViewById(R.id.toolbar2);
-        setSupportActionBar(toolbar);
 
-        ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null) {
-            setSupportActionBar(toolbar);
-            getSupportActionBar().setTitle("Wyszukaj");
-            actionBar.setDisplayHomeAsUpEnabled(true);
-        }
+    }
+    private void showNoStationFoundMessage(ArrayAdapter<String> adapter) {
+        adapter.clear();
+        adapter.add("Nie znaleziono stacji");
+
+    }
+    private void getAllStations(String query, CustomArrayAdapter adapter) {
+        DatabaseReference trainsRef = FirebaseDatabase.getInstance().getReference("trains");
+
+        trainsRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                Set<String> stationNamesSet = new HashSet<>();
+
+                for (DataSnapshot trainTypeSnapshot : dataSnapshot.getChildren()) {
+                    for (DataSnapshot trainSnapshot : trainTypeSnapshot.getChildren()) {
+                        String trainKey = trainSnapshot.getKey();
+                        DatabaseReference stationsRef = FirebaseDatabase.getInstance().getReference("/trains/" + trainTypeSnapshot.getKey() + "/" + trainKey + "/Stacje");
+
+                        stationsRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                boolean found = false;
+                                for (DataSnapshot stationSnapshot : snapshot.getChildren()) {
+                                    String nazwaStacji = stationSnapshot.getKey();
+                                    assert nazwaStacji != null;
+                                    if (nazwaStacji.toLowerCase().contains(query.toLowerCase())) {
+                                        stationNamesSet.add(nazwaStacji);
+                                        found = true;
+                                    }
+                                }
+
+                                List<String> stationNames = new ArrayList<>(stationNamesSet);
+
+                                adapter.clear();
+                                adapter.addAll(stationNames);
+
+                                if (!found) {
+                                    adapter.add("Nie znaleziono stacji");
+                                }
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError databaseError) {
+                                databaseError.toException().printStackTrace();
+                            }
+                        });
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                databaseError.toException().printStackTrace();
+            }
+        });
     }
 
-    public void reversePlaces() {
-        String textA = stationA.getText().toString();
-        String textB3 = stationB.getText().toString();
 
-        stationA.setText(textB3);
-        stationB.setText(textA);
-    }
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
@@ -298,14 +318,31 @@ public class RouteActivity extends AppCompatActivity {
                 break;
         }
     }
+    private void backButton() {
+        OnBackPressedDispatcher dispatcher = getOnBackPressedDispatcher();
+
+        OnBackPressedCallback callback = new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                backToMain();
+            }
+        };
+
+        dispatcher.addCallback(this, callback);
+    }
+
     @Override
     public void onBackPressed() {
+        backToMain();
+
+    }
+
+    public void backToMain() {
         Intent intent = new Intent(RouteActivity.this, MainActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
-        finish();
-    }
 
+    }
     private void openDialog() {
         boolean nightMode = sharedPreferencesNight.getBoolean("nightMode", false);
         String selectedTheme = sharedPreferences.getString("color_option", "BLUE");
