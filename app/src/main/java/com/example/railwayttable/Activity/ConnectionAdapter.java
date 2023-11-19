@@ -35,8 +35,8 @@ public class ConnectionAdapter extends RecyclerView.Adapter<ConnectionAdapter.My
         ConnectionModel connectionModel = list.get(position);
 
         holder.godzOjd.setText(connectionModel.getGodzinaOdjazdu());
-        holder.type.setText(connectionModel.getTyp());
         holder.godzPrzy.setText(connectionModel.getGodzinaPrzyjazdu());
+        setTrainImage(holder.imageView, connectionModel.getTyp());
 
     }
 
@@ -46,25 +46,27 @@ public class ConnectionAdapter extends RecyclerView.Adapter<ConnectionAdapter.My
     }
 
     public static class MyViewHolder extends RecyclerView.ViewHolder {
-        TextView godzOjd, type, godzPrzy;
+        TextView godzOjd, godzPrzy;
+        ImageView imageView;
 
 
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
             godzOjd = itemView.findViewById(R.id.textGodzinaOdj);
-            type = itemView.findViewById(R.id.typ);
             godzPrzy = itemView.findViewById(R.id.textGodzinaPrzy);
+            imageView = itemView.findViewById(R.id.imageTyp);
 
         }
     }
 
-    private void setTrainType(TextView typeTextView, String trainType) {
+    private void setTrainImage(ImageView imageView, String trainType) {
         if ("IC".equals(trainType)) {
-            typeTextView.setBackgroundResource(R.drawable.icons8_rectangle_ic);
+            imageView.setImageResource(R.drawable.icons8_rectangle_ic);
         } else if ("Regio".equals(trainType)) {
-            typeTextView.setBackgroundResource(R.drawable.icons8_rectangle_regio);
+            imageView.setImageResource(R.drawable.icons8_rectangle_regio);
         } else {
-            typeTextView.setBackgroundResource(R.drawable.icons8_rectangle_eic);
+
+            imageView.setImageResource(R.drawable.icons8_rectangle_eic);
         }
     }
 }

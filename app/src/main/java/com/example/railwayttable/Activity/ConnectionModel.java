@@ -1,6 +1,11 @@
 package com.example.railwayttable.Activity;
 
-import java.util.ArrayList;
+import android.annotation.SuppressLint;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -20,7 +25,7 @@ public class ConnectionModel {
         this.stacjaKon = stacjaKon;
         this.typ = typ;
         this.numer = numer;
-        this.stacje = stacje;
+        ConnectionModel.stacje = stacje;
         this.stacjeList=stacjeList;
         this.stacja = stacja;
         this.godzinaOdjazdu = godzinaOdjazdu;
@@ -91,21 +96,32 @@ public class ConnectionModel {
     public void setTyp(String typ) {
         this.typ = typ;
     }
+    public static class GodzinaOdjazduComparator implements Comparator<ConnectionModel> {
+        @Override
+        public int compare(ConnectionModel connection1, ConnectionModel connection2) {
+            String godzinaOdjazdu1 = connection1.getGodzinaOdjazdu();
+            String godzinaOdjazdu2 = connection2.getGodzinaOdjazdu();
 
-    public String getGodzinaOdjazduNaStacji(String nazwaStacji) {
+            @SuppressLint("SimpleDateFormat") SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
+            try {
+                Date date1 = sdf.parse(godzinaOdjazdu1);
+                Date date2 = sdf.parse(godzinaOdjazdu2);
 
-      return stacje.get(nazwaStacji).get("odjazd");
+                assert date1 != null;
+                return date1.compareTo(date2);
+            } catch (ParseException e) {
+                e.printStackTrace();
+                return 0;
+            }
+        }
     }
 
-    public String getGodzinaPrzyjazduNaStacji(String nazwaStacji) {
-        return stacje.get(nazwaStacji).get("przyjazd");
-    }
 
     public static Map<String, Map<String, String>> getStacje() {
         return stacje;
     }
 
     public void setStacje(Map<String, Map<String, String>> stacje) {
-        this.stacje = stacje;
+        ConnectionModel.stacje = stacje;
     }
 }

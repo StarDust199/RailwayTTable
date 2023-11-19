@@ -1,5 +1,6 @@
 package com.example.railwayttable.Activity;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -32,7 +33,6 @@ import java.util.Map;
 
 public class TravelActivity extends AppCompatActivity{
     SharedPreferences sharedPreferences, sharedPreferencesNight;
-    int positionInserted;
     DatabaseReference databaseReference;
     ConnectionAdapter connectionAdapter;
     ArrayList<ConnectionModel> list;
@@ -122,6 +122,9 @@ public class TravelActivity extends AppCompatActivity{
                                         }
                                     }
 
+
+
+                                    list.sort(new ConnectionModel.GodzinaOdjazduComparator());
                                     connectionAdapter.notifyDataSetChanged();
                                 }
 
@@ -142,7 +145,7 @@ public class TravelActivity extends AppCompatActivity{
         }
 
             private boolean isTimeAfter(String time1, String time2) {
-                SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
+                @SuppressLint("SimpleDateFormat") SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
                 try {
                     Date date1 = sdf.parse(time1);
                     Date date2 = sdf.parse(time2);
