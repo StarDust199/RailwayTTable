@@ -76,6 +76,7 @@ public class TravelActivity extends AppCompatActivity{
                         for (DataSnapshot trainSnapshot : trainTypeSnapshot.getChildren()) {
                             String connectionName = trainSnapshot.child("nazwa").getValue(String.class);
                             Long trainNumber = trainSnapshot.child("numer").getValue(Long.class);
+                            String trainType = trainSnapshot.child("typ").getValue(String.class);
 
                             DatabaseReference stacjeRef = trainSnapshot.getRef().child("Stacje");
                             stacjeRef.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -107,7 +108,7 @@ public class TravelActivity extends AppCompatActivity{
                                             tempConnection.setNazwa(connectionName);
                                             tempConnection.setNumer(trainNumber);
                                             tempConnection.setStacjaKon(trainSnapshot.child("stacja koncowa").getValue(String.class));
-                                            tempConnection.setTyp(trainTypeKey);
+                                            tempConnection.setTyp(trainType);
 
                                             Map<String, Map<String, String>> tempStacje = new HashMap<>();
                                             Map<String, String> tempDetails = new HashMap<>();

@@ -16,6 +16,7 @@ public class ConnectionModel {
     private String godzinaOdjazdu;
     private String godzinaPrzyjazdu;
     private List<String> stacjeList;
+    private boolean expanded;
     static Map<String, Map<String, String>> stacje;
     public ConnectionModel() {
     }
@@ -30,6 +31,14 @@ public class ConnectionModel {
         this.stacja = stacja;
         this.godzinaOdjazdu = godzinaOdjazdu;
         this.godzinaPrzyjazdu = godzinaPrzyjazdu;
+        expanded = false;
+    }
+    public boolean isExpanded() {
+        return expanded;
+    }
+
+    public void setExpanded(boolean expanded) {
+        this.expanded = expanded;
     }
 
     public String getStacja() {
