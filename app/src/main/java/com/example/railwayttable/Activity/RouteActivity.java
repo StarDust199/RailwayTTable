@@ -12,6 +12,8 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.MenuItem;
 import android.view.MotionEvent;
+import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
@@ -131,6 +133,20 @@ public class RouteActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+        stationA.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View view, boolean hasFocus) {
+                if (hasFocus) {
+
+                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.showSoftInput(stationA, InputMethodManager.SHOW_IMPLICIT);
+                } else {
+
+                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(stationA.getWindowToken(), 0);
+                }
+            }
+        });
 
         stationA.addTextChangedListener(new TextWatcher() {
             @Override
@@ -138,9 +154,7 @@ public class RouteActivity extends AppCompatActivity {
 
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
                 getAllStations(charSequence.toString(), autoComplete);
-
             }
 
             @Override
@@ -148,22 +162,33 @@ public class RouteActivity extends AppCompatActivity {
         });
 
 
+        stationB.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View view, boolean hasFocus) {
+                if (hasFocus) {
+
+                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.showSoftInput(stationB, InputMethodManager.SHOW_IMPLICIT);
+
+                } else {
+
+                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(stationB.getWindowToken(), 0);
+                }
+            }
+        });
         stationB.addTextChangedListener(new TextWatcher() {
 
-
             @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
 
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
                 getAllStations(charSequence.toString(), autoComplete);
-
             }
 
             @Override
-            public void afterTextChanged(Editable editable) {
-
-            }
+            public void afterTextChanged(Editable s) {}
         });
 
 
@@ -234,6 +259,7 @@ public class RouteActivity extends AppCompatActivity {
         adapter.add("Nie znaleziono stacji");
 
     }
+
     private void getAllStations(String query, CustomArrayAdapter adapter) {
         DatabaseReference trainsRef = FirebaseDatabase.getInstance().getReference("trains");
 
@@ -241,6 +267,7 @@ public class RouteActivity extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 Set<String> stationNamesSet = new HashSet<>();
+                final boolean[] found = {false};
 
                 for (DataSnapshot trainTypeSnapshot : dataSnapshot.getChildren()) {
                     for (DataSnapshot trainSnapshot : trainTypeSnapshot.getChildren()) {
@@ -250,24 +277,26 @@ public class RouteActivity extends AppCompatActivity {
                         stationsRef.addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
                             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                boolean found = false;
                                 for (DataSnapshot stationSnapshot : snapshot.getChildren()) {
                                     String nazwaStacji = stationSnapshot.getKey();
                                     assert nazwaStacji != null;
                                     if (nazwaStacji.toLowerCase().contains(query.toLowerCase())) {
                                         stationNamesSet.add(nazwaStacji);
-                                        found = true;
+                                        found[0] = true;
                                     }
                                 }
 
                                 List<String> stationNames = new ArrayList<>(stationNamesSet);
 
+
+                                if (!found[0]) {
+                                    stationNames.add("Nie znaleziono stacji");
+                                }
+
+
                                 adapter.clear();
                                 adapter.addAll(stationNames);
-
-                                if (!found) {
-                                    adapter.add("Nie znaleziono stacji");
-                                }
+                                adapter.notifyDataSetChanged();
                             }
 
                             @Override
@@ -285,6 +314,7 @@ public class RouteActivity extends AppCompatActivity {
             }
         });
     }
+
 
 
     @Override
