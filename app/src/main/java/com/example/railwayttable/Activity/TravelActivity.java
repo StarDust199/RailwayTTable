@@ -35,6 +35,7 @@ public class TravelActivity extends AppCompatActivity{
     SharedPreferences sharedPreferences, sharedPreferencesNight;
     DatabaseReference databaseReference;
     ConnectionAdapter connectionAdapter;
+    String startStation, endStation;
     ArrayList<ConnectionModel> list;
         @Override
         protected void onCreate(Bundle savedInstanceState) {
@@ -50,13 +51,17 @@ public class TravelActivity extends AppCompatActivity{
                 actionBar.setDisplayHomeAsUpEnabled(true);
             }
             Intent intent = getIntent();
-            String startStation = intent.getStringExtra("START_STATION");
-            String endStation = intent.getStringExtra("END_STATION");
+            startStation = intent.getStringExtra("START_STATION");
+            endStation = intent.getStringExtra("END_STATION");
             String godzina = intent.getStringExtra("GODZINA");
+            String data=intent.getStringExtra("DATA");
+            TextView txtHour=findViewById(R.id.textHour);
             TextView textViewStartStation = findViewById(R.id.textStationA);
             TextView textViewEndStation = findViewById(R.id.textStationB);
             textViewStartStation.setText(startStation);
             textViewEndStation.setText(endStation);
+            String combinedText = data + ", " + godzina;
+            txtHour.setText(combinedText);
 
             RecyclerView recyclerView = findViewById(R.id.connectionRecyclerView);
 
@@ -145,24 +150,35 @@ public class TravelActivity extends AppCompatActivity{
             });
         }
 
-            private boolean isTimeAfter(String time1, String time2) {
-                @SuppressLint("SimpleDateFormat") SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
-                try {
-                    Date date1 = sdf.parse(time1);
-                    Date date2 = sdf.parse(time2);
+    private boolean isTimeAfter(String time1, String time2) {
 
-                    assert date1 != null;
+        if (time1 != null && time2 != null) {
+            @SuppressLint("SimpleDateFormat") SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
+            try {
+                Date date1 = sdf.parse(time1);
+                Date date2 = sdf.parse(time2);
+
+
+                if (date1 != null && date2 != null) {
                     return date1.after(date2);
-                } catch (ParseException e) {
-                    e.printStackTrace();
+                } else {
+
+                    return false;
                 }
-
-                return false;
+            } catch (ParseException e) {
+                e.printStackTrace();
             }
+        } else {
+
+            return false;
+        }
+
+        return false;
+    }
 
 
 
-            private void backButton() {
+    private void backButton() {
         OnBackPressedDispatcher dispatcher = getOnBackPressedDispatcher();
 
         OnBackPressedCallback callback = new OnBackPressedCallback(true) {
@@ -183,6 +199,9 @@ public class TravelActivity extends AppCompatActivity{
 
     public void backToMain() {
         Intent intent = new Intent(TravelActivity.this, RouteActivity.class);
+        intent.putExtra("START_STATION", startStation);
+        intent.putExtra("END_STATION", endStation);
+        startActivity(intent);
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
 
@@ -193,6 +212,8 @@ public class TravelActivity extends AppCompatActivity{
             if (item.getItemId() == android.R.id.home) {
                 Intent intent = new Intent(TravelActivity.this, RouteActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                intent.putExtra("START_STATION", startStation);
+                intent.putExtra("END_STATION", endStation);
                 startActivity(intent);
                 finish();
                 return true;

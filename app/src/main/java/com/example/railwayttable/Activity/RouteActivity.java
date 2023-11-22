@@ -12,7 +12,6 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.MenuItem;
 import android.view.MotionEvent;
-import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
@@ -54,6 +53,8 @@ public class RouteActivity extends AppCompatActivity {
     Button button;
     CustomArrayAdapter autoComplete;
     EditText datePicker, timePicker;
+    String startStation, endStation;
+    Intent intent;
     int year;
     int month;
     int day;
@@ -66,6 +67,10 @@ public class RouteActivity extends AppCompatActivity {
         setContentView(R.layout.activity_route);
         backButton();
         Toolbar toolbar = findViewById(R.id.toolbarRoute);
+        intent = getIntent();
+        startStation = intent.getStringExtra("START_STATION");
+        endStation = intent.getStringExtra("END_STATION");
+
 
         setSupportActionBar(toolbar);
 
@@ -77,6 +82,8 @@ public class RouteActivity extends AppCompatActivity {
 
         AutoCompleteTextView stationA = findViewById(R.id.stacjaA);
         AutoCompleteTextView stationB = findViewById(R.id.stacjaB3);
+        stationA.setText(startStation);
+        stationB.setText(endStation);
         DatabaseReference database = FirebaseDatabase.getInstance().getReference();
 
         autoComplete = new CustomArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, new ArrayList<>());
@@ -120,31 +127,29 @@ public class RouteActivity extends AppCompatActivity {
             String startStation = stationA.getText().toString().trim();
             String endStation = stationB.getText().toString().trim();
             String godzina=timePicker.getText().toString().trim();
+            String data=datePicker.getText().toString().trim();
             if (startStation.isEmpty() || endStation.isEmpty() || godzina.isEmpty()) {
 
                 Toast.makeText(this, "Pole nie może być puste!", Toast.LENGTH_SHORT).show();
             } else if (startStation.equals(endStation)) {
                 Toast.makeText(this, "Stacja początkowa i końcowa nie mogą być takie same", Toast.LENGTH_SHORT).show();
             } else {
-                Intent intent = new Intent(this, TravelActivity.class);
+                intent = new Intent(this, TravelActivity.class);
                 intent.putExtra("START_STATION", startStation);
                 intent.putExtra("END_STATION", endStation);
                 intent.putExtra("GODZINA", godzina);
+                intent.putExtra("DATA",data);
                 startActivity(intent);
             }
         });
-        stationA.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View view, boolean hasFocus) {
-                if (hasFocus) {
+        stationA.setOnFocusChangeListener((view, hasFocus) -> {
+            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            if (hasFocus) {
 
-                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                    imm.showSoftInput(stationA, InputMethodManager.SHOW_IMPLICIT);
-                } else {
+                imm.showSoftInput(stationA, InputMethodManager.SHOW_IMPLICIT);
+            } else {
 
-                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                    imm.hideSoftInputFromWindow(stationA.getWindowToken(), 0);
-                }
+                imm.hideSoftInputFromWindow(stationA.getWindowToken(), 0);
             }
         });
 
@@ -162,19 +167,15 @@ public class RouteActivity extends AppCompatActivity {
         });
 
 
-        stationB.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View view, boolean hasFocus) {
-                if (hasFocus) {
+        stationB.setOnFocusChangeListener((view, hasFocus) -> {
+            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            if (hasFocus) {
 
-                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                    imm.showSoftInput(stationB, InputMethodManager.SHOW_IMPLICIT);
+                imm.showSoftInput(stationB, InputMethodManager.SHOW_IMPLICIT);
 
-                } else {
+            } else {
 
-                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                    imm.hideSoftInputFromWindow(stationB.getWindowToken(), 0);
-                }
+                imm.hideSoftInputFromWindow(stationB.getWindowToken(), 0);
             }
         });
         stationB.addTextChangedListener(new TextWatcher() {
