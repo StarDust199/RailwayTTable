@@ -8,14 +8,15 @@
 
     <ScrollView
 
+        android:id="@+id/scrollView4"
+        style="@style/ScreenBackground"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:ignore="SpeakableTextPresentCheck"
-        style="@style/ScreenBackground">
+        tools:ignore="SpeakableTextPresentCheck">
 
     </ScrollView>
 
@@ -99,7 +100,6 @@
         android:id="@+id/relativeGray"
         android:layout_width="411dp"
         android:layout_height="63dp"
-        app:layout_constraintBottom_toTopOf="@+id/relatvieConn"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/relativeLayout">
@@ -132,29 +132,14 @@
 
     </RelativeLayout>
 
-    <RelativeLayout
-        android:id="@+id/relatvieConn"
-        android:layout_width="match_parent"
-        android:layout_height="359dp"
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/connectionRecyclerView"
+        android:layout_width="404dp"
+        android:layout_height="382dp"
         app:layout_constraintBottom_toTopOf="@+id/relativeLayout5"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/connectionRecyclerView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentBottom="true"
-            android:layout_marginStart="0dp"
-            android:layout_marginTop="0dp"
-            android:layout_marginEnd="0dp"
-            android:layout_marginBottom="25dp"
-            app:layout_constraintBottom_toBottomOf="parent" />
-
-    </RelativeLayout>
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/relativeGray" />
 
     <RelativeLayout
         android:id="@+id/relativeLayout5"

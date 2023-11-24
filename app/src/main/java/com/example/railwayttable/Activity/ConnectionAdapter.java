@@ -5,6 +5,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -17,11 +18,12 @@ import com.example.railwayttable.R;
 
 import java.util.ArrayList;
 
-public class ConnectionAdapter extends RecyclerView.Adapter<ConnectionAdapter.MyViewHolder> {
+public class ConnectionAdapter extends RecyclerView.Adapter<ConnectionAdapter.MyViewHolder>  {
     Context context;
     ArrayList<ConnectionModel> list;
     AdapterView.OnItemClickListener onItemClickListener;
 
+    private int ostatnioOtwartaPozycja = RecyclerView.NO_POSITION;
 
     public ConnectionAdapter(Context context, ArrayList<ConnectionModel> list) {
         this.context = context;
@@ -42,6 +44,8 @@ public class ConnectionAdapter extends RecyclerView.Adapter<ConnectionAdapter.My
         return new MyViewHolder(v);
     }
 
+
+
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
         ConnectionModel connectionModel = list.get(position);
@@ -49,29 +53,45 @@ public class ConnectionAdapter extends RecyclerView.Adapter<ConnectionAdapter.My
         holder.godzOjd.setText(connectionModel.getGodzinaOdjazdu());
         holder.godzPrzy.setText(connectionModel.getGodzinaPrzyjazdu());
         setTrainImage(holder.imageView, connectionModel.getTyp());
+
+        boolean isExpanded = connectionModel.isExpanded();
+        holder.expandedLayout.setVisibility(isExpanded ? View.VISIBLE : View.GONE);
+
+
+        holder.typ.setText(connectionModel.getTyp());
+        holder.numer.setText(String.valueOf(connectionModel.getNumer()));
+        holder.stacKon.setText(connectionModel.getStacjaKon());
+        holder.name.setText(connectionModel.getNazwa());
+
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                int pozycja = holder.getAdapterPosition();
 
-                if (holder.expandedLayout.getVisibility() == View.GONE) {
-                    holder.expandedLayout.setVisibility(View.VISIBLE);
+                if (pozycja != RecyclerView.NO_POSITION) {
+                    if (pozycja != ostatnioOtwartaPozycja) {
+
+                        if (ostatnioOtwartaPozycja != RecyclerView.NO_POSITION) {
+                            list.get(ostatnioOtwartaPozycja).setExpanded(false);
+                            notifyItemChanged(ostatnioOtwartaPozycja);
+                        }
 
 
-                    holder.typ.setText(connectionModel.getTyp());
-                    holder.numer.setText(String.valueOf(connectionModel.getNumer()));
-                    holder.stacKon.setText(connectionModel.getStacjaKon());
-                    holder.name.setText(connectionModel.getNazwa());
-                    connectionModel.setExpanded(true);
+                        holder.expandedLayout.setVisibility(View.VISIBLE);
 
-                } else {
+                        connectionModel.setExpanded(true);
+                        ostatnioOtwartaPozycja = pozycja;
+                    } else {
 
-                    holder.expandedLayout.setVisibility(View.GONE);
-                    connectionModel.setExpanded(false);
+                        holder.expandedLayout.setVisibility(View.GONE);
+                        connectionModel.setExpanded(false);
+                        ostatnioOtwartaPozycja = RecyclerView.NO_POSITION;
+                    }
 
+                    notifyItemChanged(pozycja);
                 }
             }
         });
-
     }
 
     @Override
