@@ -88,13 +88,19 @@
             app:cardElevation="10dp"
             app:cardMaxElevation="10dp">
 
-            <include
-                layout="@layout/item"
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/connectionRecyclerViewTimetable"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="5dp"
-                android:layout_marginStart="5dp"
-                android:layout_marginEnd="5dp" />
+                android:layout_height="match_parent"
+                android:layout_margin="10dp"
+                android:layout_marginStart="10dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="10dp"
+                android:layout_marginRight="10dp"
+                android:layout_marginBottom="10dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
         </androidx.cardview.widget.CardView>
 
     </RelativeLayout>
