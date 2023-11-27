@@ -121,14 +121,14 @@ public class ConnectionAdapter extends RecyclerView.Adapter<ConnectionAdapter.My
 
     private void setTrainImage(ImageView imageView, String trainType) {
         if ("IC".equals(trainType)) {
-            imageView.setImageResource(R.drawable.icons8_rectangle_ic);
+            imageView.setImageResource(R.drawable.ic);
         } else if ("R".equals(trainType)) {
-            imageView.setImageResource(R.drawable.icons8_rectangle_regio);
+            imageView.setImageResource(R.drawable.regio);
         } else if ("TLK".equals(trainType)){
 
-            imageView.setImageResource(R.drawable.icons8_rectangle_ic);
+            imageView.setImageResource(R.drawable.tlk);
         } else{
-            imageView.setImageResource(R.drawable.icons8_rectangle_eic);
+            imageView.setImageResource(R.drawable.eic);
         }
     }
 }

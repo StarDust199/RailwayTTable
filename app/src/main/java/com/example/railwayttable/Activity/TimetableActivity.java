@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
@@ -78,6 +79,7 @@ public class TimetableActivity extends AppCompatActivity {
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
+                Log.d("RefreshList", "Refreshing list at " + getCurrentSystemTime());
                 refreshList();
                 handler.postDelayed(this, REFRESH_INTERVAL);
             }
@@ -190,23 +192,24 @@ public class TimetableActivity extends AppCompatActivity {
         });
     }
     private void refreshList() {
-
-
-
+        Log.d("RefreshList", "Refreshing list at " + getCurrentSystemTime());
 
         Iterator<ConnectionModel> iterator = list.iterator();
         while (iterator.hasNext()) {
             ConnectionModel connection = iterator.next();
             String godzinaOdjazdu = connection.getGodzinaOdjazdu();
 
-            if (isTimeAfter(godzina, godzinaOdjazdu)) {
+            Log.d("RefreshList", "Train departure time: " + godzinaOdjazdu);
+
+            if (isTimeAfter(getCurrentSystemTime(), godzinaOdjazdu)) {
+                Log.d("RefreshList", "Train removed: " + godzinaOdjazdu);
                 iterator.remove();
             }
         }
 
-
         connectionAdapter.notifyDataSetChanged();
     }
+
 
     private boolean isTimeAfter(String time1, String time2) {
 
