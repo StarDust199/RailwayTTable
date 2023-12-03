@@ -1,11 +1,9 @@
 package com.example.railwayttable.Activity;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
 import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -63,33 +61,30 @@ public class ConnectionAdapter extends RecyclerView.Adapter<ConnectionAdapter.My
         holder.stacKon.setText(connectionModel.getStacjaKon());
         holder.name.setText(connectionModel.getNazwa());
 
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                int pozycja = holder.getAdapterPosition();
+        holder.itemView.setOnClickListener(view -> {
+            int pozycja = holder.getAdapterPosition();
 
-                if (pozycja != RecyclerView.NO_POSITION) {
-                    if (pozycja != ostatnioOtwartaPozycja) {
+            if (pozycja != RecyclerView.NO_POSITION) {
+                if (pozycja != ostatnioOtwartaPozycja) {
 
-                        if (ostatnioOtwartaPozycja != RecyclerView.NO_POSITION) {
-                            list.get(ostatnioOtwartaPozycja).setExpanded(false);
-                            notifyItemChanged(ostatnioOtwartaPozycja);
-                        }
-
-
-                        holder.expandedLayout.setVisibility(View.VISIBLE);
-
-                        connectionModel.setExpanded(true);
-                        ostatnioOtwartaPozycja = pozycja;
-                    } else {
-
-                        holder.expandedLayout.setVisibility(View.GONE);
-                        connectionModel.setExpanded(false);
-                        ostatnioOtwartaPozycja = RecyclerView.NO_POSITION;
+                    if (ostatnioOtwartaPozycja != RecyclerView.NO_POSITION) {
+                        list.get(ostatnioOtwartaPozycja).setExpanded(false);
+                        notifyItemChanged(ostatnioOtwartaPozycja);
                     }
 
-                    notifyItemChanged(pozycja);
+
+                    holder.expandedLayout.setVisibility(View.VISIBLE);
+
+                    connectionModel.setExpanded(true);
+                    ostatnioOtwartaPozycja = pozycja;
+                } else {
+
+                    holder.expandedLayout.setVisibility(View.GONE);
+                    connectionModel.setExpanded(false);
+                    ostatnioOtwartaPozycja = RecyclerView.NO_POSITION;
                 }
+
+                notifyItemChanged(pozycja);
             }
         });
     }
@@ -121,14 +116,14 @@ public class ConnectionAdapter extends RecyclerView.Adapter<ConnectionAdapter.My
 
     private void setTrainImage(ImageView imageView, String trainType) {
         if ("IC".equals(trainType)) {
-            imageView.setImageResource(R.drawable.ic);
+            imageView.setImageResource(R.drawable.icn);
         } else if ("R".equals(trainType)) {
-            imageView.setImageResource(R.drawable.regio);
+            imageView.setImageResource(R.drawable.r);
         } else if ("TLK".equals(trainType)){
 
             imageView.setImageResource(R.drawable.tlk);
         } else{
-            imageView.setImageResource(R.drawable.eic);
+            imageView.setImageResource(R.drawable.eicn);
         }
     }
 }

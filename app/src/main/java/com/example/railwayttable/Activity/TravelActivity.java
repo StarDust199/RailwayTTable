@@ -5,7 +5,9 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.MenuItem;
+import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.activity.OnBackPressedCallback;
 import androidx.activity.OnBackPressedDispatcher;
@@ -18,6 +20,9 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.railwayttable.R;
+import com.example.railwayttable.db.DbHelper;
+import com.example.railwayttable.db.DestinationModel;
+import com.example.railwayttable.db.StartStationModel;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -32,10 +37,15 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class TravelActivity extends AppCompatActivity{
-    SharedPreferences sharedPreferences, sharedPreferencesNight;
+    SharedPreferences sharedPreferences;
     DatabaseReference databaseReference;
     ConnectionAdapter connectionAdapter;
+    DbHelper dbHelper=new DbHelper(this);
+    private int counter = 0;
     String startStation, endStation;
+    ImageView imageFavorite;
+    TextView  txtHour,textViewStartStation, textViewEndStation;
+    private boolean isFavorite = false;
     ArrayList<ConnectionModel> list;
         @Override
         protected void onCreate(Bundle savedInstanceState) {
@@ -44,6 +54,8 @@ public class TravelActivity extends AppCompatActivity{
             setContentView(R.layout.activity_travel);
             backButton();
             Toolbar toolbar = findViewById(R.id.toolbarTrav);
+            imageFavorite = findViewById(R.id.imageFavorite);
+
 
             setSupportActionBar(toolbar);
             ActionBar actionBar = getSupportActionBar();
@@ -55,11 +67,31 @@ public class TravelActivity extends AppCompatActivity{
             endStation = intent.getStringExtra("END_STATION");
             String godzina = intent.getStringExtra("GODZINA");
             String data=intent.getStringExtra("DATA");
-            TextView txtHour=findViewById(R.id.textHour);
-            TextView textViewStartStation = findViewById(R.id.textStationA);
-            TextView textViewEndStation = findViewById(R.id.textStationB);
+            txtHour=findViewById(R.id.textHour);
+            textViewStartStation = findViewById(R.id.textStationA);
+            textViewEndStation = findViewById(R.id.textStationB);
             textViewStartStation.setText(startStation);
             textViewEndStation.setText(endStation);
+            imageFavorite.setOnClickListener(v -> {
+                changeStarImage();
+
+                String stationStartName = textViewStartStation.getText().toString();
+                String stationEndName = textViewEndStation.getText().toString();
+
+
+                StartStationModel startStationModel = new StartStationModel(counter++,stationStartName);
+                DestinationModel destinationModel = new DestinationModel(counter++,stationEndName);
+
+
+                boolean addedToStart = dbHelper.addStartowa(startStationModel);
+                boolean addedToEnd = dbHelper.addKoncowa(destinationModel);
+
+                if (addedToStart && addedToEnd) {
+                    showToast("Dodano do ulubionych");
+                } else {
+                    showToast("Błąd podczas dodawania do ulubionych");
+                }
+            });
             String combinedText = data + ", " + godzina;
             txtHour.setText(combinedText);
 
@@ -76,7 +108,6 @@ public class TravelActivity extends AppCompatActivity{
                     list.clear();
 
                     for (DataSnapshot trainTypeSnapshot : snapshot.getChildren()) {
-                        String trainTypeKey = trainTypeSnapshot.getKey();
 
                         for (DataSnapshot trainSnapshot : trainTypeSnapshot.getChildren()) {
                             String connectionName = trainSnapshot.child("nazwa").getValue(String.class);
@@ -149,6 +180,23 @@ public class TravelActivity extends AppCompatActivity{
                 }
             });
         }
+    private void changeStarImage() {
+        if (isFavorite) {
+
+            imageFavorite.setImageResource(android.R.drawable.btn_star_big_off);
+        } else {
+
+            imageFavorite.setImageResource(android.R.drawable.btn_star_big_on);
+        }
+
+
+        isFavorite = !isFavorite;
+    }
+
+    private void showToast(String message) {
+
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+    }
 
     private boolean isTimeAfter(String time1, String time2) {
 

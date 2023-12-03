@@ -11,6 +11,8 @@ public class DestinationModel {
         this.stacjaKon = stacjaKon;
     }
 
+
+
     public int getId() {
         return id;
     }
