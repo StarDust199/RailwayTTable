@@ -1,16 +1,28 @@
 package com.example.railwayttable.db;
 
-public class StartStationModel {
+import com.example.railwayttable.Activity.Station;
+
+public class StartStationModel implements Station {
 
     private int id;
     private String stacjaPocz;
+    private boolean isFavorite;
 
     public StartStationModel() {
     }
 
+
+    public boolean isFavorite() {
+        return isFavorite;
+    }
+
+    public void setFavorite(boolean favorite) {
+        isFavorite = favorite;
+    }
     public StartStationModel(int id, String stacjaPocz) {
         this.id = id;
         this.stacjaPocz = stacjaPocz;
+        this.isFavorite = false;
     }
 
     public int getId() {
@@ -27,5 +39,10 @@ public class StartStationModel {
 
     public void setStacjaPocz(String stacjaPocz) {
         this.stacjaPocz = stacjaPocz;
+    }
+
+    @Override
+    public String getStationName() {
+        return null;
     }
 }

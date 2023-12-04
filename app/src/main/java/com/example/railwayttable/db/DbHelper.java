@@ -1,18 +1,23 @@
 package com.example.railwayttable.db;
 
+import android.annotation.SuppressLint;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class DbHelper extends SQLiteOpenHelper {
     private static final String DATABASE_NAME = "myDatabase.db";
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 4;
 
     public static final String TABLE_NAME = "startowa";
     public static final String COLUMN_ID = "id";
     public static final String COLUMN_STACJA = "stacjaPocz";
+    private static final String COLUMN_IS_FAVORITE = "is_favorite";
 
 
     public static final String TABLE_NAME_K = "koncowa";
@@ -26,13 +31,13 @@ public class DbHelper extends SQLiteOpenHelper {
         String CREATE_STARTOWA_TABLE =
                 "CREATE TABLE " + TABLE_NAME + "("
                         + COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
-                        + COLUMN_STACJA + " TEXT"
-                        + ")";
+                        + COLUMN_STACJA + " TEXT,"
+                        +   COLUMN_IS_FAVORITE + " INTEGER DEFAULT 0" +")";
         String CREATE_KONCOWA_TABLE =
                 "CREATE TABLE " + TABLE_NAME_K + "("
                         + COLUMN_ID_K + " INTEGER PRIMARY KEY AUTOINCREMENT,"
-                        + COLUMN_DESTINATION + " TEXT"
-                        + ")";
+                        + COLUMN_DESTINATION + " TEXT,"
+                        +  COLUMN_IS_FAVORITE + " INTEGER DEFAULT 0" + ")";
         db.execSQL(CREATE_STARTOWA_TABLE);
         db.execSQL(CREATE_KONCOWA_TABLE);
     }
@@ -49,6 +54,7 @@ public class DbHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues Values = new ContentValues();
         Values.put(COLUMN_STACJA, startStationModel.getStacjaPocz());
+        Values.put(COLUMN_IS_FAVORITE, 1);
         long insert = db.insert(TABLE_NAME, null, Values);
         return insert != -1;
     }
@@ -57,13 +63,52 @@ public class DbHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues Values = new ContentValues();
         Values.put(COLUMN_DESTINATION, destinationModel.getStacjaKon());
+        Values.put(COLUMN_IS_FAVORITE, 1);
         long insert = db.insert(TABLE_NAME_K, null, Values);
         return insert != -1;
     }
 
+    @SuppressLint("Range")
+    public boolean isFavorite(StartStationModel startStationModel) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        String[] columns = {COLUMN_IS_FAVORITE};
+        String selection = COLUMN_STACJA + " = ?";
+        String[] selectionArgs = {startStationModel.getStacjaPocz()};
+
+        Cursor cursor = db.query(TABLE_NAME, columns, selection, selectionArgs, null, null, null);
+        boolean isFavorite = false;
+
+        if (cursor.moveToFirst()) {
+            isFavorite = cursor.getInt(cursor.getColumnIndex(COLUMN_IS_FAVORITE)) == 1;
+        }
+
+        cursor.close();
+        db.close();
+
+        return isFavorite;
+    }
+    @SuppressLint("Range")
+    public boolean isFavorite(DestinationModel destinationModel) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        String[] columns = {COLUMN_IS_FAVORITE};
+        String selection = COLUMN_DESTINATION + " = ?";
+        String[] selectionArgs = {destinationModel.getStacjaKon()};
+
+        Cursor cursor = db.query(TABLE_NAME, columns, selection, selectionArgs, null, null, null);
+        boolean isFavorite = false;
+
+        if (cursor.moveToFirst()) {
+            isFavorite = cursor.getInt(cursor.getColumnIndex(COLUMN_IS_FAVORITE)) == 1;
+        }
+
+        cursor.close();
+        db.close();
+
+        return isFavorite;
+    }
     public StartStationModel getModelByID(int id) {
         SQLiteDatabase db = this.getWritableDatabase();
-        String queryString = " SELECT * FROM " + TABLE_NAME + " WHERE " + COLUMN_ID + " = " + id;
+        String queryString =  "SELECT * FROM " + TABLE_NAME + " WHERE " + COLUMN_ID + " = ?";
         Cursor cursor = db.rawQuery(queryString, null);
         if (cursor.moveToFirst()) {
             int column_id = cursor.getInt(0);
@@ -76,14 +121,17 @@ public class DbHelper extends SQLiteOpenHelper {
         return null;
     }
 
-    public boolean deleteStartStationByID(int id) {
+    public boolean deleteStartStation(StartStationModel startStationModel) {
         SQLiteDatabase db = this.getWritableDatabase();
-        return db.delete(TABLE_NAME, COLUMN_ID + "=" + id, null) > 0;
+        int rowsAffected = db.delete(TABLE_NAME,
+                COLUMN_ID + " = ? AND " + COLUMN_IS_FAVORITE + " = 1",
+                new String[]{String.valueOf(startStationModel.getId())});
+        return rowsAffected > 0;
     }
 
     public DestinationModel getDestModelByID(int id) {
         SQLiteDatabase db = this.getWritableDatabase();
-        String queryString = " SELECT * FROM " + TABLE_NAME_K + " WHERE " + COLUMN_ID_K + " = " + id;
+        String queryString = " SELECT * FROM " + TABLE_NAME_K + " WHERE " + COLUMN_ID_K + " = ?";
         Cursor cursor = db.rawQuery(queryString, null);
         if (cursor.moveToFirst()) {
             int column_id = cursor.getInt(0);
@@ -96,9 +144,123 @@ public class DbHelper extends SQLiteOpenHelper {
         return null;
     }
 
-    public boolean deleteDestinationByID(int id) {
+    public List<StartStationModel> getFavoriteStartStations(String stationStartName) {
+        List<StartStationModel> favoriteStartStations = new ArrayList<>();
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        String queryString = "SELECT * FROM " + TABLE_NAME + " WHERE " + COLUMN_IS_FAVORITE + " = 1";
+        Cursor cursor = db.rawQuery(queryString, null);
+
+        try {
+            if (cursor.moveToFirst()) {
+                do {
+                    @SuppressLint("Range") int id = cursor.getInt(cursor.getColumnIndex(COLUMN_ID));
+                    @SuppressLint("Range") String stacjaP = cursor.getString(cursor.getColumnIndex(COLUMN_STACJA));
+                    @SuppressLint("Range") boolean isFavorite = cursor.getInt(cursor.getColumnIndex(COLUMN_IS_FAVORITE)) == 1;
+
+                    StartStationModel startStationModel = new StartStationModel(id, stacjaP);
+                    startStationModel.setFavorite(isFavorite);
+
+                    favoriteStartStations.add(startStationModel);
+                } while (cursor.moveToNext());
+            }
+        } finally {
+            cursor.close();
+            db.close();
+        }
+
+        return favoriteStartStations;
+    }
+
+    public List<DestinationModel> getDestinationStations() {
+        List<DestinationModel> favoriteEndStations = new ArrayList<>();
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        String queryString = "SELECT * FROM " + TABLE_NAME_K + " WHERE " + COLUMN_IS_FAVORITE + " = 1";
+        Cursor cursor = db.rawQuery(queryString, null);
+
+        try {
+            if (cursor.moveToFirst()) {
+                do {
+                    @SuppressLint("Range") int id = cursor.getInt(cursor.getColumnIndex(COLUMN_ID));
+                    @SuppressLint("Range") String stacjaP = cursor.getString(cursor.getColumnIndex(COLUMN_STACJA));
+                    @SuppressLint("Range") boolean isFavorite = cursor.getInt(cursor.getColumnIndex(COLUMN_IS_FAVORITE)) == 1;
+
+                    DestinationModel destinationModel = new DestinationModel(id, stacjaP);
+                    destinationModel.setFavorite(isFavorite );
+
+                    favoriteEndStations.add(destinationModel);
+                } while (cursor.moveToNext());
+            }
+        } finally {
+            cursor.close();
+            db.close();
+        }
+
+        return favoriteEndStations;
+
+    }
+
+    public List<StartStationModel> getAllStartStations() {
+        List<StartStationModel> startStationList = new ArrayList<>();
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        String query = "SELECT * FROM " + TABLE_NAME;
+        Cursor cursor = db.rawQuery(query, null);
+
+        if (cursor.moveToFirst()) {
+            do {
+                @SuppressLint("Range") int id = cursor.getInt(cursor.getColumnIndex(COLUMN_ID));
+                @SuppressLint("Range") String stacjaPocz = cursor.getString(cursor.getColumnIndex(COLUMN_STACJA));
+                @SuppressLint("Range") boolean isFavorite = cursor.getInt(cursor.getColumnIndex(COLUMN_IS_FAVORITE)) == 1;
+
+                StartStationModel startStation = new StartStationModel(id, stacjaPocz);
+                startStation.setFavorite(isFavorite);
+
+                startStationList.add(startStation);
+            } while (cursor.moveToNext());
+        }
+
+        cursor.close();
+        db.close();
+
+        return startStationList;
+    }
+
+
+    public List<DestinationModel> getAllDestinationStations() {
+        List<DestinationModel> destinationStationList = new ArrayList<>();
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        String query = "SELECT * FROM " + TABLE_NAME_K;
+        Cursor cursor = db.rawQuery(query, null);
+
+        if (cursor.moveToFirst()) {
+            do {
+                @SuppressLint("Range") int id = cursor.getInt(cursor.getColumnIndex(COLUMN_ID_K));
+                @SuppressLint("Range") String stacjaKon = cursor.getString(cursor.getColumnIndex(COLUMN_DESTINATION));
+                @SuppressLint("Range") boolean isFavorite = cursor.getInt(cursor.getColumnIndex(COLUMN_IS_FAVORITE)) == 1;
+
+                DestinationModel destinationStation = new DestinationModel(id, stacjaKon);
+                destinationStation.setFavorite(isFavorite);
+
+                destinationStationList.add(destinationStation);
+            } while (cursor.moveToNext());
+        }
+
+        cursor.close();
+        db.close();
+
+        return destinationStationList;
+    }
+
+
+    public boolean deleteDestination(DestinationModel destinationModel) {
         SQLiteDatabase db = this.getWritableDatabase();
-        return db.delete(TABLE_NAME_K, COLUMN_ID_K + "=" + id, null) > 0;
+        int rowsAffected = db.delete(TABLE_NAME_K,
+                COLUMN_ID_K + " = ? AND " + COLUMN_IS_FAVORITE + " = 1",
+                new String[]{String.valueOf(destinationModel.getId())});
+        return rowsAffected > 0;
     }
 
 }

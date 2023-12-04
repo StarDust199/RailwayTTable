@@ -40,12 +40,14 @@ public class TravelActivity extends AppCompatActivity{
     SharedPreferences sharedPreferences;
     DatabaseReference databaseReference;
     ConnectionAdapter connectionAdapter;
+    boolean isStartFavorite, isDestinationFavorite;
+    private boolean isFavorite = false;
     DbHelper dbHelper=new DbHelper(this);
     private int counter = 0;
-    String startStation, endStation;
+    String startStation, endStation, stationStartName,stationEndName;
     ImageView imageFavorite;
     TextView  txtHour,textViewStartStation, textViewEndStation;
-    private boolean isFavorite = false;
+
     ArrayList<ConnectionModel> list;
         @Override
         protected void onCreate(Bundle savedInstanceState) {
@@ -72,25 +74,15 @@ public class TravelActivity extends AppCompatActivity{
             textViewEndStation = findViewById(R.id.textStationB);
             textViewStartStation.setText(startStation);
             textViewEndStation.setText(endStation);
+            stationStartName = textViewStartStation.getText().toString();
+            stationEndName = textViewEndStation.getText().toString();
+
+
+
+
+
             imageFavorite.setOnClickListener(v -> {
-                changeStarImage();
-
-                String stationStartName = textViewStartStation.getText().toString();
-                String stationEndName = textViewEndStation.getText().toString();
-
-
-                StartStationModel startStationModel = new StartStationModel(counter++,stationStartName);
-                DestinationModel destinationModel = new DestinationModel(counter++,stationEndName);
-
-
-                boolean addedToStart = dbHelper.addStartowa(startStationModel);
-                boolean addedToEnd = dbHelper.addKoncowa(destinationModel);
-
-                if (addedToStart && addedToEnd) {
-                    showToast("Dodano do ulubionych");
-                } else {
-                    showToast("Błąd podczas dodawania do ulubionych");
-                }
+              changeStarImage();
             });
             String combinedText = data + ", " + godzina;
             txtHour.setText(combinedText);
@@ -180,15 +172,26 @@ public class TravelActivity extends AppCompatActivity{
                 }
             });
         }
+
+
     private void changeStarImage() {
         if (isFavorite) {
-
             imageFavorite.setImageResource(android.R.drawable.btn_star_big_off);
+            showToast("Usunięto z ulubionych");
+
+
         } else {
-
             imageFavorite.setImageResource(android.R.drawable.btn_star_big_on);
-        }
+            StartStationModel startStationModel = new StartStationModel();
+            startStationModel.setStacjaPocz(stationStartName);
 
+            DestinationModel destinationModel = new DestinationModel();
+            destinationModel.setStacjaKon(stationEndName);
+
+            dbHelper.addStartowa(startStationModel);
+            dbHelper.addKoncowa(destinationModel);
+            showToast("Dodano do ulubionych");
+        }
 
         isFavorite = !isFavorite;
     }

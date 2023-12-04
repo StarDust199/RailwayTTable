@@ -53,7 +53,7 @@ public class TimetableActivity extends AppCompatActivity {
     RecyclerView recyclerView;
     ConnectionAdapter connectionAdapter;
     private final Handler handler = new Handler();
-    private final int REFRESH_INTERVAL = 60000;
+    private final int REFRESH_INTERVAL = 30000;
     String selectedStation;
     String godzina = getCurrentSystemTime();
     @Override

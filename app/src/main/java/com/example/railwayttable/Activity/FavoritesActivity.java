@@ -4,6 +4,7 @@ package com.example.railwayttable.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 
 import androidx.activity.OnBackPressedCallback;
@@ -12,11 +13,25 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.preference.PreferenceManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.railwayttable.R;
+import com.example.railwayttable.db.DbHelper;
+import com.example.railwayttable.db.DestinationModel;
+import com.example.railwayttable.db.StartStationModel;
+
+import java.util.List;
 
 public class FavoritesActivity extends AppCompatActivity {
     SharedPreferences sharedPreferences, sharedPreferencesNight;
+    private RecyclerView recyclerViewStart;
+    private RecyclerView recyclerViewDestination;
+    private StationAdapter startStationAdapter;
+    private StationAdapter destinationStationAdapter;
+    DbHelper dbHelper = new DbHelper(this);
+    private List<StartStationModel> startStationList;
+    private List<DestinationModel> destinationStationList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,7 +45,27 @@ public class FavoritesActivity extends AppCompatActivity {
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
+        recyclerViewStart = findViewById(R.id.recyclerViewStart);
+        recyclerViewStart.setLayoutManager(new LinearLayoutManager(this));
 
+        startStationAdapter = new StationAdapter(startStationList);
+        recyclerViewStart.setAdapter(startStationAdapter);
+
+        recyclerViewDestination = findViewById(R.id.recyclerViewDestination);
+        recyclerViewDestination.setLayoutManager(new LinearLayoutManager(this));
+         destinationStationList = dbHelper.getDestinationStations();
+        destinationStationAdapter = new StationAdapter(destinationStationList);
+        recyclerViewDestination.setAdapter(destinationStationAdapter);
+        startStationAdapter.notifyDataSetChanged();
+        destinationStationAdapter.notifyDataSetChanged();
+        List<StartStationModel> startStations = dbHelper.getAllStartStations();
+        for (StartStationModel startStation : startStations) {
+            Log.d("TABLE_START_STATIONS", "ID: " + startStation.getId() + ", Stacja: " + startStation.getStacjaPocz() + ", Ulubiona: " + startStation.isFavorite());
+        }
+        List<DestinationModel> destinationStations = dbHelper.getAllDestinationStations();
+        for (DestinationModel destinationStation : destinationStations) {
+            Log.d("TABLE_DESTINATION_STATIONS", "ID: " + destinationStation.getId() + ", Stacja: " + destinationStation.getStacjaKon() + ", Ulubiona: " + destinationStation.isFavorite());
+    }
     }
     private void backButton() {
         OnBackPressedDispatcher dispatcher = getOnBackPressedDispatcher();
