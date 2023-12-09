@@ -105,6 +105,15 @@ public class ConnectionModel {
     public void setTyp(String typ) {
         this.typ = typ;
     }
+
+    public boolean isStationExpanded() {
+        return expanded;
+    }
+
+    public void setStationExpanded(boolean expanded) {
+        this.expanded = expanded;
+    }
+
     public static class GodzinaOdjazduComparator implements Comparator<ConnectionModel> {
         @Override
         public int compare(ConnectionModel connection1, ConnectionModel connection2) {

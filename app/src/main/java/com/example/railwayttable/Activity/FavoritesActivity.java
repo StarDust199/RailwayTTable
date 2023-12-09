@@ -24,14 +24,9 @@ import com.example.railwayttable.db.StartStationModel;
 import java.util.List;
 
 public class FavoritesActivity extends AppCompatActivity {
-    SharedPreferences sharedPreferences, sharedPreferencesNight;
-    private RecyclerView recyclerViewStart;
-    private RecyclerView recyclerViewDestination;
-    private StationAdapter startStationAdapter;
-    private StationAdapter destinationStationAdapter;
+    SharedPreferences sharedPreferences;
     DbHelper dbHelper = new DbHelper(this);
     private List<StartStationModel> startStationList;
-    private List<DestinationModel> destinationStationList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,16 +40,16 @@ public class FavoritesActivity extends AppCompatActivity {
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
-        recyclerViewStart = findViewById(R.id.recyclerViewStart);
+        RecyclerView recyclerViewStart = findViewById(R.id.recyclerViewStart);
         recyclerViewStart.setLayoutManager(new LinearLayoutManager(this));
 
-        startStationAdapter = new StationAdapter(startStationList);
+        StationAdapter startStationAdapter = new StationAdapter(startStationList);
         recyclerViewStart.setAdapter(startStationAdapter);
 
-        recyclerViewDestination = findViewById(R.id.recyclerViewDestination);
+        RecyclerView recyclerViewDestination = findViewById(R.id.recyclerViewDestination);
         recyclerViewDestination.setLayoutManager(new LinearLayoutManager(this));
-         destinationStationList = dbHelper.getDestinationStations();
-        destinationStationAdapter = new StationAdapter(destinationStationList);
+        List<DestinationModel> destinationStationList = dbHelper.getDestinationStations();
+        StationAdapter destinationStationAdapter = new StationAdapter(destinationStationList);
         recyclerViewDestination.setAdapter(destinationStationAdapter);
         startStationAdapter.notifyDataSetChanged();
         destinationStationAdapter.notifyDataSetChanged();

@@ -5,8 +5,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -15,13 +17,23 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.railwayttable.R;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class ConnectionAdapter extends RecyclerView.Adapter<ConnectionAdapter.MyViewHolder>  {
     Context context;
     ArrayList<ConnectionModel> list;
     AdapterView.OnItemClickListener onItemClickListener;
+    private int displayedItems = 4;
 
     private int ostatnioOtwartaPozycja = RecyclerView.NO_POSITION;
+
+
+    public void setList(List<ConnectionModel> newList) {
+        list = (ArrayList<ConnectionModel>) newList;
+        notifyDataSetChanged();
+    }
+
+
 
     public ConnectionAdapter(Context context, ArrayList<ConnectionModel> list) {
         this.context = context;
@@ -43,7 +55,6 @@ public class ConnectionAdapter extends RecyclerView.Adapter<ConnectionAdapter.My
     }
 
 
-
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
         ConnectionModel connectionModel = list.get(position);
@@ -54,33 +65,50 @@ public class ConnectionAdapter extends RecyclerView.Adapter<ConnectionAdapter.My
 
         boolean isExpanded = connectionModel.isExpanded();
         holder.expandedLayout.setVisibility(isExpanded ? View.VISIBLE : View.GONE);
-
+        holder.expandedLayoutStation.setVisibility(connectionModel.isStationExpanded() ? View.VISIBLE : View.GONE);
 
         holder.typ.setText(connectionModel.getTyp());
         holder.numer.setText(String.valueOf(connectionModel.getNumer()));
         holder.stacKon.setText(connectionModel.getStacjaKon());
         holder.name.setText(connectionModel.getNazwa());
 
+        holder.stations.setOnClickListener(v -> {
+            connectionModel.setStationExpanded(!connectionModel.isStationExpanded());
+            notifyItemChanged(position);
+        });
+
         holder.itemView.setOnClickListener(view -> {
             int pozycja = holder.getAdapterPosition();
 
             if (pozycja != RecyclerView.NO_POSITION) {
                 if (pozycja != ostatnioOtwartaPozycja) {
-
                     if (ostatnioOtwartaPozycja != RecyclerView.NO_POSITION) {
                         list.get(ostatnioOtwartaPozycja).setExpanded(false);
+                        list.get(ostatnioOtwartaPozycja).setStationExpanded(false);
                         notifyItemChanged(ostatnioOtwartaPozycja);
                     }
 
-
                     holder.expandedLayout.setVisibility(View.VISIBLE);
-
                     connectionModel.setExpanded(true);
+
+
+                    if (connectionModel.isStationExpanded()) {
+                        holder.expandedLayoutStation.setVisibility(View.VISIBLE);
+
+                        List<String> stationNames = new ArrayList<>(connectionModel.getStacje().keySet());
+                        ArrayAdapter<String> adapter = new ArrayAdapter<>(holder.itemView.getContext(), android.R.layout.simple_list_item_1, stationNames);
+                        holder.listStations.setAdapter(adapter);
+                        holder.listStations.setVisibility(View.VISIBLE);
+                    } else {
+                        holder.expandedLayoutStation.setVisibility(View.GONE);
+                        holder.listStations.setVisibility(View.GONE);
+                    }
+
                     ostatnioOtwartaPozycja = pozycja;
                 } else {
-
                     holder.expandedLayout.setVisibility(View.GONE);
                     connectionModel.setExpanded(false);
+                    connectionModel.setStationExpanded(false);
                     ostatnioOtwartaPozycja = RecyclerView.NO_POSITION;
                 }
 
@@ -88,16 +116,32 @@ public class ConnectionAdapter extends RecyclerView.Adapter<ConnectionAdapter.My
             }
         });
     }
-
     @Override
     public int getItemCount() {
-        return list.size();
+        int limit = Math.min(list.size(), displayedItems);
+        return limit;
+    }
+    public void showMoreItems() {
+
+        displayedItems += 4;
+
+        displayedItems = Math.min(displayedItems, list.size());
+
+        notifyDataSetChanged();
+    }
+    public void showPreviousItems() {
+
+        displayedItems  = Math.max(0, displayedItems  - 4);
+
+        notifyDataSetChanged();
     }
 
+
     public static class MyViewHolder extends RecyclerView.ViewHolder {
-        TextView godzOjd, godzPrzy, name,numer, typ, stacKon;
+        TextView godzOjd, godzPrzy, name,numer, typ, stacKon, stations;
         ImageView imageView;
-        private LinearLayout expandedLayout;
+        ListView listStations;
+        private LinearLayout expandedLayout,expandedLayoutStation;
 
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -109,6 +153,9 @@ public class ConnectionAdapter extends RecyclerView.Adapter<ConnectionAdapter.My
             typ = itemView.findViewById(R.id.Typ);
             stacKon = itemView.findViewById(R.id.stationEnd);
             expandedLayout=itemView.findViewById(R.id.expandedLayout);
+            expandedLayoutStation=itemView.findViewById(R.id.expandedLayoutStations);
+            stations = itemView.findViewById(R.id.textViewStation);
+            listStations = itemView.findViewById(R.id.listViewStations);
 
 
         }

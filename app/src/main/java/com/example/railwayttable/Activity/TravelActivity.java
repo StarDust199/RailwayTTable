@@ -42,10 +42,12 @@ public class TravelActivity extends AppCompatActivity{
     ConnectionAdapter connectionAdapter;
     boolean isStartFavorite, isDestinationFavorite;
     private boolean isFavorite = false;
+    private int currentStartIndex = 0;
+    private int resultsPerPage = 4;
+
     DbHelper dbHelper=new DbHelper(this);
-    private int counter = 0;
     String startStation, endStation, stationStartName,stationEndName;
-    ImageView imageFavorite;
+    ImageView imageFavorite, imagePre, imageNext;
     TextView  txtHour,textViewStartStation, textViewEndStation;
 
     ArrayList<ConnectionModel> list;
@@ -57,8 +59,11 @@ public class TravelActivity extends AppCompatActivity{
             backButton();
             Toolbar toolbar = findViewById(R.id.toolbarTrav);
             imageFavorite = findViewById(R.id.imageFavorite);
+            imagePre=findViewById(R.id.imagePre);
+            imageNext=findViewById(R.id.imageNext);
 
-
+            imageNext.setOnClickListener(v -> connectionAdapter.showMoreItems());
+            imagePre.setOnClickListener(v -> connectionAdapter.showPreviousItems());
             setSupportActionBar(toolbar);
             ActionBar actionBar = getSupportActionBar();
             if (actionBar != null) {
@@ -81,9 +86,7 @@ public class TravelActivity extends AppCompatActivity{
 
 
 
-            imageFavorite.setOnClickListener(v -> {
-              changeStarImage();
-            });
+            imageFavorite.setOnClickListener(v -> changeStarImage());
             String combinedText = data + ", " + godzina;
             txtHour.setText(combinedText);
 
@@ -155,6 +158,7 @@ public class TravelActivity extends AppCompatActivity{
 
                                     list.sort(new ConnectionModel.GodzinaOdjazduComparator());
                                     connectionAdapter.notifyDataSetChanged();
+
                                 }
 
                                 @Override
