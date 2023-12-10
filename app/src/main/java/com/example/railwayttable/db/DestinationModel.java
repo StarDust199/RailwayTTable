@@ -43,6 +43,6 @@ public class DestinationModel implements Station {
 
     @Override
     public String getStationName() {
-        return null;
+        return stacjaKon;
     }
 }

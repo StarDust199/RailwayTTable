@@ -1,6 +1,5 @@
 package com.example.railwayttable.Activity;
 
-import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -32,6 +31,7 @@ import com.google.firebase.database.ValueEventListener;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -40,10 +40,10 @@ public class TravelActivity extends AppCompatActivity{
     SharedPreferences sharedPreferences;
     DatabaseReference databaseReference;
     ConnectionAdapter connectionAdapter;
-    boolean isStartFavorite, isDestinationFavorite;
-    private boolean isFavorite = false;
-    private int currentStartIndex = 0;
-    private int resultsPerPage = 4;
+
+    String godzina;
+    private boolean isFavorite;
+
 
     DbHelper dbHelper=new DbHelper(this);
     String startStation, endStation, stationStartName,stationEndName;
@@ -62,8 +62,8 @@ public class TravelActivity extends AppCompatActivity{
             imagePre=findViewById(R.id.imagePre);
             imageNext=findViewById(R.id.imageNext);
 
-            imageNext.setOnClickListener(v -> connectionAdapter.showMoreItems());
-            imagePre.setOnClickListener(v -> connectionAdapter.showPreviousItems());
+            imageNext.setOnClickListener(v -> showMoreItems());
+            imagePre.setOnClickListener(v -> showPreviousItems());
             setSupportActionBar(toolbar);
             ActionBar actionBar = getSupportActionBar();
             if (actionBar != null) {
@@ -72,7 +72,7 @@ public class TravelActivity extends AppCompatActivity{
             Intent intent = getIntent();
             startStation = intent.getStringExtra("START_STATION");
             endStation = intent.getStringExtra("END_STATION");
-            String godzina = intent.getStringExtra("GODZINA");
+            godzina = intent.getStringExtra("GODZINA");
             String data=intent.getStringExtra("DATA");
             txtHour=findViewById(R.id.textHour);
             textViewStartStation = findViewById(R.id.textStationA);
@@ -81,10 +81,7 @@ public class TravelActivity extends AppCompatActivity{
             textViewEndStation.setText(endStation);
             stationStartName = textViewStartStation.getText().toString();
             stationEndName = textViewEndStation.getText().toString();
-
-
-
-
+            isFavorite();
 
             imageFavorite.setOnClickListener(v -> changeStarImage());
             String combinedText = data + ", " + godzina;
@@ -148,7 +145,6 @@ public class TravelActivity extends AppCompatActivity{
                                             tempStacje.put(stationName, tempDetails);
 
                                             tempConnection.setStacje(tempStacje);
-
                                             list.add(tempConnection);
                                             break;
                                         }
@@ -177,13 +173,31 @@ public class TravelActivity extends AppCompatActivity{
             });
         }
 
+    private void isFavorite() {
+        StartStationModel startStationModel = new StartStationModel();
+        startStationModel.setStacjaPocz(stationStartName);
 
+        DestinationModel destinationModel = new DestinationModel();
+        destinationModel.setStacjaKon(stationEndName);
+
+
+        boolean isStartStationFavorite = dbHelper.isFavorite(startStationModel);
+        boolean isDestinationFavorite = dbHelper.isFavorite(destinationModel);
+
+
+        isFavorite = isStartStationFavorite || isDestinationFavorite;
+
+    }
     private void changeStarImage() {
         if (isFavorite) {
             imageFavorite.setImageResource(android.R.drawable.btn_star_big_off);
             showToast("Usunięto z ulubionych");
-
-
+            StartStationModel startStationModel = new StartStationModel();
+            startStationModel.setStacjaPocz(stationStartName);
+            dbHelper.deleteStartStation(startStationModel);
+            DestinationModel destinationModel = new DestinationModel();
+            destinationModel.setStacjaKon(stationEndName);
+            dbHelper.deleteDestination(destinationModel);
         } else {
             imageFavorite.setImageResource(android.R.drawable.btn_star_big_on);
             StartStationModel startStationModel = new StartStationModel();
@@ -205,27 +219,137 @@ public class TravelActivity extends AppCompatActivity{
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }
 
+
+   private void queryDatabaseWithNewHour() {
+        list.clear();
+
+        databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for (DataSnapshot trainTypeSnapshot : snapshot.getChildren()) {
+                    for (DataSnapshot trainSnapshot : trainTypeSnapshot.getChildren()) {
+                        String connectionName = trainSnapshot.child("nazwa").getValue(String.class);
+                        Long trainNumber = trainSnapshot.child("numer").getValue(Long.class);
+                        String trainType = trainSnapshot.child("typ").getValue(String.class);
+
+                        DatabaseReference stacjeRef = trainSnapshot.getRef().child("Stacje");
+                        stacjeRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot stacjeSnapshot) {
+                                boolean startStationFound = false;
+                                boolean endStationFound = false;
+                                ConnectionModel tempConnection = new ConnectionModel();
+
+                                for (DataSnapshot stationSnapshot : stacjeSnapshot.getChildren()) {
+                                    String stationName = stationSnapshot.getKey();
+                                    String departureTime = stationSnapshot.child("odjazd").getValue(String.class);
+                                    String arrivalTime = stationSnapshot.child("przyjazd").getValue(String.class);
+
+                                    assert stationName != null;
+                                    if (stationName.equals(startStation)) {
+                                        startStationFound = true;
+                                        tempConnection.setGodzinaOdjazdu(departureTime);
+                                    }
+
+                                    if (stationName.equals(endStation)) {
+                                        endStationFound = true;
+                                        tempConnection.setGodzinaPrzyjazdu(arrivalTime);
+                                    }
+
+                                    boolean departureTimeIsAfterRequestedTime = isTimeAfter(departureTime, godzina);
+
+                                    if (startStationFound && endStationFound && departureTimeIsAfterRequestedTime) {
+                                        tempConnection.setNazwa(connectionName);
+                                        tempConnection.setNumer(trainNumber);
+                                        tempConnection.setStacjaKon(trainSnapshot.child("stacja koncowa").getValue(String.class));
+                                        tempConnection.setTyp(trainType);
+                                        Map<String, Map<String, String>> tempStacje = tempConnection.getStacje();
+                                        if (tempStacje == null) {
+                                            tempStacje = new HashMap<>();
+                                        }
+
+
+                                        Map<String, String> tempDetails = new HashMap<>();
+                                        tempDetails.put("odjazd", departureTime);
+                                        tempDetails.put("przyjazd", arrivalTime);
+                                        tempStacje.put(stationName, tempDetails);
+
+
+                                        tempConnection.setStacje(tempStacje);
+
+
+                                        list.add(tempConnection);
+                                        break;
+                                    }
+
+
+                                    list.sort(new ConnectionModel.GodzinaOdjazduComparator());
+                                    connectionAdapter.notifyDataSetChanged();
+
+                                }
+                            }
+
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError error) {
+
+                            }
+                        });
+                    }
+                }
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+    }
+
+    public void showMoreItems() {
+        try {
+            updateHour(1);
+            queryDatabaseWithNewHour();
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void showPreviousItems() {
+        try {
+            updateHour(-1);
+            queryDatabaseWithNewHour();
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void updateHour(int hourChange) throws ParseException {
+        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
+        Date date = sdf.parse(godzina);
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+        calendar.add(Calendar.HOUR_OF_DAY, hourChange);
+
+        godzina = sdf.format(calendar.getTime()); }
+
     private boolean isTimeAfter(String time1, String time2) {
 
-        if (time1 != null && time2 != null) {
-            @SuppressLint("SimpleDateFormat") SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
-            try {
-                Date date1 = sdf.parse(time1);
-                Date date2 = sdf.parse(time2);
-
-
-                if (date1 != null && date2 != null) {
-                    return date1.after(date2);
-                } else {
-
-                    return false;
-                }
-            } catch (ParseException e) {
-                e.printStackTrace();
-            }
-        } else {
-
+        if (time1 == null || time2 == null) {
             return false;
+        }
+
+        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
+        try {
+            Date date1 = sdf.parse(time1);
+            Date date2 = sdf.parse(time2);
+
+            return date1 != null && date2 != null && date1.after(date2);
+
+        } catch (ParseException e) {
+            e.printStackTrace();
         }
 
         return false;

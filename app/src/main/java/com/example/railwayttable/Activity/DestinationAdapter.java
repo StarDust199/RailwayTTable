@@ -9,15 +9,16 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.railwayttable.R;
+import com.example.railwayttable.db.DestinationModel;
 import com.example.railwayttable.db.StartStationModel;
 
 import java.util.List;
 
-public class StationAdapter extends RecyclerView.Adapter<StationAdapter.StationViewHolder> {
+public class DestinationAdapter extends RecyclerView.Adapter<DestinationAdapter.StationViewHolder> {
 
     private List<? extends Station> stationList;
 
-    public StationAdapter(List<? extends Station> stationList) {
+    public DestinationAdapter(List<? extends Station> stationList) {
         this.stationList = stationList;
     }
 
@@ -27,18 +28,18 @@ public class StationAdapter extends RecyclerView.Adapter<StationAdapter.StationV
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_station, parent, false);
         return new StationViewHolder(view);
     }
+
+    @Override
+    public void onBindViewHolder(@NonNull StationViewHolder holder, int position) {
+        DestinationModel destinationModel = (DestinationModel) stationList.get(position);
+        holder.textStationName.setText(destinationModel.getStationName());
+        holder.bind(destinationModel);
+    }
     public Station getStationAtPosition(int position) {
         if (stationList != null && position >= 0 && position < stationList.size()) {
             return stationList.get(position);
         }
         return null;
-    }
-
-    @Override
-    public void onBindViewHolder(@NonNull StationViewHolder holder, int position) {
-        StartStationModel startStationModel = (StartStationModel) stationList.get(position);
-        holder.textStationName.setText(startStationModel.getStationName());
-        holder.bind(startStationModel);
     }
 
     @Override

@@ -77,28 +77,27 @@
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/recyclerViewStart"
-                    android:layout_width="144dp"
+                    android:layout_width="169dp"
                     android:layout_height="418dp"
                     android:layout_weight="1"
                     android:padding="16dp"
-                    android:paddingEnd="8dp" />
+                    android:paddingEnd="8dp">
+
+                </androidx.recyclerview.widget.RecyclerView>
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/recyclerViewDestination"
-                    android:layout_width="158dp"
+                    android:layout_width="159dp"
                     android:layout_height="match_parent"
+                    android:layout_row="0"
+                    android:layout_column="1"
                     android:layout_weight="1"
                     android:padding="16dp"
                     android:paddingStart="8dp" />
 
-                <View
-                    android:layout_width="161dp"
-                    android:layout_height="match_parent"
-                    android:layout_row="0"
-                    android:layout_column="0" />
 
 
-                <!-- Mała przerwa między RecyclerViews -->
+
 
             </GridLayout>
         </androidx.cardview.widget.CardView>

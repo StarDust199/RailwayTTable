@@ -12,7 +12,7 @@ import java.util.List;
 
 public class DbHelper extends SQLiteOpenHelper {
     private static final String DATABASE_NAME = "myDatabase.db";
-    private static final int DATABASE_VERSION = 4;
+    private static final int DATABASE_VERSION =5;
 
     public static final String TABLE_NAME = "startowa";
     public static final String COLUMN_ID = "id";
@@ -144,7 +144,7 @@ public class DbHelper extends SQLiteOpenHelper {
         return null;
     }
 
-    public List<StartStationModel> getFavoriteStartStations(String stationStartName) {
+    public List<StartStationModel> getFavoriteStartStations() {
         List<StartStationModel> favoriteStartStations = new ArrayList<>();
 
         SQLiteDatabase db = this.getReadableDatabase();

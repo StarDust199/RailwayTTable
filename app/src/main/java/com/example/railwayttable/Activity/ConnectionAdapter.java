@@ -121,20 +121,7 @@ public class ConnectionAdapter extends RecyclerView.Adapter<ConnectionAdapter.My
         int limit = Math.min(list.size(), displayedItems);
         return limit;
     }
-    public void showMoreItems() {
 
-        displayedItems += 4;
-
-        displayedItems = Math.min(displayedItems, list.size());
-
-        notifyDataSetChanged();
-    }
-    public void showPreviousItems() {
-
-        displayedItems  = Math.max(0, displayedItems  - 4);
-
-        notifyDataSetChanged();
-    }
 
 
     public static class MyViewHolder extends RecyclerView.ViewHolder {

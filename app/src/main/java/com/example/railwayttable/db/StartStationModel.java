@@ -43,6 +43,6 @@ public class StartStationModel implements Station {
 
     @Override
     public String getStationName() {
-        return null;
+        return stacjaPocz;
     }
 }
