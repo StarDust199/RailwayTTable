@@ -4,15 +4,18 @@ package com.example.railwayttable.Activity;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.Path;
 import android.os.Bundle;
-import android.view.GestureDetector;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 
 import androidx.activity.OnBackPressedCallback;
 import androidx.activity.OnBackPressedDispatcher;
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -24,30 +27,24 @@ import com.example.railwayttable.R;
 import com.example.railwayttable.db.DbHelper;
 import com.example.railwayttable.db.DestinationModel;
 import com.example.railwayttable.db.StartStationModel;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class FavoritesActivity extends AppCompatActivity {
     SharedPreferences sharedPreferences;
-    DatabaseReference databaseReference;
-    private GestureDetector gestureDetector;
+
     String godzina;
     DbHelper dbHelper = new DbHelper(this);
-    private RecyclerView recyclerViewStart,recyclerViewDestination;
-    private Station startStation;
-    private Station destinationStation;
+    private RecyclerView recyclerViewDestination, recyclerViewStart;
+    private String startStation,start;
+    private String destinationStation,end;
+    private LineDrawingRecyclerViewTouchListener lineDrawingTouchListener;
+
+    public FavoritesActivity() {
+    }
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
@@ -55,7 +52,7 @@ public class FavoritesActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setThemeOfApp();
         setContentView(R.layout.activity_favorites);
-        gestureDetector = new GestureDetector(this, new MyGestureListener());
+
         backButton();
         Toolbar toolbar = findViewById(R.id.toolbarFav);
         setSupportActionBar(toolbar);
@@ -65,59 +62,27 @@ public class FavoritesActivity extends AppCompatActivity {
         }
         godzina = getCurrentSystemTime();
 
+
         recyclerViewStart = findViewById(R.id.recyclerViewStart);
         recyclerViewStart.setLayoutManager(new LinearLayoutManager(this));
         List<StartStationModel> startStationList = dbHelper.getFavoriteStartStations();
-        StationAdapter startStationAdapter = new StationAdapter(startStationList);
+        StationAdapter startStationAdapter = new StationAdapter(startStationList, lineDrawingTouchListener);
         recyclerViewStart.setAdapter(startStationAdapter);
         startStationAdapter.notifyDataSetChanged();
 
         recyclerViewDestination = findViewById(R.id.recyclerViewDestination);
         recyclerViewDestination.setLayoutManager(new LinearLayoutManager(this));
         List<DestinationModel> destinationStationList = dbHelper.getDestinationStations();
-        DestinationAdapter destinationStationAdapter = new DestinationAdapter(destinationStationList);
+        DestinationAdapter destinationStationAdapter = new DestinationAdapter(destinationStationList, lineDrawingTouchListener);
         recyclerViewDestination.setAdapter(destinationStationAdapter);
-
-        destinationStationAdapter.notifyDataSetChanged();
-        recyclerViewStart.setOnTouchListener((v, event) -> {
-            gestureDetector.onTouchEvent(event);
+        lineDrawingTouchListener = new LineDrawingRecyclerViewTouchListener(recyclerViewStart, recyclerViewDestination);
 
 
-            switch (event.getAction()) {
-                case MotionEvent.ACTION_DOWN:
-
-                    startStation = findStationAtPosition(recyclerViewStart, event.getX(), event.getY());
-                    break;
-                case MotionEvent.ACTION_UP:
-
-                    destinationStation = findStationAtPosition(recyclerViewStart, event.getX(), event.getY());
-
-                    searchConnection(startStation, destinationStation);
-                    break;
-            }
-
-            return false;
-        });
-
-        recyclerViewDestination.setOnTouchListener((v, event) -> {
-            gestureDetector.onTouchEvent(event);
+        recyclerViewStart.setOnTouchListener(lineDrawingTouchListener);
+        recyclerViewDestination.setOnTouchListener(lineDrawingTouchListener);
 
 
-            switch (event.getAction()) {
-                case MotionEvent.ACTION_DOWN:
 
-                    startStation = findStationAtPosition(recyclerViewDestination, event.getX(), event.getY());
-                    break;
-                case MotionEvent.ACTION_UP:
-
-                    destinationStation = findStationAtPosition(recyclerViewDestination, event.getX(), event.getY());
-
-                    searchConnection(startStation, destinationStation);
-                    break;
-            }
-
-            return false;
-        });
     }
 
     private void backButton() {
@@ -133,9 +98,10 @@ public class FavoritesActivity extends AppCompatActivity {
         dispatcher.addCallback(this, callback);
     }
 
+
     @Override
     public void onBackPressed() {
-     backToMain();
+        backToMain();
 
     }
 
@@ -145,109 +111,11 @@ public class FavoritesActivity extends AppCompatActivity {
         startActivity(intent);
 
     }
-    private void searchConnection(Station startStation, Station destinationStation) {
-        ArrayList<ConnectionModel>  list = new ArrayList<>();
-        ConnectionAdapter connectionAdapter = new ConnectionAdapter(this, list);
-        databaseReference = FirebaseDatabase.getInstance().getReference("trains");
-        databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                list.clear();
-
-                for (DataSnapshot trainTypeSnapshot : snapshot.getChildren()) {
-
-                    for (DataSnapshot trainSnapshot : trainTypeSnapshot.getChildren()) {
-                        String connectionName = trainSnapshot.child("nazwa").getValue(String.class);
-                        Long trainNumber = trainSnapshot.child("numer").getValue(Long.class);
-                        String trainType = trainSnapshot.child("typ").getValue(String.class);
-
-                        DatabaseReference stacjeRef = trainSnapshot.getRef().child("Stacje");
-                        stacjeRef.addListenerForSingleValueEvent(new ValueEventListener() {
-                            @Override
-                            public void onDataChange(@NonNull DataSnapshot stacjeSnapshot) {
-                                boolean startStationFound = false;
-                                boolean endStationFound = false;
-                                ConnectionModel tempConnection = new ConnectionModel();
-
-                                for (DataSnapshot stationSnapshot : stacjeSnapshot.getChildren()) {
-                                    String stationName = stationSnapshot.getKey();
-                                    String departureTime = stationSnapshot.child("odjazd").getValue(String.class);
-                                    String arrivalTime = stationSnapshot.child("przyjazd").getValue(String.class);
-
-                                    assert stationName != null;
-                                    if (stationName.equals(startStation)) {
-                                        startStationFound = true;
-                                        tempConnection.setGodzinaOdjazdu(departureTime);
-                                    }
-
-                                    if (stationName.equals(destinationStation)) {
-                                        endStationFound = true;
-                                        tempConnection.setGodzinaPrzyjazdu(arrivalTime);
-                                    }
-
-                                    boolean departureTimeIsAfterRequestedTime = isTimeAfter(departureTime, godzina);
-
-                                    if (startStationFound && endStationFound && departureTimeIsAfterRequestedTime) {
-                                        tempConnection.setNazwa(connectionName);
-                                        tempConnection.setNumer(trainNumber);
-                                        tempConnection.setStacjaKon(trainSnapshot.child("stacja koncowa").getValue(String.class));
-                                        tempConnection.setTyp(trainType);
-
-                                        Map<String, Map<String, String>> tempStacje = new HashMap<>();
-                                        Map<String, String> tempDetails = new HashMap<>();
-                                        tempDetails.put("odjazd", departureTime);
-                                        tempDetails.put("przyjazd", arrivalTime);
-                                        tempStacje.put(stationName, tempDetails);
-
-                                        tempConnection.setStacje(tempStacje);
-                                        list.add(tempConnection);
-                                        break;
-                                    }
-                                }
 
 
 
-                                list.sort(new ConnectionModel.GodzinaOdjazduComparator());
-                                connectionAdapter.notifyDataSetChanged();
 
-                            }
 
-                            @Override
-                            public void onCancelled(@NonNull DatabaseError error) {
-
-                            }
-                        });
-                    }
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
-        });
-    }
-    private boolean isTimeAfter(String time1, String time2) {
-
-        if (time1 != null && time2 != null && !time1.isEmpty() && !time2.isEmpty()) {
-            @SuppressLint("SimpleDateFormat") SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
-            try {
-                Date date1 = sdf.parse(time1);
-                Date date2 = sdf.parse(time2);
-
-                if (date1 != null && date2 != null) {
-                    return date1.after(date2);
-                } else {
-                    return false;
-                }
-            } catch (ParseException e) {
-                e.printStackTrace();
-                return false;
-            }
-        } else {
-            return false;
-        }
-    }
     private String getCurrentSystemTime() {
         Calendar calendar = Calendar.getInstance();
         SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
@@ -285,25 +153,95 @@ public class FavoritesActivity extends AppCompatActivity {
                 break;
         }
     }
-    private Station findStationAtPosition(RecyclerView recyclerView, float x, float y) {
+
+    private String findNameAtPosition(RecyclerView recyclerView, float x, float y) {
+        Log.d("Touch", "x=" + x + ", y=" + y);
+
         View child = recyclerView.findChildViewUnder(x, y);
         if (child != null) {
             int position = recyclerView.getChildAdapterPosition(child);
+            Log.d("Touch", "Position=" + position);
             if (position != RecyclerView.NO_POSITION) {
                 RecyclerView.Adapter adapter = recyclerView.getAdapter();
                 if (adapter instanceof StationAdapter) {
                     StationAdapter stationAdapter = (StationAdapter) adapter;
-                    return stationAdapter.getStationAtPosition(position);
+                    Station station = stationAdapter.getStationAtPosition(position);
+                    if (station != null) {
+                        Log.d("Touch", "StationName=" + station.getStationName());
+                        return station.getStationName();
+                    }
                 }
             }
         }
         return null;
     }
-    private static class MyGestureListener extends GestureDetector.SimpleOnGestureListener {
-        @Override
-        public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
 
-            return super.onScroll(e1, e2, distanceX, distanceY);
+
+
+    public class LineDrawingRecyclerViewTouchListener implements View.OnTouchListener {
+        private RecyclerView recyclerViewStart;
+        private RecyclerView recyclerViewDestination;
+        private float startX, startY, currentX, currentY;
+        private final Path drawingPath;
+        private final Paint paint;
+
+        public LineDrawingRecyclerViewTouchListener(RecyclerView recyclerViewStart, RecyclerView recyclerViewDestination) {
+            this.recyclerViewStart = recyclerViewStart;
+            this.recyclerViewDestination = recyclerViewDestination;
+            drawingPath = new Path();
+
+            paint = new Paint();
+            paint.setColor(Color.BLACK);
+            paint.setStyle(Paint.Style.STROKE);
+            paint.setStrokeWidth(5);
+        }
+
+        @Override
+        public boolean onTouch(View v, MotionEvent event) {
+            switch (event.getAction()) {
+                case MotionEvent.ACTION_DOWN:
+                    Log.d("Touch", "ACTION_DOWN: x=" + startX + ", y=" + startY);
+                    startX = event.getX();
+                    startY = event.getY();
+                    drawingPath.moveTo(startX, startY);
+                    break;
+                case MotionEvent.ACTION_MOVE:
+                    Log.d("Touch", "ACTION_MOVE: x=" + event.getX() + ", y=" + event.getY());
+                    currentX = event.getX();
+                    currentY = event.getY();
+                    drawingPath.lineTo(currentX, currentY);
+                    recyclerViewStart.invalidate();
+                    recyclerViewDestination.invalidate();
+                    break;
+                case MotionEvent.ACTION_UP:
+                    float endX = event.getX();
+                    float endY = event.getY();
+
+                    startStation = String.valueOf(findNameAtPosition(recyclerViewStart, startX, startY));
+                    destinationStation = String.valueOf(findNameAtPosition(recyclerViewDestination, endX, endY));
+                    Log.d("Touch", "Start Station Name: " + startStation);
+                    Log.d("Touch", "Destination Station Name: " + destinationStation);
+                    openNewActivity(startStation,destinationStation,godzina);
+                    drawingPath.reset();
+                    recyclerViewStart.invalidate();
+                    recyclerViewDestination.invalidate();
+                    break;
+            }
+            return true;
+        }
+
+        public void draw(Canvas canvas) {
+            canvas.drawPath(drawingPath, paint);
         }
     }
+    private void openNewActivity(String startStation, String destinationStation, String czasTrwania) {
+
+        Intent intent = new Intent(this, TravelActivity.class);
+        intent.putExtra("START_STATION", startStation);
+        intent.putExtra("END_STATION", destinationStation);
+        intent.putExtra("GODZINA", godzina);
+        startActivity(intent);
+    }
+
+
 }

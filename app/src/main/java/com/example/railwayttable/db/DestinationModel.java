@@ -5,6 +5,7 @@ import com.example.railwayttable.Activity.Station;
 public class DestinationModel implements Station {
     private int id;
     private String stacjaKon;
+    private boolean isSelected;
     private boolean isFavorite;
     public DestinationModel() {
 
@@ -13,6 +14,7 @@ public class DestinationModel implements Station {
         this.id = id;
         this.stacjaKon = stacjaKon;
         this.isFavorite = false;
+        this.isSelected = false;
     }
 
 
@@ -24,7 +26,13 @@ public class DestinationModel implements Station {
         isFavorite = favorite;
     }
 
+    public boolean isSelected() {
+        return isSelected;
+    }
 
+    public void setSelected(boolean selected) {
+        isSelected = selected;
+    }
     public int getId() {
         return id;
     }

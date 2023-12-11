@@ -1,5 +1,8 @@
 package com.example.railwayttable.Activity;
 
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,9 +20,10 @@ import java.util.List;
 public class DestinationAdapter extends RecyclerView.Adapter<DestinationAdapter.StationViewHolder> {
 
     private List<? extends Station> stationList;
-
-    public DestinationAdapter(List<? extends Station> stationList) {
+    FavoritesActivity.LineDrawingRecyclerViewTouchListener lineDrawingTouchListener;
+    public DestinationAdapter(List<? extends Station> stationList, FavoritesActivity.LineDrawingRecyclerViewTouchListener listener) {
         this.stationList = stationList;
+        this.lineDrawingTouchListener = listener;
     }
 
     @NonNull
@@ -33,14 +37,40 @@ public class DestinationAdapter extends RecyclerView.Adapter<DestinationAdapter.
     public void onBindViewHolder(@NonNull StationViewHolder holder, int position) {
         DestinationModel destinationModel = (DestinationModel) stationList.get(position);
         holder.textStationName.setText(destinationModel.getStationName());
+
+
+
+        holder.itemView.setOnClickListener(v -> {
+
+            destinationModel.setSelected(!destinationModel.isSelected());
+            notifyItemChanged(position);
+        });
         holder.bind(destinationModel);
+
     }
+
     public Station getStationAtPosition(int position) {
         if (stationList != null && position >= 0 && position < stationList.size()) {
             return stationList.get(position);
         }
         return null;
     }
+    @Override
+    public void onAttachedToRecyclerView(@NonNull RecyclerView recyclerView) {
+        super.onAttachedToRecyclerView(recyclerView);
+        recyclerView.addItemDecoration(new RecyclerView.ItemDecoration() {
+            @Override
+            public void onDraw(@NonNull Canvas c, @NonNull RecyclerView parent, @NonNull RecyclerView.State state) {
+                Log.d("LineDrawing", "onDraw called");
+                if (lineDrawingTouchListener != null) {
+                    lineDrawingTouchListener.draw(c);
+                }
+                super.onDraw(c, parent, state);
+            }
+        });
+    }
+
+
 
     @Override
     public int getItemCount() {

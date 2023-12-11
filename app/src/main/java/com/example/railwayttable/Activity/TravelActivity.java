@@ -3,6 +3,7 @@ package com.example.railwayttable.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -73,7 +74,11 @@ public class TravelActivity extends AppCompatActivity{
             startStation = intent.getStringExtra("START_STATION");
             endStation = intent.getStringExtra("END_STATION");
             godzina = intent.getStringExtra("GODZINA");
+            Log.d("TwojaNowaAktywnosc", "startStation: " + startStation);
+            Log.d("TwojaNowaAktywnosc", "destinationStation: " + endStation);
+            Log.d("TwojaNowaAktywnosc", "czasTrwania: " + godzina);
             String data=intent.getStringExtra("DATA");
+
             txtHour=findViewById(R.id.textHour);
             textViewStartStation = findViewById(R.id.textStationA);
             textViewEndStation = findViewById(R.id.textStationB);

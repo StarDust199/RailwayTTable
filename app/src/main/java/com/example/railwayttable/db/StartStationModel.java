@@ -7,6 +7,8 @@ public class StartStationModel implements Station {
     private int id;
     private String stacjaPocz;
     private boolean isFavorite;
+    private boolean isSelected;
+
 
     public StartStationModel() {
     }
@@ -23,8 +25,15 @@ public class StartStationModel implements Station {
         this.id = id;
         this.stacjaPocz = stacjaPocz;
         this.isFavorite = false;
+        this.isSelected = false;
+    }
+    public boolean isSelected() {
+        return isSelected;
     }
 
+    public void setSelected(boolean selected) {
+        isSelected = selected;
+    }
     public int getId() {
         return id;
     }
