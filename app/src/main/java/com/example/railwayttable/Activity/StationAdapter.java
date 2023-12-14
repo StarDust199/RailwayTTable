@@ -12,18 +12,21 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.railwayttable.R;
+import com.example.railwayttable.db.DestinationModel;
 import com.example.railwayttable.db.StartStationModel;
 
 import java.util.List;
 
 public class StationAdapter extends RecyclerView.Adapter<StationAdapter.StationViewHolder> {
 
-    private List<? extends Station> stationList;
+    private List<StartStationModel> stationList;
     private FavoritesActivity.LineDrawingRecyclerViewTouchListener lineDrawingTouchListener;
-    public StationAdapter(List<? extends Station> stationList, FavoritesActivity.LineDrawingRecyclerViewTouchListener listener) {
+
+    public StationAdapter(List<StartStationModel> stationList) {
         this.stationList = stationList;
-        this.lineDrawingTouchListener = listener;
+
     }
+
 
     @NonNull
     @Override
@@ -31,28 +34,29 @@ public class StationAdapter extends RecyclerView.Adapter<StationAdapter.StationV
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_station, parent, false);
         return new StationViewHolder(view);
     }
+
+    @Override
+    public void onBindViewHolder(@NonNull StationViewHolder holder, int position) {
+        StartStationModel stationModel = (StartStationModel) stationList.get(position);
+        holder.textStationName.setText(stationModel.getStationName());
+
+
+
+        holder.itemView.setOnClickListener(v -> {
+
+            stationModel.setSelected(!stationModel.isSelected());
+            notifyItemChanged(position);
+        });
+        holder.bind(stationModel);
+
+    }
+
     public Station getStationAtPosition(int position) {
         if (stationList != null && position >= 0 && position < stationList.size()) {
             return stationList.get(position);
         }
         return null;
     }
-
-    @Override
-    public void onBindViewHolder(@NonNull StationViewHolder holder, int position) {
-        StartStationModel startStationModel = (StartStationModel) stationList.get(position);
-        holder.textStationName.setText(startStationModel.getStationName());
-
-        holder.itemView.setOnClickListener(v -> {
-
-           startStationModel.setSelected(!startStationModel.isSelected());
-            notifyItemChanged(position);
-        });
-        holder.bind(startStationModel);
-
-
-    }
-
     @Override
     public void onAttachedToRecyclerView(@NonNull RecyclerView recyclerView) {
         super.onAttachedToRecyclerView(recyclerView);
@@ -69,12 +73,11 @@ public class StationAdapter extends RecyclerView.Adapter<StationAdapter.StationV
     }
 
 
+
     @Override
     public int getItemCount() {
         return stationList != null ? stationList.size() : 0;
     }
-
-
 
     static class StationViewHolder extends RecyclerView.ViewHolder {
         private TextView textStationName;

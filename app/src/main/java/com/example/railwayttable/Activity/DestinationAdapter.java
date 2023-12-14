@@ -19,12 +19,14 @@ import java.util.List;
 
 public class DestinationAdapter extends RecyclerView.Adapter<DestinationAdapter.StationViewHolder> {
 
-    private List<? extends Station> stationList;
-    FavoritesActivity.LineDrawingRecyclerViewTouchListener lineDrawingTouchListener;
-    public DestinationAdapter(List<? extends Station> stationList, FavoritesActivity.LineDrawingRecyclerViewTouchListener listener) {
-        this.stationList = stationList;
-        this.lineDrawingTouchListener = listener;
+    private List<DestinationModel> stationList;
+    private FavoritesActivity.LineDrawingRecyclerViewTouchListener lineDrawingTouchListener;
+
+    public DestinationAdapter(List<DestinationModel> destinationStationList) {
+        this.stationList = destinationStationList;
+
     }
+
 
     @NonNull
     @Override
@@ -61,7 +63,7 @@ public class DestinationAdapter extends RecyclerView.Adapter<DestinationAdapter.
         recyclerView.addItemDecoration(new RecyclerView.ItemDecoration() {
             @Override
             public void onDraw(@NonNull Canvas c, @NonNull RecyclerView parent, @NonNull RecyclerView.State state) {
-                Log.d("LineDrawing", "onDraw called");
+
                 if (lineDrawingTouchListener != null) {
                     lineDrawingTouchListener.draw(c);
                 }

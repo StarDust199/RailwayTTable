@@ -9,6 +9,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.os.Bundle;
+import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -27,10 +28,10 @@ import com.example.railwayttable.R;
 import com.example.railwayttable.db.DbHelper;
 import com.example.railwayttable.db.DestinationModel;
 import com.example.railwayttable.db.StartStationModel;
-import com.google.firebase.database.DatabaseReference;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 public class FavoritesActivity extends AppCompatActivity {
@@ -39,9 +40,8 @@ public class FavoritesActivity extends AppCompatActivity {
     String godzina;
     DbHelper dbHelper = new DbHelper(this);
     private RecyclerView recyclerViewDestination, recyclerViewStart;
-    private String startStation,start;
-    private String destinationStation,end;
-    private LineDrawingRecyclerViewTouchListener lineDrawingTouchListener;
+    String formattedDate;
+
 
     public FavoritesActivity() {
     }
@@ -61,27 +61,25 @@ public class FavoritesActivity extends AppCompatActivity {
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
         godzina = getCurrentSystemTime();
-
-
+        formattedDate = getCurrentFormattedDate();
         recyclerViewStart = findViewById(R.id.recyclerViewStart);
         recyclerViewStart.setLayoutManager(new LinearLayoutManager(this));
         List<StartStationModel> startStationList = dbHelper.getFavoriteStartStations();
-        StationAdapter startStationAdapter = new StationAdapter(startStationList, lineDrawingTouchListener);
-        recyclerViewStart.setAdapter(startStationAdapter);
-        startStationAdapter.notifyDataSetChanged();
+        StationAdapter StationAdapter = new StationAdapter(startStationList);
+        recyclerViewStart.setAdapter(StationAdapter);
+
+        LineDrawingRecyclerViewTouchListener startTouchListener = new LineDrawingRecyclerViewTouchListener(recyclerViewStart, recyclerViewDestination);
+        recyclerViewStart.setOnTouchListener(startTouchListener);
+
 
         recyclerViewDestination = findViewById(R.id.recyclerViewDestination);
         recyclerViewDestination.setLayoutManager(new LinearLayoutManager(this));
         List<DestinationModel> destinationStationList = dbHelper.getDestinationStations();
-        DestinationAdapter destinationStationAdapter = new DestinationAdapter(destinationStationList, lineDrawingTouchListener);
-        recyclerViewDestination.setAdapter(destinationStationAdapter);
-        lineDrawingTouchListener = new LineDrawingRecyclerViewTouchListener(recyclerViewStart, recyclerViewDestination);
+        DestinationAdapter destinationAdapter = new DestinationAdapter(destinationStationList);
+        recyclerViewDestination.setAdapter(destinationAdapter);
 
-
-        recyclerViewStart.setOnTouchListener(lineDrawingTouchListener);
-        recyclerViewDestination.setOnTouchListener(lineDrawingTouchListener);
-
-
+        LineDrawingRecyclerViewTouchListener destinationTouchListener = new LineDrawingRecyclerViewTouchListener(recyclerViewStart, recyclerViewDestination);
+        recyclerViewDestination.setOnTouchListener(destinationTouchListener);
 
     }
 
@@ -113,7 +111,12 @@ public class FavoritesActivity extends AppCompatActivity {
     }
 
 
+    public static String getCurrentFormattedDate() {
 
+        Date currentDate = new Date();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("d MMMM yyyy");
+        return dateFormat.format(currentDate);
+    }
 
 
     private String getCurrentSystemTime() {
@@ -154,34 +157,46 @@ public class FavoritesActivity extends AppCompatActivity {
         }
     }
 
-    private String findNameAtPosition(RecyclerView recyclerView, float x, float y) {
+    private String findStationNameAtPosition(RecyclerView recyclerView, float x, float y) {
         Log.d("Touch", "x=" + x + ", y=" + y);
 
-        View child = recyclerView.findChildViewUnder(x, y);
-        if (child != null) {
-            int position = recyclerView.getChildAdapterPosition(child);
-            Log.d("Touch", "Position=" + position);
-            if (position != RecyclerView.NO_POSITION) {
-                RecyclerView.Adapter adapter = recyclerView.getAdapter();
-                if (adapter instanceof StationAdapter) {
-                    StationAdapter stationAdapter = (StationAdapter) adapter;
-                    Station station = stationAdapter.getStationAtPosition(position);
-                    if (station != null) {
-                        Log.d("Touch", "StationName=" + station.getStationName());
-                        return station.getStationName();
+        if (recyclerView != null) {
+            View child = recyclerView.findChildViewUnder(x, y);
+            if (child != null) {
+                int position = recyclerView.getChildAdapterPosition(child);
+                Log.d("Touch", "Position=" + position);
+                if (position != RecyclerView.NO_POSITION) {
+                    RecyclerView.Adapter adapter = recyclerView.getAdapter();
+                    if (adapter != null) {
+                        if (adapter instanceof StationAdapter) {
+                            StationAdapter stationAdapter = (StationAdapter) adapter;
+                            Station station = stationAdapter.getStationAtPosition(position);
+                            if (station != null) {
+                                Log.d("Touch", "StationName=" + station.getStationName());
+                                return station.getStationName();
+                            } else {
+                                Log.d("Touch", "Station is null at position " + position);
+                            }
+                        } else if (adapter instanceof DestinationAdapter) {
+                            DestinationAdapter destinationAdapter = (DestinationAdapter) adapter;
+                            Station station = destinationAdapter.getStationAtPosition(position);
+                            if (station != null) {
+                                Log.d("Touch", "StationName=" + station.getStationName());
+                                return station.getStationName();
+                            } else {
+                                Log.d("Touch", "Station is null at position " + position);
+                            }
+                        }
                     }
                 }
             }
         }
         return null;
     }
-
-
-
     public class LineDrawingRecyclerViewTouchListener implements View.OnTouchListener {
         private RecyclerView recyclerViewStart;
         private RecyclerView recyclerViewDestination;
-        private float startX, startY, currentX, currentY;
+        private float startX, startY, currentX, currentY, endX, endY;
         private final Path drawingPath;
         private final Paint paint;
 
@@ -195,33 +210,68 @@ public class FavoritesActivity extends AppCompatActivity {
             paint.setStyle(Paint.Style.STROKE);
             paint.setStrokeWidth(5);
         }
-
         @Override
         public boolean onTouch(View v, MotionEvent event) {
+            if (recyclerViewStart == null || recyclerViewDestination == null) {
+                return false;
+            }
+
+            int[] recyclerViewStartLocation = new int[2];
+            int[] recyclerViewDestinationLocation = new int[2];
+
+            try {
+                recyclerViewStart.getLocationOnScreen(recyclerViewStartLocation);
+                recyclerViewDestination.getLocationOnScreen(recyclerViewDestinationLocation);
+            } catch (NullPointerException e) {
+                e.printStackTrace();
+                return false;
+            }
+
+            float touchX = event.getRawX() - recyclerViewStartLocation[0];
+            float touchY = event.getRawY() - recyclerViewStartLocation[1];
+
             switch (event.getAction()) {
                 case MotionEvent.ACTION_DOWN:
-                    Log.d("Touch", "ACTION_DOWN: x=" + startX + ", y=" + startY);
-                    startX = event.getX();
-                    startY = event.getY();
+                    Log.d("Touch", "ACTION_DOWN: x=" + touchX + ", y=" + touchY);
+                    startX = touchX;
+                    startY = touchY;
                     drawingPath.moveTo(startX, startY);
                     break;
                 case MotionEvent.ACTION_MOVE:
-                    Log.d("Touch", "ACTION_MOVE: x=" + event.getX() + ", y=" + event.getY());
-                    currentX = event.getX();
-                    currentY = event.getY();
+                    Log.d("Touch", "ACTION_MOVE: x=" + touchX + ", y=" + touchY);
+                    currentX = touchX;
+                    currentY = touchY;
                     drawingPath.lineTo(currentX, currentY);
-                    recyclerViewStart.invalidate();
-                    recyclerViewDestination.invalidate();
+
+                    if (recyclerViewStart != null) {
+                        recyclerViewStart.invalidate();
+                    }
+
+                    if (recyclerViewDestination != null) {
+                        recyclerViewDestination.invalidate();
+                    }
                     break;
                 case MotionEvent.ACTION_UP:
-                    float endX = event.getX();
-                    float endY = event.getY();
+                    float endX = touchX;
+                    float endY = touchY;
 
-                    startStation = String.valueOf(findNameAtPosition(recyclerViewStart, startX, startY));
-                    destinationStation = String.valueOf(findNameAtPosition(recyclerViewDestination, endX, endY));
-                    Log.d("Touch", "Start Station Name: " + startStation);
-                    Log.d("Touch", "Destination Station Name: " + destinationStation);
-                    openNewActivity(startStation,destinationStation,godzina);
+
+                    double angle = Math.toDegrees(Math.atan2(endY - startY, endX - startX));
+
+                    double leftToRightStartAngle = 45.0;
+                    double leftToRightEndAngle = -45.0;
+
+
+                    if (angle > leftToRightEndAngle && angle <leftToRightStartAngle) {
+
+                        String startStation = findStationNameAtPosition(recyclerViewStart, endX, endY);
+                        String destinationStation = findStationNameAtPosition(recyclerViewDestination, endX, endY);
+
+                        Log.d("Touch", "Start Station Name: " + startStation);
+                        Log.d("Touch", "Destination Station Name: " + destinationStation);
+                        openNewActivity(startStation, destinationStation, godzina);
+                    }
+
                     drawingPath.reset();
                     recyclerViewStart.invalidate();
                     recyclerViewDestination.invalidate();
@@ -229,7 +279,6 @@ public class FavoritesActivity extends AppCompatActivity {
             }
             return true;
         }
-
         public void draw(Canvas canvas) {
             canvas.drawPath(drawingPath, paint);
         }
@@ -240,6 +289,7 @@ public class FavoritesActivity extends AppCompatActivity {
         intent.putExtra("START_STATION", startStation);
         intent.putExtra("END_STATION", destinationStation);
         intent.putExtra("GODZINA", godzina);
+        intent.putExtra("DATA", formattedDate);
         startActivity(intent);
     }
 
