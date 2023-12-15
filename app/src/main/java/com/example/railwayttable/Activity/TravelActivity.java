@@ -3,7 +3,6 @@ package com.example.railwayttable.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -74,9 +73,7 @@ public class TravelActivity extends AppCompatActivity{
             startStation = intent.getStringExtra("START_STATION");
             endStation = intent.getStringExtra("END_STATION");
             godzina = intent.getStringExtra("GODZINA");
-            Log.d("TwojaNowaAktywnosc", "startStation: " + startStation);
-            Log.d("TwojaNowaAktywnosc", "destinationStation: " + endStation);
-            Log.d("TwojaNowaAktywnosc", "czasTrwania: " + godzina);
+
             String data=intent.getStringExtra("DATA");
 
             txtHour=findViewById(R.id.textHour);
@@ -86,7 +83,14 @@ public class TravelActivity extends AppCompatActivity{
             textViewEndStation.setText(endStation);
             stationStartName = textViewStartStation.getText().toString();
             stationEndName = textViewEndStation.getText().toString();
-            isFavorite();
+
+            boolean isConnectionFavorite = isFavorite();
+
+            if (isConnectionFavorite) {
+                imageFavorite.setImageResource(android.R.drawable.btn_star_big_on);
+            } else {
+                imageFavorite.setImageResource(android.R.drawable.btn_star_big_off);
+            }
 
             imageFavorite.setOnClickListener(v -> changeStarImage());
             String combinedText = data + ", " + godzina;
@@ -178,7 +182,7 @@ public class TravelActivity extends AppCompatActivity{
             });
         }
 
-    private void isFavorite() {
+    private boolean isFavorite() {
         StartStationModel startStationModel = new StartStationModel();
         startStationModel.setStacjaPocz(stationStartName);
 
@@ -192,31 +196,44 @@ public class TravelActivity extends AppCompatActivity{
 
         isFavorite = isStartStationFavorite || isDestinationFavorite;
 
+        return isFavorite;
     }
     private void changeStarImage() {
+        boolean updatedStartStation = false;
+        boolean updatedDestination = false;
+
         if (isFavorite) {
             imageFavorite.setImageResource(android.R.drawable.btn_star_big_off);
             showToast("Usunięto z ulubionych");
+
             StartStationModel startStationModel = new StartStationModel();
             startStationModel.setStacjaPocz(stationStartName);
-            dbHelper.deleteStartStation(startStationModel);
+            updatedStartStation = dbHelper.updateStartowa(startStationModel, false);
+
             DestinationModel destinationModel = new DestinationModel();
             destinationModel.setStacjaKon(stationEndName);
-            dbHelper.deleteDestination(destinationModel);
+            updatedDestination = dbHelper.updateKoncowa(destinationModel, false);
+
         } else {
             imageFavorite.setImageResource(android.R.drawable.btn_star_big_on);
+
             StartStationModel startStationModel = new StartStationModel();
             startStationModel.setStacjaPocz(stationStartName);
 
             DestinationModel destinationModel = new DestinationModel();
             destinationModel.setStacjaKon(stationEndName);
 
-            dbHelper.addStartowa(startStationModel);
-            dbHelper.addKoncowa(destinationModel);
+            updatedStartStation = dbHelper.addStartowa(startStationModel);
+            updatedDestination = dbHelper.addKoncowa(destinationModel);
+
             showToast("Dodano do ulubionych");
         }
 
         isFavorite = !isFavorite;
+
+        if (!updatedStartStation || !updatedDestination) {
+            showToast("Błąd podczas aktualizacji stacji");
+        }
     }
 
     private void showToast(String message) {

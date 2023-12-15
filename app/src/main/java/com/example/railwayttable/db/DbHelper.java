@@ -12,7 +12,7 @@ import java.util.List;
 
 public class DbHelper extends SQLiteOpenHelper {
     private static final String DATABASE_NAME = "myDatabase.db";
-    private static final int DATABASE_VERSION =5;
+    private static final int DATABASE_VERSION =7;
 
     public static final String TABLE_NAME = "startowa";
     public static final String COLUMN_ID = "id";
@@ -59,6 +59,36 @@ public class DbHelper extends SQLiteOpenHelper {
         return insert != -1;
     }
 
+    public boolean updateStartowa(StartStationModel startStationModel, boolean isFavorite) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(COLUMN_IS_FAVORITE, isFavorite ? 1 : 0);
+
+        String selection = COLUMN_STACJA + " = ?";
+        String[] selectionArgs = {startStationModel.getStacjaPocz()};
+
+        int rowsUpdated = db.update(TABLE_NAME, values, selection, selectionArgs);
+
+        db.close();
+
+        return rowsUpdated > 0;
+    }
+    public boolean updateKoncowa(DestinationModel destinationModel, boolean isFavorite) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(COLUMN_IS_FAVORITE, isFavorite ? 1 : 0);
+
+        String selection = COLUMN_DESTINATION + " = ?";
+        String[] selectionArgs = {destinationModel.getStacjaKon()};
+
+        int rowsUpdated = db.update(TABLE_NAME_K, values, selection, selectionArgs);
+
+        db.close();
+
+        return rowsUpdated > 0;
+    }
     public boolean addKoncowa(DestinationModel destinationModel) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues Values = new ContentValues();
@@ -103,6 +133,53 @@ public class DbHelper extends SQLiteOpenHelper {
 
         cursor.close();
         db.close();
+
+        return isFavorite;
+    }
+
+    @SuppressLint("Range")
+    public boolean isFavoriteByStationName(String stationName) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        boolean isFavorite = false;
+
+        try {
+            String[] columns = {COLUMN_IS_FAVORITE};
+            String selection = COLUMN_STACJA + " = ?";
+            String[] selectionArgs = {stationName};
+
+            Cursor cursor = db.query(TABLE_NAME, columns, selection, selectionArgs, null, null, null);
+
+            if (cursor.moveToFirst()) {
+                isFavorite = cursor.getInt(cursor.getColumnIndex(COLUMN_IS_FAVORITE)) == 1;
+            }
+
+            cursor.close();
+        } finally {
+            db.close();
+        }
+
+        return isFavorite;
+    }
+    @SuppressLint("Range")
+    public boolean isFavoriteDestinationStationName(String stationName) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        boolean isFavorite = false;
+
+        try {
+            String[] columns = {COLUMN_IS_FAVORITE};
+            String selection = COLUMN_DESTINATION + " = ?";
+            String[] selectionArgs = {stationName};
+
+            Cursor cursor = db.query(TABLE_NAME_K, columns, selection, selectionArgs, null, null, null);
+
+            if (cursor.moveToFirst()) {
+                isFavorite = cursor.getInt(cursor.getColumnIndex(COLUMN_IS_FAVORITE)) == 1;
+            }
+
+            cursor.close();
+        } finally {
+            db.close();
+        }
 
         return isFavorite;
     }

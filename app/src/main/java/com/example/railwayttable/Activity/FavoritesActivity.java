@@ -250,27 +250,39 @@ public class FavoritesActivity extends AppCompatActivity {
                     if (recyclerViewDestination != null) {
                         recyclerViewDestination.invalidate();
                     }
+
                     break;
                 case MotionEvent.ACTION_UP:
                     float endX = touchX;
                     float endY = touchY;
 
-
                     double angle = Math.toDegrees(Math.atan2(endY - startY, endX - startX));
 
                     double leftToRightStartAngle = 45.0;
                     double leftToRightEndAngle = -45.0;
+                    double rightToLeftStartAngle = 135.0;
+                    double rightToLeftEndAngle = 225.0;
+
+                    String startStation;
+                    String destinationStation;
 
 
-                    if (angle > leftToRightEndAngle && angle <leftToRightStartAngle) {
+                    if ((angle > leftToRightEndAngle && angle < leftToRightStartAngle) ||
+                            (angle > rightToLeftEndAngle && angle < rightToLeftStartAngle) ||
+                            (angle > -180 && angle < -135) ||
+                            (angle > 135 && angle < 180)) {
 
-                        String startStation = findStationNameAtPosition(recyclerViewStart, endX, endY);
-                        String destinationStation = findStationNameAtPosition(recyclerViewDestination, endX, endY);
+                        startStation = findStationNameAtPosition(recyclerViewStart, endX, endY);
+                        destinationStation = findStationNameAtPosition(recyclerViewDestination, endX, endY);
+                    } else {
 
-                        Log.d("Touch", "Start Station Name: " + startStation);
-                        Log.d("Touch", "Destination Station Name: " + destinationStation);
-                        openNewActivity(startStation, destinationStation, godzina);
+                        destinationStation = findStationNameAtPosition(recyclerViewStart, endX, endY);
+                        startStation   = findStationNameAtPosition(recyclerViewDestination, endX, endY);
                     }
+
+                    Log.d("Touch", "Start Station Name: " + startStation);
+                    Log.d("Touch", "Destination Station Name: " + destinationStation);
+                    openNewActivity(startStation, destinationStation, godzina);
 
                     drawingPath.reset();
                     recyclerViewStart.invalidate();
@@ -283,7 +295,7 @@ public class FavoritesActivity extends AppCompatActivity {
             canvas.drawPath(drawingPath, paint);
         }
     }
-    private void openNewActivity(String startStation, String destinationStation, String czasTrwania) {
+    private void openNewActivity(String startStation, String destinationStation, String czas) {
 
         Intent intent = new Intent(this, TravelActivity.class);
         intent.putExtra("START_STATION", startStation);
