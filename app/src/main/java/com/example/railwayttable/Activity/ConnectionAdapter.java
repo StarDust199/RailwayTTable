@@ -65,17 +65,14 @@ public class ConnectionAdapter extends RecyclerView.Adapter<ConnectionAdapter.My
 
         boolean isExpanded = connectionModel.isExpanded();
         holder.expandedLayout.setVisibility(isExpanded ? View.VISIBLE : View.GONE);
-        holder.expandedLayoutStation.setVisibility(connectionModel.isStationExpanded() ? View.VISIBLE : View.GONE);
+
 
         holder.typ.setText(connectionModel.getTyp());
         holder.numer.setText(String.valueOf(connectionModel.getNumer()));
         holder.stacKon.setText(connectionModel.getStacjaKon());
         holder.name.setText(connectionModel.getNazwa());
 
-        holder.stations.setOnClickListener(v -> {
-            connectionModel.setStationExpanded(!connectionModel.isStationExpanded());
-            notifyItemChanged(position);
-        });
+
 
         holder.itemView.setOnClickListener(view -> {
             int pozycja = holder.getAdapterPosition();
@@ -92,17 +89,10 @@ public class ConnectionAdapter extends RecyclerView.Adapter<ConnectionAdapter.My
                     connectionModel.setExpanded(true);
 
 
-                    if (connectionModel.isStationExpanded()) {
-                        holder.expandedLayoutStation.setVisibility(View.VISIBLE);
 
-                        List<String> stationNames = new ArrayList<>(connectionModel.getStacje().keySet());
-                        ArrayAdapter<String> adapter = new ArrayAdapter<>(holder.itemView.getContext(), android.R.layout.simple_list_item_1, stationNames);
-                        holder.listStations.setAdapter(adapter);
-                        holder.listStations.setVisibility(View.VISIBLE);
-                    } else {
-                        holder.expandedLayoutStation.setVisibility(View.GONE);
-                        holder.listStations.setVisibility(View.GONE);
-                    }
+
+
+
 
                     ostatnioOtwartaPozycja = pozycja;
                 } else {
@@ -128,7 +118,7 @@ public class ConnectionAdapter extends RecyclerView.Adapter<ConnectionAdapter.My
         TextView godzOjd, godzPrzy, name,numer, typ, stacKon, stations;
         ImageView imageView;
         ListView listStations;
-        private LinearLayout expandedLayout,expandedLayoutStation;
+        private LinearLayout expandedLayout;
 
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -140,9 +130,6 @@ public class ConnectionAdapter extends RecyclerView.Adapter<ConnectionAdapter.My
             typ = itemView.findViewById(R.id.Typ);
             stacKon = itemView.findViewById(R.id.stationEnd);
             expandedLayout=itemView.findViewById(R.id.expandedLayout);
-            expandedLayoutStation=itemView.findViewById(R.id.expandedLayoutStations);
-            stations = itemView.findViewById(R.id.textViewStation);
-            listStations = itemView.findViewById(R.id.listViewStations);
 
 
         }

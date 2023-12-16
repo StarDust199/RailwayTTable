@@ -51,4 +51,8 @@
     <string name="numer2">numer:</string>
     <string name="nazwa2">nazwa:</string>
     <string name="wybierz_stacj">Wybierz stację:</string>
+    <string name="Tytuł">tytul</string>
+    <string name="komentarz">komentarz</string>
+    <string name="dodaj_plan">Dodaj plan</string>
+    <string name="wyszukaj_po_czenie">WYSZUKAJ POŁĄCZENIE</string>
 </resources>

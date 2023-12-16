@@ -27,6 +27,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.view.ContextThemeWrapper;
 import androidx.appcompat.widget.Toolbar;
 import androidx.preference.PreferenceManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.railwayttable.R;
 import com.google.firebase.database.DataSnapshot;
@@ -53,6 +54,7 @@ public class RouteActivity extends AppCompatActivity {
     Button button;
     CustomArrayAdapter autoComplete;
     EditText datePicker, timePicker;
+
     String startStation, endStation;
     Intent intent;
     int year;

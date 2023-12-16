@@ -183,20 +183,6 @@ public class DbHelper extends SQLiteOpenHelper {
 
         return isFavorite;
     }
-    public StartStationModel getModelByID(int id) {
-        SQLiteDatabase db = this.getWritableDatabase();
-        String queryString =  "SELECT * FROM " + TABLE_NAME + " WHERE " + COLUMN_ID + " = ?";
-        Cursor cursor = db.rawQuery(queryString, null);
-        if (cursor.moveToFirst()) {
-            int column_id = cursor.getInt(0);
-            String stacjaP = cursor.getString(1);
-
-            return new StartStationModel(column_id, stacjaP);
-        }
-        cursor.close();
-        db.close();
-        return null;
-    }
 
     public boolean deleteStartStation(StartStationModel startStationModel) {
         SQLiteDatabase db = this.getWritableDatabase();
