@@ -1,6 +1,7 @@
 package com.example.railwayttable.Activity;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,13 +21,25 @@ public class PlannerAdapter extends FirestoreRecyclerAdapter<Planner, PlannerAda
         super(options);
         this.context=context;
     }
-
+    @Override
+    public int getItemCount() {
+        return super.getItemCount();
+    }
     @Override
     protected void onBindViewHolder(@NonNull PlannerViewHolder holder, int position, @NonNull Planner planner) {
 
         holder.txtTitle.setText(planner.title);
         holder.txtcomment.setText(planner.Description);
         holder.txtstamp.setText(Utility.timeStampToString(planner.timestamp));
+
+        holder.itemView.setOnClickListener(v -> {
+            Intent intent=new Intent(context, NotesDetailsActivity.class);
+            intent.putExtra("title",planner.title);
+            intent.putExtra("comment",planner.Description);
+            String docId =this.getSnapshots().getSnapshot(position).getId();
+            intent.putExtra("docId",docId);
+            context.startActivity(intent);
+        });
 
     }
 
@@ -37,7 +50,7 @@ public class PlannerAdapter extends FirestoreRecyclerAdapter<Planner, PlannerAda
         return new PlannerViewHolder(view);
     }
 
-    public class PlannerViewHolder extends RecyclerView.ViewHolder {
+    public static class PlannerViewHolder extends RecyclerView.ViewHolder {
 
     TextView txtTitle, txtcomment, txtstamp;
 

@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import androidx.activity.OnBackPressedCallback;
 import androidx.activity.OnBackPressedDispatcher;
@@ -44,6 +45,7 @@ public class PlannerActivity extends AppCompatActivity {
 
     }
     private void setupRecyclerView() {
+
         Query query = Utility.getCollectionReference().orderBy("timestamp", Query.Direction.DESCENDING);
         FirestoreRecyclerOptions<Planner> options = new FirestoreRecyclerOptions.Builder<Planner>()
                 .setQuery(query, Planner.class)

@@ -31,10 +31,28 @@
     <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="436dp"
+        android:layout_margin="10dp"
+        android:layout_marginStart="15dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="10dp"
         app:layout_constraintBottom_toTopOf="@+id/relativeLayout12"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/relativeLayout8">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recylerNotes"
+            android:layout_width="389dp"
+            android:layout_height="326dp"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginStart="13dp"
+            android:layout_marginTop="30dp"
+            android:layout_marginEnd="10dp"
+            android:layout_marginBottom="80dp" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/add_plan_btn"
@@ -47,11 +65,6 @@
             android:backgroundTint="?attr/colorPrimaryVariant"
             android:src="@drawable/baseline_add_24"
             tools:ignore="SpeakableTextPresentCheck" />
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recylerNotes"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
     </RelativeLayout>
 
     <RelativeLayout

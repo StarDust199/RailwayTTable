@@ -4,60 +4,81 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="?attr/colorPrimaryVariant"
-    tools:context=".Activity.NotesDetailsActivity">
+    style="@style/ScreenBackground">
 
-    <RelativeLayout
-        android:id="@+id/relativeTitle"
-        android:layout_width="401dp"
-        android:layout_height="67dp"
+    <ScrollView
+
+        android:id="@+id/scrollView5"
+        style="@style/ScreenBackground"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="SpeakableTextPresentCheck">
 
+    </ScrollView>
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbarAddNotes"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?attr/colorPrimary"
+        android:minHeight="?attr/actionBarSize"
+        android:theme="?attr/actionBarTheme"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:navigationIcon="@drawable/icons8_back_48"
+        app:title="Dodaj Plan"
+        app:titleTextColor="@color/white" >
 
         <ImageButton
             android:id="@+id/saveNoteBtn"
             android:layout_width="100dp"
-            android:layout_height="match_parent"
+            android:layout_height="50dp"
             android:layout_alignParentEnd="true"
             android:layout_alignParentBottom="true"
-            android:background="?attr/colorPrimaryVariant"
-            android:src="@drawable/baseline_done_24"
-            tools:ignore="SpeakableTextPresentCheck" />
+            android:background="?attr/colorPrimary"
+            android:src="@drawable/baseline_done_24_white"
+            tools:ignore="SpeakableTextPresentCheck"
+            tools:layout_editor_absoluteX="174dp"
+            android:layout_gravity="right"
+            tools:layout_editor_absoluteY="16dp" />
+    </androidx.appcompat.widget.Toolbar>
 
-        <TextView
-            android:id="@+id/pagetitle"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentBottom="true"
-            android:layout_marginStart="25dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginEnd="100dp"
-            android:layout_marginBottom="0dp"
-            android:layout_toStartOf="@+id/saveNoteBtn"
-            android:text="@string/dodaj_plan"
-            android:textSize="32sp"
-            android:textStyle="bold" />
 
+    <RelativeLayout
+        android:id="@+id/relativeLayout"
+        android:layout_width="match_parent"
+        android:layout_height="130dp"
+        android:background="@drawable/wave_blue"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/toolbarAddNotes">
 
     </RelativeLayout>
 
+
     <androidx.cardview.widget.CardView
-        android:layout_width="347dp"
-        android:layout_height="500dp"
+        android:layout_width="348dp"
+        android:layout_height="358dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="30dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginBottom="30dp"
         android:elevation="25dp"
         android:fadingEdgeLength="10dp"
-        app:cardBackgroundColor="@color/shadow"
-        app:cardCornerRadius="5dp"
+        app:cardBackgroundColor="?attr/colorButtonNormal"
+        app:cardCornerRadius="15dp"
         app:cardElevation="10dp"
         app:cardMaxElevation="10dp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/relativeLayout9"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/relativeTitle">
+        app:layout_constraintTop_toBottomOf="@+id/relativeLayout">
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -128,5 +149,31 @@
 
     </androidx.cardview.widget.CardView>
 
+    <RelativeLayout
+        android:id="@+id/relativeLayout9"
+        android:layout_width="match_parent"
+        android:layout_height="102dp"
+        android:background="@drawable/wave_floor"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <TextView
+            android:id="@+id/textDelete"
+            android:layout_width="136dp"
+            android:layout_height="47dp"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginStart="125dp"
+            android:layout_marginTop="15dp"
+            android:layout_marginEnd="125dp"
+            android:layout_marginBottom="38dp"
+            android:gravity="center"
+            android:text="Usun Plan"
+            android:textStyle="bold"
+            android:visibility="visible" />
+    </RelativeLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -55,4 +55,5 @@
     <string name="komentarz">komentarz</string>
     <string name="dodaj_plan">Dodaj plan</string>
     <string name="wyszukaj_po_czenie">WYSZUKAJ POŁĄCZENIE</string>
+    <string name="usu_plan">Usuń plan</string>
 </resources>
