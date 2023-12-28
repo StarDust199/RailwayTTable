@@ -41,14 +41,6 @@ public class ConnectionModel {
         this.expanded = expanded;
     }
 
-    public String getStacja() {
-        return stacja;
-    }
-
-    public void setStacja(String stacja) {
-        this.stacja = stacja;
-    }
-
     public String getGodzinaOdjazdu() {
         return godzinaOdjazdu;
     }
@@ -63,14 +55,6 @@ public class ConnectionModel {
 
     public void setGodzinaPrzyjazdu(String godzinaPrzyjazdu) {
         this.godzinaPrzyjazdu = godzinaPrzyjazdu;
-    }
-
-    public List<String> getStacjeList() {
-        return stacjeList;
-    }
-
-    public void setStacjeList(List<String> stacjeList) {
-        this.stacjeList = stacjeList;
     }
 
     public String getNazwa() {

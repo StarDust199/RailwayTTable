@@ -26,9 +26,22 @@ public class PolicyActivity extends AppCompatActivity {
         setContentView(R.layout.activity_policy);
         backButton();
         textview= findViewById(R.id.textPolicy);
-        String pars="Lorem ipsum dolor sit amet, consectetur adipiscing elit. In consectetur venenatis ipsum, quis lacinia dui varius vel. Nullam pharetra odio neque, id porta dolor sodales sit amet. Nullam fermentum finibus consectetur. Phasellus at malesuada magna, nec interdum nisl. Integer sagittis iaculis erat, non ultrices lacus consequat id. Curabitur vitae leo massa. Maecenas posuere arcu orci, nec rutrum nisi pellentesque a. Nulla massa nisl, efficitur imperdiet nibh ut, scelerisque ultrices sapien.\n" +
-                "\n" +
-                "Sed elementum bibendum elit sit amet pellentesque. Cras auctor odio felis, non tempus enim aliquam in. Pellentesque sit amet augue tristique, bibendum odio a, tempor ipsum. Integer et aliquam ex. Duis nulla lectus, pretium at nibh id, hendrerit cursus justo. Ut sit amet molestie tellus. Duis laoreet vestibulum odio, vel pretium turpis eleifend quis. Praesent accumsan viverra leo hendrerit fringilla. Nullam placerat tellus sed libero faucibus, fringilla ultrices nisl vulputate. Ut metus sem, rhoncus vel ultricies vel, dictum in ipsum. Vestibulum pretium varius ligula.";
+        String pars=    "POLITYKA PRYWATNOŚCI\n" +
+                    "\n" +
+                    "1. Aplikacja Rzokład Jazdy jest administrowana przez twórcę aplikacji tj. Agnieszkę Hamal.\n" +
+                    "\n" +
+                    "2. Zródłem danych wykorzystywanych przez aplikację jest baza dnaych utworzona na podstawie tablicowego rozkładu jazdy. Obecnie w aplikacje nie przetwarzane dane analityczne oraz osobowe." +
+                    "Baza dnaych podlega ochronie w rozumieniu ustawy z dnia 27 lipca 2001 o ochronie baz danych (Dz. U. 2001 nr 128 poz. 1402 ze zm.)\n" +
+                    "\n" +
+                    "3. W przypadku rozwoju apliakcji dane bedą zebrane w celu personalizacji lub świadczenia wybranych usług.\n" +
+                    "\n" +
+                    "4. Podstawą prawną dotycząca przetwarzania danych jest RODO tj. Rozporządzenie Parlamentu Europejskiego i Rady (UE) w sprawie ochrony danych osobowych.\n" +
+                    "\n" +
+                    "5. Dane osobowe bedą przechowywane od momentu udostępnienia zgody do momentu jej wycofania.\n" +
+                    "\n" +
+                    "6. Użytkownikowi przysługuje możliwość zmmiany w udostępnianych danych a także wycofanie zgód.\n" +
+                    "\n" +
+                    "7. Autor zastrzega sobie możliwosć zmian w polityce prywatnosci, użytkownik bedzie poinformowany o tym w stosowny sposób.";
         textview.setText(pars);
         textview.setMovementMethod(new ScrollingMovementMethod());
         Toolbar toolbar = findViewById(R.id.toolbarPolicy);

@@ -28,9 +28,27 @@ public class InformationActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbarInfo);
         setSupportActionBar(toolbar);
         textview= findViewById(R.id.textInfo);
-        String pars="Lorem ipsum dolor sit amet, consectetur adipiscing elit. In consectetur venenatis ipsum, quis lacinia dui varius vel. Nullam pharetra odio neque, id porta dolor sodales sit amet. Nullam fermentum finibus consectetur. Phasellus at malesuada magna, nec interdum nisl. Integer sagittis iaculis erat, non ultrices lacus consequat id. Curabitur vitae leo massa. Maecenas posuere arcu orci, nec rutrum nisi pellentesque a. Nulla massa nisl, efficitur imperdiet nibh ut, scelerisque ultrices sapien.\n" +
-                "\n" +
-                "Sed elementum bibendum elit sit amet pellentesque. Cras auctor odio felis, non tempus enim aliquam in. Pellentesque sit amet augue tristique, bibendum odio a, tempor ipsum. Integer et aliquam ex. Duis nulla lectus, pretium at nibh id, hendrerit cursus justo. Ut sit amet molestie tellus. Duis laoreet vestibulum odio, vel pretium turpis eleifend quis. Praesent accumsan viverra leo hendrerit fringilla. Nullam placerat tellus sed libero faucibus, fringilla ultrices nisl vulputate. Ut metus sem, rhoncus vel ultricies vel, dictum in ipsum. Vestibulum pretium varius ligula.";
+        String pars=    "OPIS\n" +
+                    "Rozklad Jazdy - mobilny rozkład jazdy pociągów\n" +
+                    "\n" +
+                    "Apliakcja Rozkład Jazdy przeznaczona na urządzenia mobilne oferuje \n" +
+                    "informacje na temat rozkzładu jazdy obejmujące przewozników Polregio oraz PKP intercity na trasie Katowice - Wrocław.\n" +
+                    "Jest to bezpłatna apliakcja umożliwiająca wyszukanie połączeń a także zawierajaca dodatkowe funkcje, których nie posiadają inne aplikacje.\n" +
+                    "\n" +
+                    "Sekcja ulubione i wyszukiwanie gestem\n" +
+                    "Aplikacja umożliwia dodawanie połączeń do ulubionych, a z poziomu sekcji ulubione wyszukanie informacji o połączeniu za pomocą jedynie gestu bez wpisywania nazw stacji czy godziny\n" +
+                    "\n" +
+                    "Interaktywny rozkład\n" +
+                    "Chcesz sprawdzić połaczenia na dowolnej stacji? Wystarczy, że wybierzesz stację a połączenie zostanie natychmiast wysiwieltone.\n" +
+                    "Dodatkowe informacje widoczne są po kliknięciu na połączenie\n" +
+                    "\n" +
+                    "Zaplanuj wyjazd\n" +
+                    "Tworzenie notatek umożliwia planownaie podróży. Chcesz po prostu dokonać wpisu na temat planów? Czy może chcesz od razu dodać informacje na temat połaczenia? Kazda z tych opcji jest możliwa w sekcji planera. Notatki mają możliwość edycji i usunięcia.\n" +
+                    "\n" +
+                    "Aplikacja stworzona i utrzymywana przez Agnieszkę Hamal.\n" +
+                    "email: agnieszka.hamal@gmail.com\n" +
+                    "\n" +
+                    "Projekt aplikacji jest w całości pomysłem autora, w rozumieniu ustawy z dnia 4 lutego 1994 o prawach autorskich i prawach pokrewnych (Dz. U. 2006 nr 90 poz. 631 ze zm. ) . W przypadku ikon wykorzystano zródła oferujace darmowa licencje - ikony pochodzą głównie ze strony https://icons8.com ";
         textview.setText(pars);
         textview.setMovementMethod(new ScrollingMovementMethod());
         ActionBar actionBar = getSupportActionBar();

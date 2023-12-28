@@ -129,10 +129,10 @@ public class NotesDetailsActivity extends AppCompatActivity {
                                                 "\nNumer pociągu: " + trainNumber +
                                                 "\nTyp pociągu: " + trainType +
                                                 "\nStacja końcowa: " + trainSnapshot.child("stacja koncowa").getValue(String.class) +
-                                                "\nGodzina odjazdu: " + departureTime;
-
+                                                "\nGodzina przyjazdu: " + departureTime;
+                                        String combinedText =startStation + " - " + endStation;
                                         txtComment.setText(description);
-
+                                        txtTitle.setText(combinedText);
                                         break;
                                     }
                                 }
