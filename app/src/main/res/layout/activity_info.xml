@@ -36,8 +36,10 @@
 
     <TextView
         android:id="@+id/textInfo"
-        android:layout_width="match_parent"
-        android:layout_height="451dp"
+        android:layout_width="wrap_content"
+        android:layout_height="395dp"
+        android:layout_marginTop="25dp"
+        android:layout_marginBottom="25dp"
         android:scrollbars="vertical"
         app:layout_constraintBottom_toTopOf="@+id/relativeLayout6"
         app:layout_constraintEnd_toEndOf="parent"

@@ -1,7 +1,14 @@
 package com.example.railwayttable.Activity;
 
+import androidx.activity.OnBackPressedCallback;
+import androidx.activity.OnBackPressedDispatcher;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.view.ContextThemeWrapper;
+import androidx.appcompat.widget.Toolbar;
+import androidx.preference.PreferenceManager;
 
-import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Context;
@@ -19,16 +26,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import androidx.activity.OnBackPressedCallback;
-import androidx.activity.OnBackPressedDispatcher;
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.view.ContextThemeWrapper;
-import androidx.appcompat.widget.Toolbar;
-import androidx.preference.PreferenceManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import com.example.railwayttable.R;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -45,10 +42,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
-
-public class RouteActivity extends AppCompatActivity {
-
-
+public class RouteAcitvitySecond extends AppCompatActivity {
 
     SharedPreferences sharedPreferences, sharedPreferencesNight;
     Button button;
@@ -61,14 +55,13 @@ public class RouteActivity extends AppCompatActivity {
     int month;
     int day;
 
-    @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setThemeOfApp();
-        setContentView(R.layout.activity_route);
-        backButton();
+        setContentView(R.layout.activity_route_acitvity_second);
         Toolbar toolbar = findViewById(R.id.toolbarRoute);
+        backButton();
         intent = getIntent();
         startStation = intent.getStringExtra("START_STATION");
         endStation = intent.getStringExtra("END_STATION");
@@ -136,7 +129,7 @@ public class RouteActivity extends AppCompatActivity {
             } else if (startStation.equals(endStation)) {
                 Toast.makeText(this, "Stacja początkowa i końcowa nie mogą być takie same", Toast.LENGTH_SHORT).show();
             } else {
-                intent = new Intent(this, TravelActivity.class);
+                intent = new Intent(this, NotesDetailsActivity.class);
                 intent.putExtra("START_STATION", startStation);
                 intent.putExtra("END_STATION", endStation);
                 intent.putExtra("GODZINA", godzina);
@@ -229,7 +222,7 @@ public class RouteActivity extends AppCompatActivity {
             day = calendar.get(Calendar.DAY_OF_MONTH);
             int dialogStyle = nightMode ? R.style.DialogWindowCalendar_Dark : R.style.DialogWindowCalendar_Light;
 
-            DatePickerDialog datePickerDialog = new DatePickerDialog(RouteActivity.this,
+            DatePickerDialog datePickerDialog = new DatePickerDialog(RouteAcitvitySecond.this,
                     dialogStyle,
                     (view, year, month, dayOfMonth) -> {
                         calendar.set(year, month, dayOfMonth);
@@ -323,7 +316,7 @@ public class RouteActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
-            Intent intent = new Intent(RouteActivity.this, MainActivity.class);
+            Intent intent = new Intent(RouteAcitvitySecond.this, NotesDetailsActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(intent);
             finish();
@@ -371,7 +364,7 @@ public class RouteActivity extends AppCompatActivity {
     }
 
     public void backToMain() {
-        Intent intent = new Intent(RouteActivity.this, MainActivity.class);
+        Intent intent = new Intent(RouteAcitvitySecond.this, NotesDetailsActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
 
@@ -420,3 +413,4 @@ public class RouteActivity extends AppCompatActivity {
         time.show();
     }
 }
+

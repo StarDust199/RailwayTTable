@@ -5,8 +5,9 @@
     <color name="blue_berry">#445470</color>
     <color name="light_blue">#DAE2F0</color>
     <color name="gray">#4B4C4C</color>
+    <color name="gray2">#757D6F</color>
     <color name="blue">#8692F7</color>
-    <color name="shadow">#DFE3E3</color>
+    <color name="shadow">#C0C4C4</color>
     <!-- Motyw C -->
     <color name="light">#c0a1c3</color>
     <color name="rose">#916ce9</color>

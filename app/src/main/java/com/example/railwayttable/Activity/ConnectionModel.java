@@ -1,23 +1,60 @@
 package com.example.railwayttable.Activity;
 
-import java.util.ArrayList;
+import android.annotation.SuppressLint;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
 public class ConnectionModel {
     String  nazwa, stacjaKon, typ;
     long numer;
-
+    private String stacja;
+    private String godzinaOdjazdu;
+    private String godzinaPrzyjazdu;
+    private List<String> stacjeList;
+    private boolean expanded;
     static Map<String, Map<String, String>> stacje;
     public ConnectionModel() {
     }
 
-    public ConnectionModel(String nazwa, String stacjaKon, String typ, long numer, Map<String, Map<String, String>> stacje) {
+    public ConnectionModel(String nazwa, String stacjaKon, String typ, long numer, Map<String, Map<String, String>> stacje, List<String> stacjeList,String stacja, String godzinaOdjazdu, String godzinaPrzyjazdu) {
         this.nazwa = nazwa;
         this.stacjaKon = stacjaKon;
         this.typ = typ;
         this.numer = numer;
-        this.stacje = stacje;
+        ConnectionModel.stacje = stacje;
+        this.stacjeList=stacjeList;
+        this.stacja = stacja;
+        this.godzinaOdjazdu = godzinaOdjazdu;
+        this.godzinaPrzyjazdu = godzinaPrzyjazdu;
+        expanded = false;
+    }
+    public boolean isExpanded() {
+        return expanded;
+    }
+
+    public void setExpanded(boolean expanded) {
+        this.expanded = expanded;
+    }
+
+    public String getGodzinaOdjazdu() {
+        return godzinaOdjazdu;
+    }
+
+    public void setGodzinaOdjazdu(String godzinaOdjazdu) {
+        this.godzinaOdjazdu = godzinaOdjazdu;
+    }
+
+    public String getGodzinaPrzyjazdu() {
+        return godzinaPrzyjazdu;
+    }
+
+    public void setGodzinaPrzyjazdu(String godzinaPrzyjazdu) {
+        this.godzinaPrzyjazdu = godzinaPrzyjazdu;
     }
 
     public String getNazwa() {
@@ -53,62 +90,40 @@ public class ConnectionModel {
         this.typ = typ;
     }
 
-    public static List<StationModel> getStations() {
-        List<StationModel> stations = new ArrayList<>();
-        if (stacje != null) {
-            for (Map.Entry<String, Map<String, String>> entry : stacje.entrySet()) {
-                String nazwaStacji = entry.getKey();
-                Map<String, String> details = entry.getValue();
-                String odjazd = details.get("odjazd");
-                String przyjazd = details.get("przyjazd");
+    public boolean isStationExpanded() {
+        return expanded;
+    }
 
-                StationModel station = new StationModel(nazwaStacji, odjazd, przyjazd);
-                stations.add(station);
+    public void setStationExpanded(boolean expanded) {
+        this.expanded = expanded;
+    }
+
+    public static class GodzinaOdjazduComparator implements Comparator<ConnectionModel> {
+        @Override
+        public int compare(ConnectionModel connection1, ConnectionModel connection2) {
+            String godzinaOdjazdu1 = connection1.getGodzinaOdjazdu();
+            String godzinaOdjazdu2 = connection2.getGodzinaOdjazdu();
+
+            @SuppressLint("SimpleDateFormat") SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
+            try {
+                Date date1 = sdf.parse(godzinaOdjazdu1);
+                Date date2 = sdf.parse(godzinaOdjazdu2);
+
+                assert date1 != null;
+                return date1.compareTo(date2);
+            } catch (ParseException e) {
+                e.printStackTrace();
+                return 0;
             }
         }
-        return stations;
     }
-    public static List<StationModel> findConnectionsBetweenStations(String startStation, String endStation, Map<String, Map<String, String>> stacje) {
-        List<StationModel> connections = new ArrayList<>();
-        if (stacje != null) {
-        for (Map.Entry<String, Map<String, String>> entry : ConnectionModel.stacje.entrySet()) {
-            String nazwaStacji = entry.getKey();
 
-            if (nazwaStacji.equals(startStation)) {
-
-                Map<String, String> stationDetails = entry.getValue();
-                String odjazd = stationDetails.get("odjazd");
-                String przyjazd = stationDetails.get("przyjazd");
-                StationModel station = new StationModel(nazwaStacji, odjazd, przyjazd);
-                connections.add(station);
-
-                for (Map.Entry<String, String> detailEntry : stationDetails.entrySet()) {
-                    if (detailEntry.getKey().equals("odjazd") || detailEntry.getKey().equals("przyjazd")) {
-
-                        continue;
-                    }
-
-                    String innerStationName = detailEntry.getKey();
-                    odjazd = detailEntry.getValue();
-                    przyjazd = stationDetails.get(innerStationName + "_przyjazd");
-                    StationModel innerStation = new StationModel(innerStationName, odjazd, przyjazd);
-                    connections.add(innerStation);
-
-                    if (innerStationName.equals(endStation)) {
-
-                        break;
-                    }
-                }
-            }
-        }}
-        return connections;
-    }
 
     public static Map<String, Map<String, String>> getStacje() {
         return stacje;
     }
 
     public void setStacje(Map<String, Map<String, String>> stacje) {
-        this.stacje = stacje;
+        ConnectionModel.stacje = stacje;
     }
 }
